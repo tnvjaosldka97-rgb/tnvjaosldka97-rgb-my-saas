@@ -110,12 +110,31 @@ export function App() {
         </div>
       </Section>
 
-      <Section id="pricing" eyebrow="Pricing" title="보일러플레이트는 무료, 인프라 비용만"
-        description="옥토워커스는 교육생에 한해 오픈소스로 제공됩니다. Cloudflare Free Plan으로도 시작할 수 있습니다.">
-        <div className="ops-rail">
-          <article><h3>Free Plan</h3><p>일 100,000 요청, D1 5GB, KV 100K 읽기. 사이드 프로젝트나 MVP에 충분합니다.</p></article>
-          <article><h3>Paid Plan ($5/월)</h3><p>월 1,000만 요청, D1 25GB, KV 무제한. 프로덕션 SaaS에 적합. <a href={pageUrl('pricing-guide')} style={{ color: '#ffb259' }}>요금 상세 보기</a></p></article>
-          <article><h3>Enterprise</h3><p>대규모 트래픽, 전용 지원, SLA. Cloudflare Enterprise 요금제와 조합하세요.</p></article>
+      <Section id="pricing" eyebrow="Cost Savings" title="AWS 대비 80~93% 비용 절감"
+        description="옥토워커스 + Cloudflare 조합은 기존 클라우드 대비 압도적으로 저렴합니다.">
+        <div className="feature-grid">
+          <article>
+            <h3>인프라 비용</h3>
+            <p><strong style={{ color: '#ffb259', fontSize: '1.4em' }}>$5/월</strong>로 프로덕션 운영. AWS 동일 구성 $35~505/월. 이그레스 비용 $0, CPU 대기 시간 무과금, Cold Start 없음.</p>
+          </article>
+          <article>
+            <h3>개발 비용</h3>
+            <p><strong style={{ color: '#ffb259', fontSize: '1.4em' }}>11~16주 단축</strong>. 인증, 어드민, CRM, CMS, 이메일, CI/CD가 전부 포함. clone 후 AI에게 말하면 바로 시작.</p>
+          </article>
+        </div>
+        <div className="ops-rail" style={{ marginTop: 18 }}>
+          <article>
+            <h3>MVP (500만 req/월)</h3>
+            <p>AWS ~$35/월 → Cloudflare <strong style={{ color: '#4ade80' }}>$5/월</strong><br />86% 절감</p>
+          </article>
+          <article>
+            <h3>중규모 (1억 req/월)</h3>
+            <p>AWS ~$505/월 → Cloudflare <strong style={{ color: '#4ade80' }}>$38/월</strong><br />93% 절감</p>
+          </article>
+          <article>
+            <h3>AI 앱 (1천만 req/월)</h3>
+            <p>AWS ~$170/월 → Cloudflare <strong style={{ color: '#4ade80' }}>$35/월</strong><br />79% 절감. <a href={pageUrl('pricing-guide')} style={{ color: '#ffb259' }}>요금 상세 보기</a></p>
+          </article>
         </div>
       </Section>
 
