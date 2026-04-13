@@ -51,9 +51,9 @@
   // ],
   "vars": {
     "ENV_NAME": "production",
-    "APP_DOMAIN": "octoworkers.com",
-    "ADMIN_DOMAIN": "admin.octoworkers.com",
-    "SAAS_DOMAIN": "app.octoworkers.com",
+    "APP_DOMAIN": "REPLACE_WITH_DOMAIN",
+    "ADMIN_DOMAIN": "admin.REPLACE_WITH_DOMAIN",
+    "SAAS_DOMAIN": "app.REPLACE_WITH_DOMAIN",
     "ADMIN_ACCESS_MODE": "hybrid",
     "ADMIN_ALLOWED_EMAILS": "REPLACE_WITH_ADMIN_EMAIL",
     "ADMIN_LOGIN_EMAIL": "REPLACE_WITH_ADMIN_EMAIL",
@@ -65,7 +65,7 @@
     "AI_MODEL": "@cf/meta/llama-3.1-8b-instruct",
     "AI_TEXT_MODEL": "@cf/meta/llama-3.1-8b-instruct-fast",
     "AI_EMBED_MODEL": "@cf/baai/bge-small-en-v1.5",
-    "GITHUB_ALLOWED_USERS": "johunsang",
+    "GITHUB_ALLOWED_USERS": "REPLACE_WITH_GITHUB_USERNAME",
     "GITHUB_CLIENT_ID": "REPLACE_WITH_GITHUB_CLIENT_ID"
   },
   "d1_databases": [
@@ -77,20 +77,21 @@
     }
   ],
   "workers_dev": true,
-  "routes": [
-    {
-      "pattern": "octoworkers.com",
-      "custom_domain": true
-    },
-    {
-      "pattern": "admin.octoworkers.com",
-      "custom_domain": true
-    },
-    {
-      "pattern": "app.octoworkers.com",
-      "custom_domain": true
-    }
-  ],
+  // 커스텀 도메인 설정 후 주석 해제
+  // "routes": [
+  //   {
+  //     "pattern": "REPLACE_WITH_DOMAIN",
+  //     "custom_domain": true
+  //   },
+  //   {
+  //     "pattern": "admin.REPLACE_WITH_DOMAIN",
+  //     "custom_domain": true
+  //   },
+  //   {
+  //     "pattern": "app.REPLACE_WITH_DOMAIN",
+  //     "custom_domain": true
+  //   }
+  // ],
   "observability": {
     "enabled": true
   }

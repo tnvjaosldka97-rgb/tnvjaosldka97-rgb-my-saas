@@ -9,6 +9,7 @@ coverage
 .env.local
 .env.*.local
 worker/.dev.vars
+worker/wrangler.local.jsonc
 worker/public
 
 # Claude Code local files

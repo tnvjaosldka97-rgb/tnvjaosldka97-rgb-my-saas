@@ -407,7 +407,7 @@ GitHub Secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
 | slug | 제목 |
 | --- | --- |
 | `prerequisites` | 사전 설치 가이드 (Node.js, pnpm, Wrangler, Claude Code) |
-| `my-project-setup` | 내 SaaS 만들기: 처음부터 배포까지 완벽 가이드 (Step 0~14) |
+| `my-project-setup` | 내 SaaS 만들기: 처음부터 배포까지 완벽 가이드 (Step 0\~14) |
 | `token-setup` | Cloudflare 토큰 & 권한 설정 가이드 |
 | `ai-dev-guide` | AI 개발 가이드 (서브에이전트, Hooks, MCP, Skills) |
 | `guide` | Cloudflare Workers 실전 가이드 (14단계) |
