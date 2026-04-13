@@ -2,8 +2,8 @@
 
 ## 브랜치 전략
 
-- `develop` -> staging 자동 배포
-- `main` -> production 자동 배포
+- `develop` -&gt; staging 자동 배포
+- `main` -&gt; production 자동 배포
 
 ## GitHub Actions
 
@@ -125,8 +125,8 @@ pnpm deploy:prod
 
 빌드 결과:
 
-- landing -> `worker/public/landing`
-- admin -> `worker/public/admin`
+- landing -&gt; `worker/public/landing`
+- admin -&gt; `worker/public/admin`
 
 Worker는 호스트명을 보고 해당 자산을 반환합니다.
 

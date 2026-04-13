@@ -85,6 +85,10 @@ export function App() {
             <span className="module-code">CSS</span>
             <div><strong>디자인 커스터마이징</strong><p>디자인 토큰, 컴포넌트 패턴, 테마 변경 프롬프트</p></div>
           </a>
+          <a href={pageUrl('prerequisites')} className="module-item" style={{ color: 'inherit' }}>
+            <span className="module-code">0</span>
+            <div><strong>사전 설치 가이드</strong><p>Node.js, pnpm, Wrangler, Claude Code 설치 (macOS/Windows/Linux)</p></div>
+          </a>
           <a href={pageUrl('pricing-guide')} className="module-item" style={{ color: 'inherit' }}>
             <span className="module-code">$</span>
             <div><strong>요금제 완벽 가이드</strong><p>서비스별 요금, AWS 비교, 시나리오별 비용</p></div>

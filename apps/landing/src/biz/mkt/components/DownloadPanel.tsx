@@ -11,6 +11,21 @@ export function DownloadPanel() {
 
       <div className="install-guide">
         <div className="install-step">
+          <div className="step-number">0</div>
+          <div className="step-content">
+            <strong>사전 설치 (1회만)</strong>
+            <pre className="code-block"><code>{`# macOS
+brew install node git
+npm install -g pnpm wrangler @anthropic-ai/claude-code
+
+# Windows
+winget install OpenJS.NodeJS.LTS Git.Git
+npm install -g pnpm wrangler @anthropic-ai/claude-code`}</code></pre>
+            <p>Node.js 20+, pnpm, Wrangler, Git, Claude Code가 필요합니다. <a href={pageUrl('prerequisites')} style={{ color: '#ffb259' }}>상세 설치 가이드</a></p>
+          </div>
+        </div>
+
+        <div className="install-step">
           <div className="step-number">1</div>
           <div className="step-content">
             <strong>프로젝트 클론 & AI 에이전트 실행</strong>
