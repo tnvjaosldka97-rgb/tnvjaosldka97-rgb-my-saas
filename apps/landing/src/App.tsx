@@ -5,6 +5,8 @@ import { DownloadPanel } from './biz/mkt/components/DownloadPanel'
 import { StackDetail } from './biz/mkt/components/StackDetail'
 import { ModuleList } from './biz/mkt/components/ModuleList'
 import { SamplePages } from './biz/mkt/components/SamplePages'
+import { CostChart } from './biz/mkt/components/CostChart'
+import { ArchDiagram } from './biz/mkt/components/ArchDiagram'
 import { usePublicBootstrap } from './biz/mkt/hooks/usePublicBootstrap'
 import { adminUrl, pageUrl } from './com/url'
 
@@ -120,41 +122,14 @@ export function App() {
         <SamplePages />
       </Section>
 
-      <Section eyebrow="Architecture" title="미들웨어부터 배포까지 설계됨"
-        description="보안 헤더, 인증, CORS, ETag 캐싱이 미들웨어 스택으로 자동 적용됩니다. GitHub Actions CI/CD로 staging과 production을 분리 배포합니다.">
-        <div className="ops-rail">
-          <article><h3>보안 미들웨어</h3><p>CSP, HSTS, X-Frame-Options, nosniff가 모든 응답에 자동 적용. WebSocket은 예외 처리됨.</p></article>
-          <article><h3>인증 시스템</h3><p>JWT 세션 + GitHub OAuth + Cloudflare Access 하이브리드. 허용 이메일 목록으로 접근 제어.</p></article>
-          <article><h3>CI/CD 파이프라인</h3><p>PR마다 타입체크 + 테스트 + 빌드. develop → staging, main → production 자동 배포.</p></article>
-        </div>
+      <Section eyebrow="Architecture" title="브라우저에서 DB까지 한눈에"
+        description="요청이 어떻게 처리되는지 시각적으로 확인하세요. 모든 미들웨어와 서비스가 하나의 런타임에서 동작합니다.">
+        <ArchDiagram />
       </Section>
 
       <Section id="pricing" eyebrow="Cost Savings" title="AWS 대비 80~93% 비용 절감"
-        description="옥토워커스 + Cloudflare 조합은 기존 클라우드 대비 압도적으로 저렴합니다.">
-        <div className="feature-grid">
-          <article>
-            <h3>인프라 비용</h3>
-            <p><strong style={{ color: '#ffb259', fontSize: '1.4em' }}>$5/월</strong>로 프로덕션 운영. AWS 동일 구성 $35~505/월. 이그레스 비용 $0, CPU 대기 시간 무과금, Cold Start 없음.</p>
-          </article>
-          <article>
-            <h3>개발 비용</h3>
-            <p><strong style={{ color: '#ffb259', fontSize: '1.4em' }}>11~16주 단축</strong>. 인증, 어드민, CRM, CMS, 이메일, CI/CD가 전부 포함. clone 후 AI에게 말하면 바로 시작.</p>
-          </article>
-        </div>
-        <div className="ops-rail" style={{ marginTop: 18 }}>
-          <article>
-            <h3>MVP (500만 req/월)</h3>
-            <p>AWS ~$35/월 → Cloudflare <strong style={{ color: '#4ade80' }}>$5/월</strong><br />86% 절감</p>
-          </article>
-          <article>
-            <h3>중규모 (1억 req/월)</h3>
-            <p>AWS ~$505/월 → Cloudflare <strong style={{ color: '#4ade80' }}>$38/월</strong><br />93% 절감</p>
-          </article>
-          <article>
-            <h3>AI 앱 (1천만 req/월)</h3>
-            <p>AWS ~$170/월 → Cloudflare <strong style={{ color: '#4ade80' }}>$35/월</strong><br />79% 절감. <a href={pageUrl('pricing-guide')} style={{ color: '#ffb259' }}>요금 상세 보기</a></p>
-          </article>
-        </div>
+        description="옥토워커스 + Cloudflare 조합은 기존 클라우드 대비 압도적으로 저렴합니다. 차트로 직접 비교하세요.">
+        <CostChart />
       </Section>
 
       <footer className="landing-footer">
