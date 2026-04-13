@@ -33,6 +33,13 @@ export function App() {
       </nav>
       <HeroPanel metrics={metrics} loading={loading} />
 
+      <a href={pageUrl('my-project-setup')} className="setup-banner">
+        <span className="setup-banner-badge">Step-by-Step Guide</span>
+        <strong>내 SaaS 만들기: 처음부터 배포까지 완벽 가이드</strong>
+        <p>사전 설치 → 클론 → AI 세팅 → 테마 → 콘텐츠 → 배포. 14단계를 따라하면 사이트가 완성됩니다.</p>
+        <span className="setup-banner-arrow">가이드 시작하기 &rarr;</span>
+      </a>
+
       <Section id="features" eyebrow="AI-First Development" title="AI에게 말하면 SaaS가 만들어집니다"
         description="CLAUDE.md 문서 시스템으로 AI가 프로젝트를 완벽히 이해합니다. 코드를 직접 쓸 필요 없이 기능 요청, 버그 수정, 배포를 자연어로 수행하세요.">
         <FeatureGrid />
