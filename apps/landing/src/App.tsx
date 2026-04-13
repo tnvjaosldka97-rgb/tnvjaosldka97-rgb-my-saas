@@ -108,6 +108,10 @@ export function App() {
             <span className="module-code">$</span>
             <div><strong>요금제 완벽 가이드</strong><p>서비스별 요금, AWS 비교, 시나리오별 비용</p></div>
           </a>
+          <a href={pageUrl('faq')} className="module-item" style={{ color: 'inherit' }}>
+            <span className="module-code">?</span>
+            <div><strong>FAQ</strong><p>시작, 비용, 기술, 배포, 보안, 문제 해결 30개 Q&A</p></div>
+          </a>
         </div>
       </Section>
 
