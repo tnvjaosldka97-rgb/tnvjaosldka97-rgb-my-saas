@@ -89,6 +89,10 @@ export function App() {
             <span className="module-code">0</span>
             <div><strong>사전 설치 가이드</strong><p>Node.js, pnpm, Wrangler, Claude Code 설치 (macOS/Windows/Linux)</p></div>
           </a>
+          <a href={pageUrl('my-project-setup')} className="module-item" style={{ color: 'inherit' }}>
+            <span className="module-code">1</span>
+            <div><strong>내 프로젝트 세팅</strong><p>클론 → 프로젝트명 교체 → 도메인 → 시크릿 → 문서 재생성 → 배포 14단계</p></div>
+          </a>
           <a href={pageUrl('pricing-guide')} className="module-item" style={{ color: 'inherit' }}>
             <span className="module-code">$</span>
             <div><strong>요금제 완벽 가이드</strong><p>서비스별 요금, AWS 비교, 시나리오별 비용</p></div>
