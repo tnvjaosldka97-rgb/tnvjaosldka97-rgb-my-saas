@@ -895,3 +895,162 @@ describe('page CMS routes', () => {
     expect(page.title).toBe('Public')
   })
 })
+
+describe('SEO routes', () => {
+  it('should return robots.txt with sitemap URL', async () => {
+    const app = createApp()
+    const env = createTestEnv()
+    const res = await app.request('http://localhost/robots.txt', undefined, env)
+    expect(res.status).toBe(200)
+    const text = await res.text()
+    expect(text).toContain('User-agent: *')
+    expect(text).toContain('Allow: /')
+    expect(text).toContain('Disallow: /api/admin/')
+    expect(text).toContain('Sitemap:')
+    expect(text).toContain('example.com/sitemap.xml')
+  })
+
+  it('should return sitemap.xml with published pages', async () => {
+    const app = createApp()
+    const env = createTestEnv()
+
+    // Create and publish a page
+    await app.request(
+      'http://localhost/api/admin/pages',
+      { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug: 'sitemap-test', title: 'Sitemap Test', contentMd: '# Test' }) },
+      env,
+    )
+    await app.request(`http://localhost/api/admin/pages/${testPages[0].id}/publish`, { method: 'POST' }, env)
+
+    const res = await app.request('http://localhost/sitemap.xml', undefined, env)
+    expect(res.status).toBe(200)
+    const xml = await res.text()
+    expect(xml).toContain('<?xml version="1.0"')
+    expect(xml).toContain('<urlset')
+    expect(xml).toContain('example.com')
+    expect(xml).toContain('sitemap-test')
+  })
+
+  it('should return sitemap.xml even with no pages', async () => {
+    const app = createApp()
+    const env = createTestEnv()
+    const res = await app.request('http://localhost/sitemap.xml', undefined, env)
+    expect(res.status).toBe(200)
+    const xml = await res.text()
+    expect(xml).toContain('<urlset')
+    expect(xml).toContain('example.com')
+  })
+})
+
+describe('API endpoint smoke tests', () => {
+  it('should return health check', async () => {
+    const app = createApp()
+    const env = createTestEnv()
+    const res = await app.request('http://localhost/api/health', undefined, env)
+    expect(res.status).toBe(200)
+  })
+
+  it('should return public bootstrap', async () => {
+    const app = createApp()
+    const env = createTestEnv()
+    const res = await app.request('http://localhost/api/public/bootstrap', undefined, env)
+    expect(res.status).toBe(200)
+    const data = await res.json()
+    expect(data).toHaveProperty('settings')
+    expect(data).toHaveProperty('metrics')
+  })
+
+  it('should return empty public pages list', async () => {
+    const app = createApp()
+    const env = createTestEnv()
+    const res = await app.request('http://localhost/api/public/pages', undefined, env)
+    expect(res.status).toBe(200)
+    const data = await res.json()
+    expect(Array.isArray(data)).toBe(true)
+  })
+
+  it('should return 404 for non-existent public page', async () => {
+    const app = createApp()
+    const env = createTestEnv()
+    const res = await app.request('http://localhost/api/public/pages/nonexistent', undefined, env)
+    expect(res.status).toBe(404)
+  })
+
+  it('should reject invalid lead submission', async () => {
+    const app = createApp()
+    const env = createTestEnv()
+    const res = await app.request(
+      'http://localhost/api/public/leads',
+      { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: '', email: 'invalid' }) },
+      env,
+    )
+    expect(res.status).toBe(400)
+  })
+
+  it('should accept valid lead submission', async () => {
+    const app = createApp()
+    const env = createTestEnv()
+    const res = await app.request(
+      'http://localhost/api/public/leads',
+      { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: 'Test User', email: 'test@example.com' }) },
+      env,
+    )
+    expect(res.status).toBe(201)
+  })
+
+  it('should return dashboard data', async () => {
+    const app = createApp()
+    const env = createTestEnv()
+    const res = await app.request('http://localhost/api/admin/dashboard', undefined, env)
+    expect(res.status).toBe(200)
+    const data = await res.json()
+    expect(data).toHaveProperty('stats')
+  })
+
+  it('should return admin leads list', async () => {
+    const app = createApp()
+    const env = createTestEnv()
+    const res = await app.request('http://localhost/api/admin/leads', undefined, env)
+    expect(res.status).toBe(200)
+    const data = await res.json()
+    expect(Array.isArray(data)).toBe(true)
+  })
+
+  it('should return settings', async () => {
+    const app = createApp()
+    const env = createTestEnv()
+    const res = await app.request('http://localhost/api/admin/settings', undefined, env)
+    expect(res.status).toBe(200)
+    const data = await res.json()
+    expect(data).toHaveProperty('brand')
+  })
+
+  it('should create and list pages', async () => {
+    const app = createApp()
+    const env = createTestEnv()
+
+    const createRes = await app.request(
+      'http://localhost/api/admin/pages',
+      { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug: 'test-page', title: 'Test Page', contentMd: '# Hello\n\nWorld' }) },
+      env,
+    )
+    expect(createRes.status).toBe(201)
+
+    const listRes = await app.request('http://localhost/api/admin/pages', undefined, env)
+    expect(listRes.status).toBe(200)
+    const pages = await listRes.json()
+    expect(pages.length).toBe(1)
+    expect(pages[0].slug).toBe('test-page')
+  })
+
+  it('should reject page with invalid slug', async () => {
+    const app = createApp()
+    const env = createTestEnv()
+    const res = await app.request(
+      'http://localhost/api/admin/pages',
+      { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug: 'INVALID SLUG!', title: 'Bad', contentMd: 'x' }) },
+      env,
+    )
+    expect(res.status).toBe(400)
+  })
+})
