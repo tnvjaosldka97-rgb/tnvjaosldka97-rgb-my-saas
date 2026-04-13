@@ -61,6 +61,10 @@ export function App() {
             <span className="module-code">CF</span>
             <div><strong>Cloudflare 실전 가이드</strong><p>가입 → Wrangler → D1/KV → 배포 14단계</p></div>
           </a>
+          <a href={pageUrl('token-setup')} className="module-item" style={{ color: 'inherit' }}>
+            <span className="module-code">KEY</span>
+            <div><strong>토큰 & 권한 설정</strong><p>wrangler login, API 토큰 생성, 권한 매핑, CI/CD</p></div>
+          </a>
           <a href={pageUrl('domain-setup')} className="module-item" style={{ color: 'inherit' }}>
             <span className="module-code">DNS</span>
             <div><strong>도메인 설정</strong><p>커스텀 도메인, DNS, SSL, 멀티 도메인 구조</p></div>
