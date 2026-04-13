@@ -418,6 +418,7 @@ GitHub Secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
 | `email-setup` | 이메일 설정 가이드 |
 | `db-rag-guide` | D1 데이터베이스 & RAG 가이드 |
 | `design-guide` | 디자인 테마 프리셋 (30개) |
+| `faq` | 자주 묻는 질문 (FAQ) — 30개 Q&A |
 | `presentation` | 옥토워커스 발표 자료 (17 Slides) |
 
 ## 문서 우선순위
