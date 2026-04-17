@@ -140,27 +140,25 @@
 .oc-hamburger:hover { background: var(--oc-gray-100); }
 .oc-hamburger span { display: block; width: 20px; height: 2px; background: var(--oc-gray-900); margin: 4px auto; border-radius: 2px; }
 
-/* === Hero (미니) === */
+/* === Hero (차분한 신뢰 톤) === */
 .oc-hero {
   position: relative;
-  padding: 80px 0 64px;
+  padding: 88px 0 64px;
   background:
-    radial-gradient(ellipse 900px 500px at 90% -15%, rgba(29, 78, 216, 0.14), transparent 60%),
-    radial-gradient(ellipse 700px 450px at -5% 115%, rgba(245, 158, 11, 0.10), transparent 55%),
-    radial-gradient(circle 300px at 50% 40%, rgba(11, 30, 63, 0.04), transparent 70%),
-    var(--oc-offwhite);
+    linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
   text-align: left;
   overflow: hidden;
+  border-bottom: 1px solid rgba(11, 30, 63, 0.04);
 }
 .oc-hero::before {
   content: '';
   position: absolute;
   inset: 0;
   background-image:
-    radial-gradient(circle at 1px 1px, rgba(11, 30, 63, 0.08) 1px, transparent 0);
-  background-size: 28px 28px;
-  mask-image: radial-gradient(ellipse 80% 70% at 50% 100%, rgba(0,0,0,0.35), transparent 70%);
-  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 100%, rgba(0,0,0,0.35), transparent 70%);
+    radial-gradient(circle at 1px 1px, rgba(11, 30, 63, 0.045) 1px, transparent 0);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(ellipse 60% 55% at 85% 20%, rgba(0,0,0,0.5), transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse 60% 55% at 85% 20%, rgba(0,0,0,0.5), transparent 70%);
   pointer-events: none;
   z-index: 0;
 }
@@ -1560,6 +1558,355 @@
   font-size: 11px;
   color: var(--oc-gray-500);
 }
+
+/* === Page View (CMS 페이지 본문) === */
+.oc-page-main {
+  padding: 48px 0 80px;
+  background: var(--oc-cream);
+  min-height: 70vh;
+}
+.oc-page-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  gap: 40px;
+  align-items: start;
+}
+.oc-page-content { min-width: 0; }
+.oc-page-loading, .oc-page-error {
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--oc-gray-500);
+  background: white;
+  border-radius: var(--oc-radius-lg);
+  border: 1px dashed var(--oc-gray-100);
+}
+.oc-page-error h1 { color: var(--oc-navy); font-size: 20px; margin: 0 0 8px; }
+.oc-page-error p { margin: 0 0 20px; }
+.oc-page-article {
+  padding: 40px 48px;
+  background: white;
+  border: 1px solid var(--oc-gray-100);
+  border-radius: var(--oc-radius-lg);
+  box-shadow: var(--oc-shadow-soft);
+}
+.oc-page-article-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--oc-gray-100);
+}
+.oc-page-slug {
+  padding: 3px 9px;
+  background: rgba(29, 78, 216, 0.08);
+  color: var(--oc-royal);
+  font-size: 11.5px;
+  font-family: ui-monospace, "JetBrains Mono", monospace;
+  border-radius: 5px;
+  font-weight: 600;
+}
+.oc-page-article-head time {
+  font-size: 12px;
+  color: var(--oc-gray-500);
+}
+
+/* TOC */
+.oc-page-toc {
+  position: sticky;
+  top: 88px;
+  padding: 18px 20px;
+  background: white;
+  border: 1px solid var(--oc-gray-100);
+  border-radius: var(--oc-radius-lg);
+  font-size: 13px;
+}
+.oc-page-toc h4 {
+  margin: 0 0 12px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--oc-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.oc-page-toc ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.oc-page-toc a {
+  color: var(--oc-gray-700);
+  font-weight: 500;
+  transition: color 140ms;
+  line-height: 1.5;
+  display: block;
+}
+.oc-page-toc a:hover { color: var(--oc-royal); }
+.oc-toc-indent { padding-left: 12px; font-size: 12px; }
+
+/* Page Nav (prev/next) */
+.oc-page-nav {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--oc-gray-100);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.oc-page-nav-link {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 18px;
+  background: #F8FAFC;
+  border: 1px solid var(--oc-gray-100);
+  border-radius: var(--oc-radius);
+  transition: border-color 160ms, transform 160ms, background 160ms;
+}
+.oc-page-nav-link:hover {
+  border-color: var(--oc-royal-soft);
+  background: white;
+  transform: translateY(-1px);
+}
+.oc-page-nav-next { text-align: right; }
+.oc-page-nav-next .oc-page-nav-dir { justify-content: flex-end; }
+.oc-page-nav-dir {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--oc-gray-500);
+  letter-spacing: 0.01em;
+}
+.oc-page-nav-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--oc-navy);
+}
+
+/* === Prose (markdown HTML 본문) === */
+.oc-prose {
+  font-size: 15.5px;
+  line-height: 1.75;
+  color: var(--oc-gray-900);
+}
+.oc-prose h1 {
+  font-size: clamp(24px, 3.2vw, 30px);
+  font-weight: 800;
+  color: var(--oc-navy);
+  letter-spacing: -0.03em;
+  margin: 0 0 20px;
+  line-height: 1.3;
+}
+.oc-prose h2 {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--oc-navy);
+  letter-spacing: -0.025em;
+  margin: 36px 0 14px;
+  padding-top: 8px;
+  line-height: 1.35;
+}
+.oc-prose h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--oc-navy);
+  letter-spacing: -0.02em;
+  margin: 26px 0 10px;
+}
+.oc-prose p {
+  margin: 0 0 14px;
+  color: var(--oc-gray-700);
+}
+.oc-prose strong {
+  color: var(--oc-navy);
+  font-weight: 700;
+}
+.oc-prose em { color: var(--oc-royal); font-style: normal; font-weight: 600; }
+.oc-prose ul, .oc-prose ol {
+  margin: 0 0 16px;
+  padding-left: 24px;
+  color: var(--oc-gray-700);
+}
+.oc-prose ul li, .oc-prose ol li { margin-bottom: 6px; line-height: 1.7; }
+.oc-prose ul { list-style: none; padding-left: 4px; }
+.oc-prose ul li {
+  position: relative;
+  padding-left: 18px;
+}
+.oc-prose ul li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 13px;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--oc-royal);
+  opacity: 0.7;
+}
+.oc-prose ol { list-style: decimal; }
+.oc-prose a {
+  color: var(--oc-royal);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+  font-weight: 600;
+}
+.oc-prose a:hover { color: var(--oc-navy); }
+.oc-prose code {
+  background: rgba(11, 30, 63, 0.06);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-family: ui-monospace, "JetBrains Mono", monospace;
+  color: var(--oc-navy);
+}
+.oc-prose blockquote {
+  margin: 18px 0;
+  padding: 14px 18px;
+  background: rgba(29, 78, 216, 0.05);
+  border-left: 3px solid var(--oc-royal);
+  border-radius: 6px;
+  color: var(--oc-gray-700);
+}
+.oc-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0;
+  font-size: 13.5px;
+}
+.oc-prose th, .oc-prose td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--oc-gray-100);
+  text-align: left;
+}
+.oc-prose th {
+  font-weight: 700;
+  color: var(--oc-navy);
+  background: #F8FAFC;
+}
+.oc-prose hr {
+  border: none;
+  border-top: 1px solid var(--oc-gray-100);
+  margin: 32px 0;
+}
+@media (max-width: 959px) {
+  .oc-page-grid { grid-template-columns: 1fr; }
+  .oc-page-toc { position: static; }
+  .oc-page-article { padding: 28px 24px; }
+}
+
+/* === PageList (문서 목록) === */
+.oc-pagelist-main {
+  padding: 56px 0 80px;
+  background: var(--oc-cream);
+  min-height: 70vh;
+}
+.oc-pagelist-header {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 40px;
+}
+.oc-pagelist-header h1 {
+  font-size: clamp(24px, 3.4vw, 32px);
+  font-weight: 800;
+  color: var(--oc-navy);
+  letter-spacing: -0.03em;
+  margin: 10px 0 10px;
+  line-height: 1.3;
+}
+.oc-pagelist-header p {
+  margin: 0 0 14px;
+  font-size: 14px;
+  color: var(--oc-gray-500);
+  line-height: 1.6;
+}
+.oc-pagelist-meta {
+  display: inline-block;
+  padding: 5px 12px;
+  background: white;
+  border: 1px solid var(--oc-gray-100);
+  border-radius: 999px;
+  font-size: 12.5px;
+  color: var(--oc-gray-500);
+}
+.oc-pagelist-meta strong { color: var(--oc-navy); font-weight: 800; }
+
+.oc-pagelist-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.oc-pagelist-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  background: white;
+  border: 1px solid var(--oc-gray-100);
+  border-radius: var(--oc-radius-lg);
+  transition: border-color 160ms, transform 160ms, box-shadow 160ms;
+}
+.oc-pagelist-card:hover {
+  border-color: var(--oc-royal-soft);
+  transform: translateY(-2px);
+  box-shadow: var(--oc-shadow);
+}
+.oc-pagelist-card-num {
+  flex-shrink: 0;
+  width: 36px; height: 36px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, var(--oc-navy), var(--oc-royal));
+  color: white;
+  display: grid; place-items: center;
+  font-family: ui-monospace, "JetBrains Mono", monospace;
+  font-size: 12.5px;
+  font-weight: 800;
+}
+.oc-pagelist-card-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.oc-pagelist-card-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--oc-royal);
+  font-size: 11px;
+  font-weight: 600;
+}
+.oc-pagelist-slug {
+  font-family: ui-monospace, "JetBrains Mono", monospace;
+}
+.oc-pagelist-card-body h2 {
+  margin: 2px 0 2px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--oc-navy);
+  letter-spacing: -0.02em;
+}
+.oc-pagelist-card-body time {
+  font-size: 11.5px;
+  color: var(--oc-gray-500);
+}
+.oc-pagelist-arrow {
+  flex-shrink: 0;
+  color: var(--oc-gray-300);
+  transition: color 160ms, transform 160ms;
+}
+.oc-pagelist-card:hover .oc-pagelist-arrow {
+  color: var(--oc-royal);
+  transform: translateX(3px);
+}
+@media (max-width: 959px) { .oc-pagelist-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 639px) { .oc-pagelist-grid { grid-template-columns: 1fr; } }
 
 /* === Error Boundary === */
 .oc-errbound {

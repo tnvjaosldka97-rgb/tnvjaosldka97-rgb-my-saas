@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
+import { FileText, ArrowRight } from 'lucide-react'
+import { LPHeader } from '../../../components/LPHeader'
+import { LPFooter } from '../../../components/LPFooter'
 import { apiFetch } from '../../../com/api/client'
-import { adminUrl, homeUrl, pageUrl } from '../../../com/url'
+import { pageUrl } from '../../../com/url'
+import '../../../landing-page.css'
 
 type PageSummary = { id: number; slug: string; title: string; publishedAt: string | null }
 
@@ -13,49 +17,40 @@ export function PageListView() {
   }, [])
 
   return (
-    <div className="pagelist-shell">
-      <nav className="pagelist-nav">
-        <a href={homeUrl()} className="nav-brand">my-saas</a>
-        <div className="pagelist-nav-links">
-          <a href={homeUrl()}>Home</a>
-          <a href={adminUrl()}>Admin</a>
-          <a href="https://github.com/johunsang/my-saas" target="_blank" rel="noreferrer">GitHub</a>
+    <div className="onlyup-scope">
+      <LPHeader />
+      <main className="oc-pagelist-main">
+        <div className="oc-container">
+          <header className="oc-pagelist-header">
+            <span className="oc-section-eyebrow">공식 문서</span>
+            <h1>OnlyUp Compare 가이드 & 정책</h1>
+            <p>이용 안내, 요금, 법적 고지 등 모든 공식 문서를 한곳에서 확인하세요.</p>
+            <div className="oc-pagelist-meta">총 <strong>{pages.length}</strong>개 문서</div>
+          </header>
+
+          {loading && <div className="oc-page-loading">불러오는 중…</div>}
+
+          <div className="oc-pagelist-grid">
+            {pages.map((page, idx) => (
+              <a key={page.id} href={pageUrl(page.slug)} className="oc-pagelist-card">
+                <div className="oc-pagelist-card-num">{String(idx + 1).padStart(2, '0')}</div>
+                <div className="oc-pagelist-card-body">
+                  <div className="oc-pagelist-card-head">
+                    <FileText size={14} strokeWidth={2} aria-hidden />
+                    <span className="oc-pagelist-slug">/{page.slug}</span>
+                  </div>
+                  <h2>{page.title}</h2>
+                  {page.publishedAt && (
+                    <time>{new Date(page.publishedAt).toLocaleDateString('ko-KR')}</time>
+                  )}
+                </div>
+                <ArrowRight size={16} strokeWidth={2} aria-hidden className="oc-pagelist-arrow" />
+              </a>
+            ))}
+          </div>
         </div>
-      </nav>
-
-      <header className="pagelist-header">
-        <span className="pagelist-badge">SaaS CMS</span>
-        <h1>my-saas 페이지</h1>
-        <p>마크다운으로 작성한 CMS 페이지가 D1 데이터베이스에서 실시간으로 서빙됩니다.</p>
-        <div className="pagelist-meta">
-          <span>{pages.length} pages published</span>
-        </div>
-      </header>
-
-      {loading && <p className="pagelist-loading">Loading...</p>}
-
-      <div className="pagelist-grid">
-        {pages.map((page, idx) => (
-          <a key={page.id} href={pageUrl(page.slug)} className="pagelist-card">
-            <div className="pagelist-card-number">{String(idx + 1).padStart(2, '0')}</div>
-            <div className="pagelist-card-body">
-              <h2>{page.title}</h2>
-              <span className="pagelist-slug">/{page.slug}</span>
-            </div>
-            <div className="pagelist-card-footer">
-              {page.publishedAt && <time>{new Date(page.publishedAt).toLocaleDateString('ko-KR')}</time>}
-              <span className="pagelist-arrow">&rarr;</span>
-            </div>
-          </a>
-        ))}
-      </div>
-
-      <footer className="pagelist-footer">
-        <a href={homeUrl()}>홈으로</a>
-        <a href="/pages/contact">문의</a>
-        <a href="/pages/terms">이용약관</a>
-        <a href="/pages/privacy">개인정보처리방침</a>
-      </footer>
+      </main>
+      <LPFooter />
     </div>
   )
 }
