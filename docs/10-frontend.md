@@ -2,7 +2,7 @@
 
 ## 개요
 
-옥토워커스는 두 개의 독립된 React + Vite 앱을 포함합니다.
+my-saas는 두 개의 독립된 React + Vite 앱을 포함합니다.
 
 | 앱 | 경로 | 포트 | 용도 | 빌드 출력 |
 |----|------|------|------|----------|
@@ -23,10 +23,10 @@ const data = await apiFetch<LeadRecord[]>('/api/admin/leads')
 
 ### 공유 타입
 
-`@octoworkers/com`에서 import:
+`@my-saas/com`에서 import:
 
 ```typescript
-import type { SiteSettings, LeadRecord } from '@octoworkers/com'
+import type { SiteSettings, LeadRecord } from '@my-saas/com'
 ```
 
 ### Vite 프록시
@@ -129,7 +129,7 @@ AuthenticatedAdmin
 1. `apps/admin/src/biz/{3글자}/hooks/use*.ts` 생성
 2. `apps/admin/src/biz/{3글자}/components/*.tsx` 생성 (선택)
 3. `App.tsx`의 `AuthenticatedAdmin`에 패널 추가
-4. `@octoworkers/com`에서 필요한 타입 import
+4. `@my-saas/com`에서 필요한 타입 import
 
 ```typescript
 // hooks/useNotifications.ts

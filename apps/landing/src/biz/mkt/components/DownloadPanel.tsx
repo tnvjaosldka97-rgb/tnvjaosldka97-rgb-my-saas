@@ -29,7 +29,7 @@ npm install -g pnpm wrangler @anthropic-ai/claude-code`}</code></pre>
           <div className="step-number">1</div>
           <div className="step-content">
             <strong>프로젝트 클론 & AI 에이전트 실행</strong>
-            <pre className="code-block"><code>{`git clone https://github.com/johunsang/octoworkers my-saas
+            <pre className="code-block"><code>{`git clone https://github.com/johunsang/my-saas my-saas
 cd my-saas
 claude`}</code></pre>
             <p>Claude Code가 CLAUDE.md를 자동으로 읽고 프로젝트 구조를 파악합니다. Codex를 쓰려면 <code>codex</code>를 실행하세요.</p>
@@ -40,7 +40,7 @@ claude`}</code></pre>
           <div className="step-number">2</div>
           <div className="step-content">
             <strong>AI에게 첫 번째 말</strong>
-            <pre className="code-block"><code>{`옥토워커스 보일러플레이트로 내 SaaS를 만들어줘.
+            <pre className="code-block"><code>{`my-saas 보일러플레이트로 내 SaaS를 만들어줘.
 프로젝트명은 my-saas이고 도메인은 my-saas.com이야.
 pnpm install부터 로컬 실행까지 전부 세팅해줘.`}</code></pre>
             <p>AI가 알아서 의존성 설치, 환경변수 생성, DB 마이그레이션, 개발 서버 실행까지 합니다.</p>

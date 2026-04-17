@@ -76,7 +76,7 @@ app.route('/api/admin/notifications', notificationRoutes)
 ```bash
 cp _templates/migration/0000_template.sql worker/migrations/0002_add_notifications.sql
 sed -i '' 's/__items__/notifications/g' worker/migrations/0002_add_notifications.sql
-pnpm --filter @octoworkers/worker db:migrate:local
+pnpm --filter @my-saas/worker db:migrate:local
 ```
 
 ### 6. 테스트

@@ -41,7 +41,7 @@ INSERT OR IGNORE INTO site_settings (
   updated_at
 ) VALUES (
   1,
-  '옥토워커스',
+  'my-saas',
   'Cloudflare-native SaaS boilerplate',
   'Run landing, admin, API, database, media, and AI behind one edge runtime.',
   'A production-ready starter with Hono, Vite, D1, Cloudflare Images, AI Gateway, and deploy automation built in.',

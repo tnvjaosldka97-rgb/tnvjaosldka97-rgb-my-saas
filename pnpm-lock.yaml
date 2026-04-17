@@ -10,7 +10,7 @@ importers:
 
   apps/admin:
     dependencies:
-      '@octoworkers/com':
+      '@my-saas/com':
         specifier: workspace:*
         version: link:../../packages/com
       dompurify:
@@ -44,7 +44,7 @@ importers:
 
   apps/landing:
     dependencies:
-      '@octoworkers/com':
+      '@my-saas/com':
         specifier: workspace:*
         version: link:../../packages/com
       dompurify:
@@ -83,7 +83,7 @@ importers:
       '@hono/zod-validator':
         specifier: ^0.7.6
         version: 0.7.6(hono@4.12.12)(zod@4.3.6)
-      '@octoworkers/com':
+      '@my-saas/com':
         specifier: workspace:*
         version: link:../packages/com
       agents:

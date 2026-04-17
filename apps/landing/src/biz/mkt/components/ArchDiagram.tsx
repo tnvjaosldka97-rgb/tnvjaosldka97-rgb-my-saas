@@ -50,7 +50,7 @@ export function ArchDiagram() {
       <div className="arch-arrow">&darr;</div>
       <div className="arch-row arch-frontends">
         <div className="arch-frontend">
-          <strong>octoworkers.com</strong>
+          <strong>my-saas.com</strong>
           <span>Landing</span>
         </div>
         <div className="arch-frontend">

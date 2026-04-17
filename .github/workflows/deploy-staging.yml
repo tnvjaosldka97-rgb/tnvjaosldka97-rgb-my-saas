@@ -37,12 +37,12 @@ jobs:
       - name: Build
         run: pnpm build
       - name: D1 migrations (staging)
-        run: pnpm --filter @octoworkers/worker db:migrate:remote:staging
+        run: pnpm --filter @my-saas/worker db:migrate:remote:staging
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       - name: Deploy to Cloudflare Workers (staging)
-        run: pnpm --filter @octoworkers/worker deploy:staging
+        run: pnpm --filter @my-saas/worker deploy:staging
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

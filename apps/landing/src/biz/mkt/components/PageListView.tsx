@@ -15,17 +15,17 @@ export function PageListView() {
   return (
     <div className="pagelist-shell">
       <nav className="pagelist-nav">
-        <a href={homeUrl()} className="nav-brand">옥토워커스</a>
+        <a href={homeUrl()} className="nav-brand">my-saas</a>
         <div className="pagelist-nav-links">
           <a href={homeUrl()}>Home</a>
           <a href={adminUrl()}>Admin</a>
-          <a href="https://github.com/johunsang/octoworkers" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="https://github.com/johunsang/my-saas" target="_blank" rel="noreferrer">GitHub</a>
         </div>
       </nav>
 
       <header className="pagelist-header">
         <span className="pagelist-badge">SaaS CMS</span>
-        <h1>옥토워커스 페이지</h1>
+        <h1>my-saas 페이지</h1>
         <p>마크다운으로 작성한 CMS 페이지가 D1 데이터베이스에서 실시간으로 서빙됩니다.</p>
         <div className="pagelist-meta">
           <span>{pages.length} pages published</span>
@@ -54,7 +54,7 @@ export function PageListView() {
         <a href={homeUrl()}>Landing</a>
         <a href={adminUrl()}>Admin Console</a>
         <a href="/api/public/pages">Pages API</a>
-        <a href="https://github.com/johunsang/octoworkers" target="_blank" rel="noreferrer">GitHub</a>
+        <a href="https://github.com/johunsang/my-saas" target="_blank" rel="noreferrer">GitHub</a>
       </footer>
     </div>
   )

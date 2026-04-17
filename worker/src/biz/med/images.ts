@@ -1,4 +1,4 @@
-import type { DirectUploadPayload } from '@octoworkers/com'
+import type { DirectUploadPayload } from '@my-saas/com'
 import type { AppBindings } from '../../com/bindings'
 import { cloudflareAccountId, imagesConfigured } from '../../com/env'
 

@@ -1,25 +1,25 @@
-/* === Design Tokens === */
+/* === Design Tokens (Linear Minimal) === */
 :root {
-  --bg-base: #08131c;
-  --text-primary: #e8edf2;
-  --text-secondary: rgba(232, 237, 242, 0.76);
-  --text-muted: rgba(232, 237, 242, 0.62);
-  --accent-warm: #ffb259;
-  --accent-warm-end: #ff6d3f;
-  --accent-cool: #9fd8ff;
-  --surface: rgba(255, 255, 255, 0.05);
-  --surface-hover: rgba(255, 255, 255, 0.08);
-  --border: rgba(255, 255, 255, 0.08);
-  --border-light: rgba(255, 255, 255, 0.12);
-  --glass-bg: rgba(8, 17, 26, 0.82);
-  --radius-lg: 28px;
-  --radius-md: 20px;
-  --radius-sm: 14px;
+  --bg-base: #ffffff;
+  --text-primary: #171717;
+  --text-secondary: rgba(23, 23, 23, 0.65);
+  --text-muted: rgba(23, 23, 23, 0.45);
+  --accent-warm: #5e6ad2;
+  --accent-warm-end: #8b5cf6;
+  --accent-cool: #5e6ad2;
+  --surface: rgba(0, 0, 0, 0.03);
+  --surface-hover: rgba(0, 0, 0, 0.06);
+  --border: rgba(0, 0, 0, 0.08);
+  --border-light: rgba(0, 0, 0, 0.12);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
   --radius-pill: 999px;
-  --shadow-card: 0 28px 80px rgba(0, 0, 0, 0.24);
-  --gradient-warm: linear-gradient(135deg, var(--accent-warm) 0%, var(--accent-warm-end) 100%);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.04);
+  --gradient-warm: linear-gradient(135deg, #5e6ad2, #8b5cf6);
 
-  font-family: "Space Grotesk", "IBM Plex Sans KR", sans-serif;
+  font-family: "Inter", "Noto Sans KR", sans-serif;
   color: var(--text-primary);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -41,8 +41,8 @@ body::before {
   inset: 0;
   z-index: -1;
   background:
-    radial-gradient(circle at top left, rgba(255, 178, 89, 0.22), transparent 30%),
-    radial-gradient(circle at top right, rgba(102, 197, 255, 0.24), transparent 24%);
+    radial-gradient(circle at top right, rgba(94, 106, 210, 0.06), transparent 40%),
+    radial-gradient(circle at bottom left, rgba(139, 92, 246, 0.04), transparent 40%);
   pointer-events: none;
 }
 
@@ -447,7 +447,7 @@ body::before {
 .page-nav-dir { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
 .page-nav-title { font-size: 15px; font-weight: 600; }
 
-/* === Page List View (app.octoworkers.com) === */
+/* === Page List View (app.my-saas.com) === */
 .pagelist-shell { width: min(900px, calc(100% - 32px)); margin: 0 auto; padding: 0 0 60px; min-height: 100vh; }
 .pagelist-nav { border-bottom: 1px solid var(--border); margin-bottom: 40px; }
 .pagelist-header { text-align: center; margin-bottom: 48px; }

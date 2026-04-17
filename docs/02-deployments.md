@@ -9,9 +9,9 @@
 
 포함된 워크플로:
 
-- [ci.yml](/Volumes/SAMSUNG/apps/projects/octoworkers/.github/workflows/ci.yml)
-- [deploy-staging.yml](/Volumes/SAMSUNG/apps/projects/octoworkers/.github/workflows/deploy-staging.yml)
-- [deploy-production.yml](/Volumes/SAMSUNG/apps/projects/octoworkers/.github/workflows/deploy-production.yml)
+- [ci.yml](/Volumes/SAMSUNG/apps/projects/my-saas/.github/workflows/ci.yml)
+- [deploy-staging.yml](/Volumes/SAMSUNG/apps/projects/my-saas/.github/workflows/deploy-staging.yml)
+- [deploy-production.yml](/Volumes/SAMSUNG/apps/projects/my-saas/.github/workflows/deploy-production.yml)
 
 ## CI 동작
 
@@ -98,7 +98,7 @@ pnpm deploy:prod
 
 ## 도메인 라우팅 활성화
 
-[wrangler.jsonc](/Volumes/SAMSUNG/apps/projects/octoworkers/worker/wrangler.jsonc) 에 들어 있는 `routes` 예시는 주석 상태입니다.
+[wrangler.jsonc](/Volumes/SAMSUNG/apps/projects/my-saas/worker/wrangler.jsonc) 에 들어 있는 `routes` 예시는 주석 상태입니다.
 
 실제 도메인 확정 후:
 

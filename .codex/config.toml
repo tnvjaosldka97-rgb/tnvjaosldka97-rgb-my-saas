@@ -1,4 +1,4 @@
-# 옥토워커스 — Codex project configuration
+# my-saas — Codex project configuration
 
 model = "o4-mini"
 approval_policy = "on-request"

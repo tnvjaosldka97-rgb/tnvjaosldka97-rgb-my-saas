@@ -231,3 +231,220 @@ export type SystemStats = {
   recentAccessLogs: AccessLog[]
   recentApiLogs: ApiLog[]
 }
+
+export type ProjectStatus = 'recruiting' | 'closing' | 'in_progress' | 'completed'
+export type BudgetType = 'monthly' | 'range' | 'fixed'
+export type QuoteStatus = 'pending' | 'accepted' | 'rejected' | 'completed'
+
+export type MarketProject = {
+  id: number
+  slug: string
+  industry: string
+  industryColor: string
+  title: string
+  marketingTypes: string[]
+  hashtags: string[]
+  budgetMin: number
+  budgetMax: number | null
+  budgetType: BudgetType
+  status: ProjectStatus
+  applicantCount: number
+  verifiedOnly: boolean
+  daysLeft: number
+  closesAt: string | null
+  createdAt: string
+}
+
+export type MarketProjectDetail = MarketProject & {
+  description: string
+  advertiserName: string | null
+  timeline: string | null
+  updatedAt: string
+}
+
+export type MarketAgency = {
+  id: number
+  slug: string
+  name: string
+  description: string
+  specialties: string[]
+  verified: boolean
+  rating: number
+  completedProjects: number
+  totalReviews: number
+}
+
+export type MarketQuote = {
+  id: number
+  projectId: number
+  agencyId: number
+  priceMin: number
+  priceMax: number | null
+  timelineMonths: number
+  description: string
+  strength: string | null
+  status: QuoteStatus
+  createdAt: string
+  agency: MarketAgency
+}
+
+export type ProjectDetailResponse = {
+  project: MarketProjectDetail
+  quotes: MarketQuote[]
+}
+
+export type ProjectListQuery = {
+  status?: ProjectStatus | 'all'
+  sort?: 'latest' | 'closing' | 'budget' | 'applicants'
+}
+
+export type ConsultationRequestInput = {
+  projectId: number
+  agencyId?: number | null
+  requesterName: string
+  requesterContact: string
+  message: string
+  preferredTime?: 'any' | 'morning' | 'afternoon' | 'evening'
+}
+
+export type MarketUserType = 'advertiser' | 'agency'
+
+export type MarketUser = {
+  id: number
+  email: string
+  name: string
+  userType: MarketUserType
+  phone: string | null
+  createdAt: string
+}
+
+export type MarketAuthResponse = {
+  user: MarketUser
+}
+
+export type MarketRegisterInput = {
+  email: string
+  password: string
+  name: string
+  userType: MarketUserType
+  phone?: string
+}
+
+export type MarketLoginInput = {
+  email: string
+  password: string
+}
+
+export type CreateProjectInput = {
+  industry: string
+  industryColor?: string
+  title: string
+  description: string
+  marketingTypes: string[]
+  hashtags?: string[]
+  budgetMin: number
+  budgetMax?: number | null
+  budgetType: BudgetType
+  timeline?: string
+  daysLeft?: number
+  advertiserName?: string
+}
+
+export type CreateQuoteInput = {
+  priceMin: number
+  priceMax?: number | null
+  timelineMonths: number
+  description: string
+  strength?: string
+}
+
+export type DashboardSummary = {
+  user: MarketUser
+  projects: MarketProject[]
+  quotes: MarketQuote[]
+}
+
+export type ProjectStage = 'recruiting' | 'contracting' | 'executing' | 'completed'
+export type ApplicationStatus = 'pending' | 'selected' | 'rejected'
+
+export type ProjectApplication = {
+  id: number
+  projectId: number
+  agencyUserId: number
+  message: string
+  status: ApplicationStatus
+  createdAt: string
+  project?: MarketProject
+}
+
+export type ApplicationInput = {
+  message?: string
+}
+
+export type ApplicationFunnel = {
+  applying: number
+  contracting: number
+  executing: number
+  completed: number
+}
+
+export type AgencyMypageData = {
+  funnel: ApplicationFunnel
+  applications: ProjectApplication[]
+}
+
+export type OAuthProvider = 'kakao' | 'naver'
+
+export type NotificationKind =
+  | 'application_received'
+  | 'application_selected'
+  | 'application_rejected'
+  | 'project_stage_changed'
+  | 'review_received'
+
+export type MarketNotification = {
+  id: number
+  userId: number
+  kind: NotificationKind
+  projectId: number | null
+  applicationId: number | null
+  title: string
+  body: string
+  link: string | null
+  readAt: string | null
+  createdAt: string
+}
+
+export type ApplicantDetail = ProjectApplication & {
+  userName: string
+  userEmail: string
+}
+
+export type ApplicationActionInput = {
+  action: 'select' | 'reject'
+}
+
+export type ProjectReview = {
+  id: number
+  projectId: number
+  agencyUserId: number
+  authorUserId: number
+  rating: number
+  comment: string
+  createdAt: string
+  authorName?: string
+  projectTitle?: string
+}
+
+export type ProjectReviewInput = {
+  agencyUserId: number
+  rating: number
+  comment: string
+}
+
+export type AdvertiserFunnel = {
+  recruiting: number
+  contracting: number
+  executing: number
+  completed: number
+}

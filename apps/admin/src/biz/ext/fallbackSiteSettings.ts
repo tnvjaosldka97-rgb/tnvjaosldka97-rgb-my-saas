@@ -1,8 +1,8 @@
-import type { SiteSettings } from '@octoworkers/com'
+import type { SiteSettings } from '@my-saas/com'
 
 export const fallbackSiteSettings: SiteSettings = {
   id: 1,
-  brand: '옥토워커스',
+  brand: 'my-saas',
   heroLabel: 'Cloudflare-native SaaS boilerplate',
   heroTitle: 'Run landing, admin, API, database, media, and AI behind one edge runtime.',
   heroSubtitle: 'A production-ready starter with Hono, Vite, D1, Cloudflare Images, AI Gateway, and deploy automation built in.',

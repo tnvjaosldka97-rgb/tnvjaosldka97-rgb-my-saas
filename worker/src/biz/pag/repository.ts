@@ -1,4 +1,4 @@
-import type { Page, PageInput, PageSummary, PageStatus } from '@octoworkers/com'
+import type { Page, PageInput, PageSummary, PageStatus } from '@my-saas/com'
 import type { D1DatabaseLike } from '../../com/bindings'
 import { allRows, isoNow } from '../../com/db'
 

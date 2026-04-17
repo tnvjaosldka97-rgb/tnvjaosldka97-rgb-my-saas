@@ -1,10 +1,10 @@
 {
-  "name": "create-octoworkers",
+  "name": "create-my-saas",
   "version": "0.1.0",
-  "description": "Scaffold a new SaaS project from the 옥토워커스 boilerplate",
+  "description": "Scaffold a new SaaS project from the my-saas boilerplate",
   "type": "module",
   "bin": {
-    "create-octoworkers": "./dist/index.js"
+    "create-my-saas": "./dist/index.js"
   },
   "files": ["dist"],
   "scripts": {

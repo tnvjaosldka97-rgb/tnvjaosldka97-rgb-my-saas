@@ -5,7 +5,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { apiFetch } from '../../../com/api/client'
 
-// import type { __ITEM__Record } from '@octoworkers/com'
+// import type { __ITEM__Record } from '@my-saas/com'
 
 type __ITEM__Record = {
   id: number

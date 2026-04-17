@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { DirectUploadPayload, MediaAsset } from '@octoworkers/com'
+import type { DirectUploadPayload, MediaAsset } from '@my-saas/com'
 import { apiFetch } from '../../../com/api/client'
 
 export function useMedia() {

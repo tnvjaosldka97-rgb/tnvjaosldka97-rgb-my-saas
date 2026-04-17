@@ -14,7 +14,7 @@
 
 예제 입력:
 
-- [exampleCopyRequest.ts](/Volumes/SAMSUNG/apps/projects/octoworkers/worker/src/biz/ext/ai/exampleCopyRequest.ts)
+- [exampleCopyRequest.ts](/Volumes/SAMSUNG/apps/projects/my-saas/worker/src/biz/ext/ai/exampleCopyRequest.ts)
 
 동작:
 
@@ -236,7 +236,7 @@
 
 참고 구현 위치:
 
-- [index.ts](/Volumes/SAMSUNG/apps/projects/octoworkers/worker/src/index.ts)
-- [auth routes](/Volumes/SAMSUNG/apps/projects/octoworkers/worker/src/biz/aut/routes.ts)
-- [media routes](/Volumes/SAMSUNG/apps/projects/octoworkers/worker/src/biz/med/routes.ts)
-- [ext routes](/Volumes/SAMSUNG/apps/projects/octoworkers/worker/src/biz/ext/routes.ts)
+- [index.ts](/Volumes/SAMSUNG/apps/projects/my-saas/worker/src/index.ts)
+- [auth routes](/Volumes/SAMSUNG/apps/projects/my-saas/worker/src/biz/aut/routes.ts)
+- [media routes](/Volumes/SAMSUNG/apps/projects/my-saas/worker/src/biz/med/routes.ts)
+- [ext routes](/Volumes/SAMSUNG/apps/projects/my-saas/worker/src/biz/ext/routes.ts)

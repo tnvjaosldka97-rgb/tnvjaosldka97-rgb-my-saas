@@ -1,4 +1,4 @@
-import type { DirectUploadPayload, MediaAsset } from '@octoworkers/com'
+import type { DirectUploadPayload, MediaAsset } from '@my-saas/com'
 import type { D1DatabaseLike } from '../../com/bindings'
 import { allRows, isoNow } from '../../com/db'
 

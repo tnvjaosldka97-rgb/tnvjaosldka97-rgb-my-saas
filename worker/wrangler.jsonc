@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "octoworkers",
+  "name": "my-saas",
   "main": "src/index.ts",
   "compatibility_date": "2026-04-07",
   "compatibility_flags": ["nodejs_compat"],
@@ -17,14 +17,14 @@
   "kv_namespaces": [
     {
       "binding": "APP_KV",
-      "id": "REPLACE_WITH_KV_NAMESPACE_ID"
+      "id": "e3da355f9fda4e859c1b5d2e9eadd2c6"
     }
   ],
-  // Vectorize: wrangler vectorize create octoworkers-doc-index --dimensions 384 --metric cosine
+  // Vectorize: wrangler vectorize create my-saas-doc-index --dimensions 384 --metric cosine
   // "vectorize": [
   //   {
   //     "binding": "DOC_INDEX",
-  //     "index_name": "octoworkers-doc-index",
+  //     "index_name": "my-saas-doc-index",
   //     "remote": true
   //   }
   // ],
@@ -42,37 +42,37 @@
       "new_sqlite_classes": ["OpsAgent"]
     }
   ],
-  // R2: wrangler r2 bucket create octoworkers-media
+  // R2: wrangler r2 bucket create my-saas-media
   // "r2_buckets": [
   //   {
   //     "binding": "MEDIA_R2",
-  //     "bucket_name": "octoworkers-media"
+  //     "bucket_name": "my-saas-media"
   //   }
   // ],
   "vars": {
     "ENV_NAME": "production",
-    "APP_DOMAIN": "REPLACE_WITH_DOMAIN",
-    "ADMIN_DOMAIN": "admin.REPLACE_WITH_DOMAIN",
-    "SAAS_DOMAIN": "app.REPLACE_WITH_DOMAIN",
+    "APP_DOMAIN": "my-saas.com",
+    "ADMIN_DOMAIN": "admin.my-saas.com",
+    "SAAS_DOMAIN": "app.my-saas.com",
     "ADMIN_ACCESS_MODE": "hybrid",
     "ADMIN_ALLOWED_EMAILS": "REPLACE_WITH_ADMIN_EMAIL",
     "ADMIN_LOGIN_EMAIL": "REPLACE_WITH_ADMIN_EMAIL",
-    "CLOUDFLARE_ACCOUNT_ID": "REPLACE_WITH_ACCOUNT_ID",
+    "CLOUDFLARE_ACCOUNT_ID": "25241c072cd5ef34a3d6317fbbd38fe3",
     "CLOUDFLARE_IMAGES_DELIVERY_HASH": "",
-    "AI_GATEWAY_ACCOUNT_ID": "REPLACE_WITH_ACCOUNT_ID",
+    "AI_GATEWAY_ACCOUNT_ID": "25241c072cd5ef34a3d6317fbbd38fe3",
     "AI_GATEWAY_ID": "default",
     "AI_PROVIDER": "workers-ai",
     "AI_MODEL": "@cf/meta/llama-3.1-8b-instruct",
     "AI_TEXT_MODEL": "@cf/meta/llama-3.1-8b-instruct-fast",
     "AI_EMBED_MODEL": "@cf/baai/bge-small-en-v1.5",
-    "GITHUB_ALLOWED_USERS": "REPLACE_WITH_GITHUB_USERNAME",
-    "GITHUB_CLIENT_ID": "REPLACE_WITH_GITHUB_CLIENT_ID"
+    "GITHUB_ALLOWED_USERS": "tnvjaosldka97-rgb",
+    "GITHUB_CLIENT_ID": "Ov23liQpMsGtFwItJjte"
   },
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "octoworkers",
-      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+      "database_name": "my-saas-db",
+      "database_id": "8f4f6960-6d56-4fee-a042-e5153340eb11",
       "migrations_dir": "./migrations"
     }
   ],
@@ -80,15 +80,15 @@
   // 커스텀 도메인 설정 후 주석 해제
   // "routes": [
   //   {
-  //     "pattern": "REPLACE_WITH_DOMAIN",
+  //     "pattern": "my-saas.com",
   //     "custom_domain": true
   //   },
   //   {
-  //     "pattern": "admin.REPLACE_WITH_DOMAIN",
+  //     "pattern": "admin.my-saas.com",
   //     "custom_domain": true
   //   },
   //   {
-  //     "pattern": "app.REPLACE_WITH_DOMAIN",
+  //     "pattern": "app.my-saas.com",
   //     "custom_domain": true
   //   }
   // ],

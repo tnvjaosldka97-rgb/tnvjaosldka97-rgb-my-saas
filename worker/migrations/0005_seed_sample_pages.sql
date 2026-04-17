@@ -1,13 +1,13 @@
--- 옥토워커스 샘플 CMS 페이지 시드 데이터
+-- my-saas 샘플 CMS 페이지 시드 데이터
 INSERT INTO pages (slug, title, content_md, content_html, status, published_at, created_at, updated_at) VALUES
 (
   'about',
-  '옥토워커스 소개',
-  '# 옥토워커스란?
+  'my-saas 소개',
+  '# my-saas란?
 
-옥토워커스는 Cloudflare Workers 기반 **SaaS 보일러플레이트**입니다.
+my-saas는 Cloudflare Workers 기반 **SaaS 보일러플레이트**입니다.
 
-## 왜 옥토워커스인가
+## 왜 my-saas인가
 
 - **풀스택 에지 런타임**: 프론트엔드, API, 데이터베이스, AI가 모두 Cloudflare 안에서 돌아갑니다
 - **프로덕션 레디**: 인증, CORS, CSP, 보안 헤더가 기본 탑재
@@ -25,7 +25,7 @@ INSERT INTO pages (slug, title, content_md, content_html, status, published_at, 
 | 배포 | GitHub Actions + Wrangler |
 
 시작하려면 [문의 페이지](/pages/contact)를 확인하세요.',
-  '<h1>옥토워커스란?</h1><p>옥토워커스는 Cloudflare Workers 기반 <strong>SaaS 보일러플레이트</strong>입니다.</p><h2>왜 옥토워커스인가</h2><ul><li><strong>풀스택 에지 런타임</strong>: 프론트엔드, API, 데이터베이스, AI가 모두 Cloudflare 안에서 돌아갑니다</li><li><strong>프로덕션 레디</strong>: 인증, CORS, CSP, 보안 헤더가 기본 탑재</li><li><strong>모듈 구조</strong>: 3글자 약어 기반 모듈 시스템으로 비즈니스 로직을 깔끔하게 분리</li><li><strong>원클릭 배포</strong>: GitHub Actions CI/CD로 staging/production 분리 배포</li></ul><h2>기술 스택</h2><p>API: Hono 4 + TypeScript / 프론트: React 19 + Vite / DB: Cloudflare D1 / AI: Workers AI + AI Gateway / 배포: GitHub Actions + Wrangler</p><p>시작하려면 문의 페이지를 확인하세요.</p>',
+  '<h1>my-saas란?</h1><p>my-saas는 Cloudflare Workers 기반 <strong>SaaS 보일러플레이트</strong>입니다.</p><h2>왜 my-saas인가</h2><ul><li><strong>풀스택 에지 런타임</strong>: 프론트엔드, API, 데이터베이스, AI가 모두 Cloudflare 안에서 돌아갑니다</li><li><strong>프로덕션 레디</strong>: 인증, CORS, CSP, 보안 헤더가 기본 탑재</li><li><strong>모듈 구조</strong>: 3글자 약어 기반 모듈 시스템으로 비즈니스 로직을 깔끔하게 분리</li><li><strong>원클릭 배포</strong>: GitHub Actions CI/CD로 staging/production 분리 배포</li></ul><h2>기술 스택</h2><p>API: Hono 4 + TypeScript / 프론트: React 19 + Vite / DB: Cloudflare D1 / AI: Workers AI + AI Gateway / 배포: GitHub Actions + Wrangler</p><p>시작하려면 문의 페이지를 확인하세요.</p>',
   'published',
   datetime('now'),
   datetime('now'),
@@ -34,7 +34,7 @@ INSERT INTO pages (slug, title, content_md, content_html, status, published_at, 
 (
   'features',
   '주요 기능',
-  '# 옥토워커스 주요 기능
+  '# my-saas 주요 기능
 
 ## 랜딩 페이지
 React + Vite 기반 마케팅 사이트. 히어로, 기능 그리드, 리드 캡처 폼이 기본 포함됩니다.
@@ -61,7 +61,7 @@ Resend API 연동. 템플릿 관리, 리드별 발송, 이력 추적.
 
 ## CMS
 마크다운 기반 페이지 관리. 발행/미발행 상태, slug 기반 공개 URL.',
-  '<h1>옥토워커스 주요 기능</h1><h2>랜딩 페이지</h2><p>React + Vite 기반 마케팅 사이트. 히어로, 기능 그리드, 리드 캡처 폼이 기본 포함됩니다.</p><h2>어드민 콘솔</h2><p>인증 기반 운영 대시보드. 리드 CRM, 미디어 관리, 사이트 설정, AI 카피 생성, 이메일 발송, CMS를 하나의 화면에서 관리합니다.</p><h2>API 서버</h2><p>Hono 4 기반 타입 세이프 REST API. Zod 검증, JWT 세션, CORS, ETag 캐싱이 기본 탑재됩니다.</p><h2>데이터베이스</h2><p>Cloudflare D1 (SQLite). 마이그레이션 자동화, prepared statement 기반 안전한 쿼리.</p><h2>미디어 관리</h2><p>Cloudflare Images 직접 업로드. 메타데이터 관리, 상태 추적, delivery URL 자동 생성.</p><h2>AI 연동</h2><ul><li><strong>Workers AI</strong>: 텍스트 생성, 임베딩</li><li><strong>AI Gateway</strong>: 비용 추적, 속도 제한</li><li><strong>Vectorize</strong>: 시맨틱 검색</li></ul><h2>이메일 시스템</h2><p>Resend API 연동. 템플릿 관리, 리드별 발송, 이력 추적.</p><h2>CMS</h2><p>마크다운 기반 페이지 관리. 발행/미발행 상태, slug 기반 공개 URL.</p>',
+  '<h1>my-saas 주요 기능</h1><h2>랜딩 페이지</h2><p>React + Vite 기반 마케팅 사이트. 히어로, 기능 그리드, 리드 캡처 폼이 기본 포함됩니다.</p><h2>어드민 콘솔</h2><p>인증 기반 운영 대시보드. 리드 CRM, 미디어 관리, 사이트 설정, AI 카피 생성, 이메일 발송, CMS를 하나의 화면에서 관리합니다.</p><h2>API 서버</h2><p>Hono 4 기반 타입 세이프 REST API. Zod 검증, JWT 세션, CORS, ETag 캐싱이 기본 탑재됩니다.</p><h2>데이터베이스</h2><p>Cloudflare D1 (SQLite). 마이그레이션 자동화, prepared statement 기반 안전한 쿼리.</p><h2>미디어 관리</h2><p>Cloudflare Images 직접 업로드. 메타데이터 관리, 상태 추적, delivery URL 자동 생성.</p><h2>AI 연동</h2><ul><li><strong>Workers AI</strong>: 텍스트 생성, 임베딩</li><li><strong>AI Gateway</strong>: 비용 추적, 속도 제한</li><li><strong>Vectorize</strong>: 시맨틱 검색</li></ul><h2>이메일 시스템</h2><p>Resend API 연동. 템플릿 관리, 리드별 발송, 이력 추적.</p><h2>CMS</h2><p>마크다운 기반 페이지 관리. 발행/미발행 상태, slug 기반 공개 URL.</p>',
   'published',
   datetime('now'),
   datetime('now'),
@@ -70,10 +70,10 @@ Resend API 연동. 템플릿 관리, 리드별 발송, 이력 추적.
 (
   'pricing',
   '요금 안내',
-  '# 옥토워커스 요금 안내
+  '# my-saas 요금 안내
 
 ## 무료 (오픈소스)
-옥토워커스 보일러플레이트는 **MIT 라이선스**로 무료 제공됩니다.
+my-saas 보일러플레이트는 **MIT 라이선스**로 무료 제공됩니다.
 
 ## Cloudflare 비용
 실제 운영 비용은 Cloudflare 리소스 사용량에 따라 달라집니다.
@@ -96,7 +96,7 @@ Resend API 연동. 템플릿 관리, 리드별 발송, 이력 추적.
 ---
 
 *모든 가격은 Cloudflare 공식 요금 기준이며, 변동될 수 있습니다.*',
-  '<h1>옥토워커스 요금 안내</h1><h2>무료 (오픈소스)</h2><p>옥토워커스 보일러플레이트는 <strong>MIT 라이선스</strong>로 무료 제공됩니다.</p><h2>Cloudflare 비용</h2><p>실제 운영 비용은 Cloudflare 리소스 사용량에 따라 달라집니다.</p><h3>Workers Free Plan</h3><ul><li>요청: 일 100,000건 무료</li><li>D1: 5GB 스토리지, 일 500만 행 읽기</li><li>KV: 일 100,000 읽기, 1,000 쓰기</li><li>Images: 월 $5부터</li></ul><h3>Workers Paid Plan ($5/월)</h3><ul><li>요청: 월 1,000만건 포함</li><li>D1: 25GB 스토리지</li><li>KV: 무제한 읽기</li><li>AI Gateway: 로깅, 캐싱, 속도 제한</li></ul><h3>엔터프라이즈</h3><p>대규모 트래픽, 전용 지원이 필요하시면 문의해 주세요.</p><hr/><p><em>모든 가격은 Cloudflare 공식 요금 기준이며, 변동될 수 있습니다.</em></p>',
+  '<h1>my-saas 요금 안내</h1><h2>무료 (오픈소스)</h2><p>my-saas 보일러플레이트는 <strong>MIT 라이선스</strong>로 무료 제공됩니다.</p><h2>Cloudflare 비용</h2><p>실제 운영 비용은 Cloudflare 리소스 사용량에 따라 달라집니다.</p><h3>Workers Free Plan</h3><ul><li>요청: 일 100,000건 무료</li><li>D1: 5GB 스토리지, 일 500만 행 읽기</li><li>KV: 일 100,000 읽기, 1,000 쓰기</li><li>Images: 월 $5부터</li></ul><h3>Workers Paid Plan ($5/월)</h3><ul><li>요청: 월 1,000만건 포함</li><li>D1: 25GB 스토리지</li><li>KV: 무제한 읽기</li><li>AI Gateway: 로깅, 캐싱, 속도 제한</li></ul><h3>엔터프라이즈</h3><p>대규모 트래픽, 전용 지원이 필요하시면 문의해 주세요.</p><hr/><p><em>모든 가격은 Cloudflare 공식 요금 기준이며, 변동될 수 있습니다.</em></p>',
   'published',
   datetime('now'),
   datetime('now'),
@@ -107,11 +107,11 @@ Resend API 연동. 템플릿 관리, 리드별 발송, 이력 추적.
   '문의하기',
   '# 문의하기
 
-옥토워커스에 대해 궁금한 점이 있으시면 아래 채널로 연락해 주세요.
+my-saas에 대해 궁금한 점이 있으시면 아래 채널로 연락해 주세요.
 
 ## 일반 문의
-- **이메일**: hello@octoworkers.com
-- **GitHub**: [github.com/octoworkers](https://github.com/octoworkers)
+- **이메일**: hello@my-saas.com
+- **GitHub**: [github.com/my-saas](https://github.com/my-saas)
 
 ## 기술 지원
 - GitHub Issues에 버그 리포트나 기능 요청을 남겨주세요
@@ -124,7 +124,7 @@ Resend API 연동. 템플릿 관리, 리드별 발송, 이력 추적.
 ---
 
 또는 메인 페이지의 **문의 폼**을 통해 바로 연락하실 수 있습니다.',
-  '<h1>문의하기</h1><p>옥토워커스에 대해 궁금한 점이 있으시면 아래 채널로 연락해 주세요.</p><h2>일반 문의</h2><ul><li><strong>이메일</strong>: hello@octoworkers.com</li><li><strong>GitHub</strong>: <a href="https://github.com/octoworkers">github.com/octoworkers</a></li></ul><h2>기술 지원</h2><ul><li>GitHub Issues에 버그 리포트나 기능 요청을 남겨주세요</li><li>커뮤니티 디스커션에서 다른 사용자들과 소통할 수 있습니다</li></ul><h2>엔터프라이즈</h2><ul><li>전용 지원, 커스텀 개발, 컨설팅이 필요하시면 이메일로 문의해 주세요</li><li>SLA 기반 지원 계약도 가능합니다</li></ul><hr/><p>또는 메인 페이지의 <strong>문의 폼</strong>을 통해 바로 연락하실 수 있습니다.</p>',
+  '<h1>문의하기</h1><p>my-saas에 대해 궁금한 점이 있으시면 아래 채널로 연락해 주세요.</p><h2>일반 문의</h2><ul><li><strong>이메일</strong>: hello@my-saas.com</li><li><strong>GitHub</strong>: <a href="https://github.com/my-saas">github.com/my-saas</a></li></ul><h2>기술 지원</h2><ul><li>GitHub Issues에 버그 리포트나 기능 요청을 남겨주세요</li><li>커뮤니티 디스커션에서 다른 사용자들과 소통할 수 있습니다</li></ul><h2>엔터프라이즈</h2><ul><li>전용 지원, 커스텀 개발, 컨설팅이 필요하시면 이메일로 문의해 주세요</li><li>SLA 기반 지원 계약도 가능합니다</li></ul><hr/><p>또는 메인 페이지의 <strong>문의 폼</strong>을 통해 바로 연락하실 수 있습니다.</p>',
   'published',
   datetime('now'),
   datetime('now'),
@@ -133,12 +133,12 @@ Resend API 연동. 템플릿 관리, 리드별 발송, 이력 추적.
 (
   'getting-started',
   '시작 가이드',
-  '# 옥토워커스 시작 가이드
+  '# my-saas 시작 가이드
 
 ## 1. 프로젝트 복사
 
 ```bash
-git clone https://github.com/octoworkers/boilerplate my-saas
+git clone https://github.com/my-saas/boilerplate my-saas
 cd my-saas
 pnpm install
 ```
@@ -153,7 +153,7 @@ cp worker/.dev.vars.example worker/.dev.vars
 ## 3. 데이터베이스 초기화
 
 ```bash
-pnpm --filter @octoworkers/worker db:migrate:local
+pnpm --filter @my-saas/worker db:migrate:local
 ```
 
 ## 4. 개발 서버 실행
@@ -169,7 +169,7 @@ pnpm dev
 
 ## 5. 프로젝트명 변경
 
-`package.json` 파일들에서 `octoworkers`를 새 프로젝트명으로 교체하세요.
+`package.json` 파일들에서 `my-saas`를 새 프로젝트명으로 교체하세요.
 
 ## 6. Cloudflare 배포
 
@@ -183,9 +183,9 @@ pnpm deploy:prod      # 프로덕션 배포
 - [주요 기능](/pages/features) 둘러보기
 - [요금 안내](/pages/pricing) 확인
 - [문의하기](/pages/contact)로 질문하기',
-  '<h1>옥토워커스 시작 가이드</h1><h2>1. 프로젝트 복사</h2><pre><code>git clone https://github.com/octoworkers/boilerplate my-saas
+  '<h1>my-saas 시작 가이드</h1><h2>1. 프로젝트 복사</h2><pre><code>git clone https://github.com/my-saas/boilerplate my-saas
 cd my-saas
-pnpm install</code></pre><h2>2. 로컬 환경 설정</h2><pre><code>cp worker/.dev.vars.example worker/.dev.vars</code></pre><h2>3. 데이터베이스 초기화</h2><pre><code>pnpm --filter @octoworkers/worker db:migrate:local</code></pre><h2>4. 개발 서버 실행</h2><pre><code>pnpm dev</code></pre><p>이제 세 개의 서버가 동시에 뜹니다:</p><ul><li><strong>랜딩</strong>: http://localhost:5173</li><li><strong>어드민</strong>: http://localhost:5174</li><li><strong>API</strong>: http://localhost:8787</li></ul><h2>5. 프로젝트명 변경</h2><p>package.json 파일들에서 octoworkers를 새 프로젝트명으로 교체하세요.</p><h2>6. Cloudflare 배포</h2><pre><code>pnpm deploy:staging
+pnpm install</code></pre><h2>2. 로컬 환경 설정</h2><pre><code>cp worker/.dev.vars.example worker/.dev.vars</code></pre><h2>3. 데이터베이스 초기화</h2><pre><code>pnpm --filter @my-saas/worker db:migrate:local</code></pre><h2>4. 개발 서버 실행</h2><pre><code>pnpm dev</code></pre><p>이제 세 개의 서버가 동시에 뜹니다:</p><ul><li><strong>랜딩</strong>: http://localhost:5173</li><li><strong>어드민</strong>: http://localhost:5174</li><li><strong>API</strong>: http://localhost:8787</li></ul><h2>5. 프로젝트명 변경</h2><p>package.json 파일들에서 my-saas를 새 프로젝트명으로 교체하세요.</p><h2>6. Cloudflare 배포</h2><pre><code>pnpm deploy:staging
 pnpm deploy:prod</code></pre><h2>다음 단계</h2><ul><li>주요 기능 둘러보기</li><li>요금 안내 확인</li><li>문의하기로 질문하기</li></ul>',
   'published',
   datetime('now'),

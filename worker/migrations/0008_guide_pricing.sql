@@ -2,7 +2,7 @@
 UPDATE pages SET
   content_md = '# Cloudflare Workers 실전 가이드
 
-Cloudflare 계정 생성부터 옥토워커스 SaaS 배포까지, 단계별 발표자료 형식으로 안내합니다.
+Cloudflare 계정 생성부터 my-saas SaaS 배포까지, 단계별 발표자료 형식으로 안내합니다.
 
 ---
 
@@ -105,11 +105,11 @@ wrangler kv namespace create APP_KV --preview
 
 ---
 
-## 7. 옥토워커스 프로젝트 클론
+## 7. my-saas 프로젝트 클론
 
 ```
-git clone https://github.com/johunsang/octoworkers.git
-cd octoworkers
+git clone https://github.com/johunsang/my-saas.git
+cd my-saas
 pnpm install
 ```
 
@@ -153,7 +153,7 @@ pnpm dev
 - 랜딩 페이지: http://localhost:5173
 - 어드민 콘솔: http://localhost:5174
 - Worker API: http://localhost:8787
-- D1 로컬 마이그레이션: `pnpm --filter @octoworkers/worker db:migrate:local`
+- D1 로컬 마이그레이션: `pnpm --filter @my-saas/worker db:migrate:local`
 
 ---
 
@@ -204,7 +204,7 @@ Browser → Cloudflare Workers
 
 - 무료: 5GB 저장, 읽기 500만/일, 쓰기 10만/일
 - 유료: 5GB 포함 + 초과 $0.75/GB/월, 읽기 250억/월, 쓰기 5천만/월
-- 옥토워커스 기본 스키마 용량: 약 10~50MB (충분히 무료 범위)
+- my-saas 기본 스키마 용량: 약 10~50MB (충분히 무료 범위)
 
 ### KV (키-값 저장소)
 
@@ -246,12 +246,12 @@ Browser → Cloudflare Workers
 - **Workers Paid ($5/월)**로 프로덕션 운영, 초과분만 종량제
 - **Workers + D1 + KV**로 풀스택 서버리스 구현
 - **R2 이그레스 무료**로 AWS 대비 스토리지 비용 대폭 절감
-- **옥토워커스**를 클론하면 즉시 SaaS 보일러플레이트 확보
+- **my-saas**를 클론하면 즉시 SaaS 보일러플레이트 확보
 - **pnpm dev** 한 줄로 로컬 개발 환경 실행
 - **pnpm deploy:prod** 한 줄로 프로덕션 배포 완료',
 
   content_html = '<h1>Cloudflare Workers 실전 가이드</h1>
-<p>Cloudflare 계정 생성부터 옥토워커스 SaaS 배포까지, 단계별 발표자료 형식으로 안내합니다.</p>
+<p>Cloudflare 계정 생성부터 my-saas SaaS 배포까지, 단계별 발표자료 형식으로 안내합니다.</p>
 
 <hr />
 
@@ -334,9 +334,9 @@ wrangler kv namespace create APP_KV --preview</code></pre>
 
 <hr />
 
-<h2>7. 옥토워커스 프로젝트 클론</h2>
-<pre><code>git clone https://github.com/johunsang/octoworkers.git
-cd octoworkers
+<h2>7. my-saas 프로젝트 클론</h2>
+<pre><code>git clone https://github.com/johunsang/my-saas.git
+cd my-saas
 pnpm install</code></pre>
 <ul><li>pnpm 워크스페이스 모노레포 구조</li>
 <li><code>worker/</code> — Hono API 서버</li>
@@ -368,7 +368,7 @@ pnpm install</code></pre>
 <ul><li>랜딩 페이지: http://localhost:5173</li>
 <li>어드민 콘솔: http://localhost:5174</li>
 <li>Worker API: http://localhost:8787</li>
-<li>D1 로컬 마이그레이션: <code>pnpm --filter @octoworkers/worker db:migrate:local</code></li></ul>
+<li>D1 로컬 마이그레이션: <code>pnpm --filter @my-saas/worker db:migrate:local</code></li></ul>
 
 <hr />
 
@@ -409,7 +409,7 @@ pnpm deploy:prod</code></pre>
 <h3>D1 (서버리스 데이터베이스)</h3>
 <ul><li>무료: 5GB 저장, 읽기 500만/일, 쓰기 10만/일</li>
 <li>유료: 5GB 포함 + 초과 $0.75/GB/월, 읽기 250억/월, 쓰기 5천만/월</li>
-<li>옥토워커스 기본 스키마 용량: 약 10~50MB (충분히 무료 범위)</li></ul>
+<li>my-saas 기본 스키마 용량: 약 10~50MB (충분히 무료 범위)</li></ul>
 
 <h3>KV (키-값 저장소)</h3>
 <ul><li>무료: 읽기 10만/일, 쓰기 1천/일, 저장 1GB</li>
@@ -445,7 +445,7 @@ pnpm deploy:prod</code></pre>
 <li><strong>Workers Paid ($5/월)</strong>로 프로덕션 운영, 초과분만 종량제</li>
 <li><strong>Workers + D1 + KV</strong>로 풀스택 서버리스 구현</li>
 <li><strong>R2 이그레스 무료</strong>로 AWS 대비 스토리지 비용 대폭 절감</li>
-<li><strong>옥토워커스</strong>를 클론하면 즉시 SaaS 보일러플레이트 확보</li>
+<li><strong>my-saas</strong>를 클론하면 즉시 SaaS 보일러플레이트 확보</li>
 <li><strong>pnpm dev</strong> 한 줄로 로컬 개발 환경 실행</li>
 <li><strong>pnpm deploy:prod</strong> 한 줄로 프로덕션 배포 완료</li></ul>',
 

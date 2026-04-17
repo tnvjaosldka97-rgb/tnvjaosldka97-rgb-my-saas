@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { LeadRecord } from '@octoworkers/com'
+import type { LeadRecord } from '@my-saas/com'
 import { Panel } from '../../../com/ui/Panel'
 import { useEmailTemplates, useEmailSender } from '../hooks/useEmail'
 

@@ -1,26 +1,26 @@
-/* === Design Tokens === */
+/* === Design Tokens (Linear Minimal) === */
 :root {
-  --admin-bg: #0c1822;
-  --sidebar-bg: linear-gradient(180deg, #0d1d2b 0%, #12283b 100%);
+  --admin-bg: #fafafa;
+  --sidebar-bg: linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%);
   --sidebar-width: 260px;
-  --content-bg: #0f1c28;
-  --surface: rgba(255, 255, 255, 0.04);
-  --surface-hover: rgba(255, 255, 255, 0.07);
-  --border: rgba(255, 255, 255, 0.08);
-  --border-light: rgba(255, 255, 255, 0.12);
-  --text-primary: #e8edf2;
-  --text-secondary: rgba(232, 237, 242, 0.7);
-  --text-muted: rgba(232, 237, 242, 0.45);
-  --accent: #ffb259;
-  --accent-end: #ff6d3f;
-  --accent-cool: #66c5ff;
-  --gradient-warm: linear-gradient(135deg, #ffb259, #ff6d3f);
-  --radius-lg: 20px;
-  --radius-md: 14px;
-  --radius-sm: 10px;
-  --shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  --content-bg: #fafafa;
+  --surface: rgba(0, 0, 0, 0.03);
+  --surface-hover: rgba(0, 0, 0, 0.06);
+  --border: rgba(0, 0, 0, 0.08);
+  --border-light: rgba(0, 0, 0, 0.12);
+  --text-primary: #171717;
+  --text-secondary: rgba(23, 23, 23, 0.65);
+  --text-muted: rgba(23, 23, 23, 0.45);
+  --accent: #5e6ad2;
+  --accent-end: #8b5cf6;
+  --accent-cool: #5e6ad2;
+  --gradient-warm: linear-gradient(135deg, #5e6ad2, #8b5cf6);
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.04);
 
-  font-family: "Sora", "IBM Plex Sans KR", sans-serif;
+  font-family: "Inter", "Noto Sans KR", sans-serif;
   color: var(--text-primary);
   font-synthesis: none;
   text-rendering: optimizeLegibility;

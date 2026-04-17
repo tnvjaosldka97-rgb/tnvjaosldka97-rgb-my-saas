@@ -60,7 +60,7 @@
 
 ### POST /api/auth/login
 
-이메일/비밀번호 로그인. JWT 쿠키(`__Host-octoworkers_admin`) 발급.
+이메일/비밀번호 로그인. JWT 쿠키(`__Host-my-saas_admin`) 발급.
 
 **요청:** `{ "email": "...", "password": "..." }`
 **응답:** `{ "ok": true }`

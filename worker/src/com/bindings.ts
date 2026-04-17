@@ -1,3 +1,4 @@
+// kakao / naver OAuth env vars are optional
 export interface D1PreparedStatementLike {
   bind(...values: unknown[]): D1PreparedStatementLike
   first<T>(): Promise<T | null>
@@ -92,4 +93,8 @@ export type AppBindings = {
   GITHUB_CLIENT_ID?: string
   GITHUB_CLIENT_SECRET?: string
   GITHUB_ALLOWED_USERS?: string
+  KAKAO_CLIENT_ID?: string
+  KAKAO_CLIENT_SECRET?: string
+  NAVER_CLIENT_ID?: string
+  NAVER_CLIENT_SECRET?: string
 }

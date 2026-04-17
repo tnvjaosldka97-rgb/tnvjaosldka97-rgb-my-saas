@@ -10,6 +10,9 @@ import { applySecurityHeaders, enforceAdminAccess } from './com/security'
 import { requireRole } from './com/rbac'
 import { aiRoutes } from './biz/aid/routes'
 import { authRoutes } from './biz/aut/routes'
+import { marketAuthRoutes } from './biz/mau/routes'
+import { notificationRoutes } from './biz/not/routes'
+import { marketProjectRoutes } from './biz/prj/routes'
 import { dashboardRoutes } from './biz/dsh/routes'
 import { extRoutes } from './biz/ext/routes'
 import { healthRoutes } from './biz/hlt/routes'
@@ -35,9 +38,9 @@ export function createApp() {
   app.use('/api/*', cors({
     origin: (origin) => {
       const allowed = [
-        'https://octoworkers.com',
-        'https://admin.octoworkers.com',
-        'https://app.octoworkers.com',
+        'https://my-saas.com',
+        'https://admin.my-saas.com',
+        'https://app.my-saas.com',
       ]
       if (!origin) return origin
       if (allowed.includes(origin)) return origin
@@ -71,13 +74,13 @@ export function createApp() {
 
   // SEO: robots.txt
   app.get('/robots.txt', (c) => {
-    const domain = c.env.APP_DOMAIN ?? 'octoworkers.com'
+    const domain = c.env.APP_DOMAIN ?? 'my-saas.com'
     return c.text(`User-agent: *\nAllow: /\nDisallow: /api/admin/\nDisallow: /admin/\n\nSitemap: https://${domain}/sitemap.xml`)
   })
 
   // SEO: sitemap.xml
   app.get('/sitemap.xml', async (c) => {
-    const domain = c.env.APP_DOMAIN ?? 'octoworkers.com'
+    const domain = c.env.APP_DOMAIN ?? 'my-saas.com'
     const saas = c.env.SAAS_DOMAIN ?? `app.${domain}`
     let urls = `  <url><loc>https://${domain}</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>\n`
     try {
@@ -94,6 +97,16 @@ export function createApp() {
   app.route('/api/health', healthRoutes)
   app.route('/api/auth', authRoutes)
   app.route('/api/public', publicRoutes)
+
+  // 마켓 사용자 (광고주/대행사) 인증 및 인증 필요 쓰기
+  app.use('/api/mau/register', rateLimit({ maxRequests: 5, windowSeconds: 60 }))
+  app.use('/api/mau/login', rateLimit({ maxRequests: 10, windowSeconds: 60 }))
+  app.use('/api/mau/oauth/*', rateLimit({ maxRequests: 20, windowSeconds: 60 }))
+  app.use('/api/public/consultations', rateLimit({ maxRequests: 5, windowSeconds: 60 }))
+  app.use('/api/market/projects/*/apply', rateLimit({ maxRequests: 20, windowSeconds: 60 }))
+  app.route('/api/mau', marketAuthRoutes)
+  app.route('/api/market', marketProjectRoutes)
+  app.route('/api/notifications', notificationRoutes)
 
   // M-4: role 기반 권한 — viewer (읽기 전용)
   app.use('/api/admin/dashboard', requireRole('viewer'))

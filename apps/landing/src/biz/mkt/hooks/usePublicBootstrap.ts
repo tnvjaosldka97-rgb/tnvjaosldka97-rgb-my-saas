@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { PublicBootstrap } from '@octoworkers/com'
+import type { PublicBootstrap } from '@my-saas/com'
 import { apiFetch } from '../../../com/api/client'
 
 export function usePublicBootstrap() {

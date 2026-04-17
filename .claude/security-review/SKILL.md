@@ -1,8 +1,8 @@
 ---
-description: 옥토워커스 보안 감사. 인증/인가, SQL 인젝션, XSS, 시크릿, CORS, Cloudflare 바인딩 보안을 점검할 때 사용.
+description: my-saas 보안 감사. 인증/인가, SQL 인젝션, XSS, 시크릿, CORS, Cloudflare 바인딩 보안을 점검할 때 사용.
 ---
 
-옥토워커스 프로젝트 보안 감사를 수행합니다.
+my-saas 프로젝트 보안 감사를 수행합니다.
 
 ## 감사 항목
 

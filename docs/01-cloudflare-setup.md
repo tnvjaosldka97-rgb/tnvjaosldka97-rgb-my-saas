@@ -36,7 +36,7 @@
 
 수정 파일:
 
-- [wrangler.jsonc](/Volumes/SAMSUNG/apps/projects/octoworkers/worker/wrangler.jsonc)
+- [wrangler.jsonc](/Volumes/SAMSUNG/apps/projects/my-saas/worker/wrangler.jsonc)
 
 반드시 바꿔야 하는 값:
 
@@ -54,36 +54,36 @@ Production:
 
 ```bash
 cd worker
-pnpm wrangler d1 create octoworkers
+pnpm wrangler d1 create my-saas
 ```
 
 Staging:
 
 ```bash
 cd worker
-pnpm wrangler d1 create octoworkers-staging
+pnpm wrangler d1 create my-saas-staging
 ```
 
-명령 결과에서 `database_id`를 복사해 [wrangler.jsonc](/Volumes/SAMSUNG/apps/projects/octoworkers/worker/wrangler.jsonc)에 넣습니다.
+명령 결과에서 `database_id`를 복사해 [wrangler.jsonc](/Volumes/SAMSUNG/apps/projects/my-saas/worker/wrangler.jsonc)에 넣습니다.
 
 ## 5. D1 마이그레이션
 
 로컬:
 
 ```bash
-pnpm --filter @octoworkers/worker db:migrate:local
+pnpm --filter @my-saas/worker db:migrate:local
 ```
 
 staging:
 
 ```bash
-pnpm --filter @octoworkers/worker db:migrate:remote:staging
+pnpm --filter @my-saas/worker db:migrate:remote:staging
 ```
 
 production:
 
 ```bash
-pnpm --filter @octoworkers/worker db:migrate:remote
+pnpm --filter @my-saas/worker db:migrate:remote
 ```
 
 ## 6. Cloudflare Images
@@ -147,7 +147,7 @@ pnpm wrangler secret put CLOUDFLARE_IMAGES_API_TOKEN
 추천 생성 흐름:
 
 1. Vectorize 인덱스 생성
-2. [wrangler.jsonc](/Volumes/SAMSUNG/apps/projects/octoworkers/worker/wrangler.jsonc) 의 `index_name` 반영
+2. [wrangler.jsonc](/Volumes/SAMSUNG/apps/projects/my-saas/worker/wrangler.jsonc) 의 `index_name` 반영
 3. admin 또는 API에서 reindex 수행
 
 운영 API:
@@ -199,7 +199,7 @@ R2는 기본 주석 상태입니다.
 활성화 순서:
 
 1. 버킷 생성
-2. [wrangler.jsonc](/Volumes/SAMSUNG/apps/projects/octoworkers/worker/wrangler.jsonc) 의 `r2_buckets` 주석 해제
+2. [wrangler.jsonc](/Volumes/SAMSUNG/apps/projects/my-saas/worker/wrangler.jsonc) 의 `r2_buckets` 주석 해제
 3. bucket 이름 입력
 
 예제 API:
@@ -239,7 +239,7 @@ admin 보호 권장 방식:
 
 로컬 개발:
 
-- [worker/.dev.vars.example](/Volumes/SAMSUNG/apps/projects/octoworkers/worker/.dev.vars.example) 참고
+- [worker/.dev.vars.example](/Volumes/SAMSUNG/apps/projects/my-saas/worker/.dev.vars.example) 참고
 
 원격 환경 secret:
 

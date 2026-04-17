@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { DashboardData } from '@octoworkers/com'
+import type { DashboardData } from '@my-saas/com'
 import { apiFetch } from '../../../com/api/client'
 
 export function useDashboard() {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { AdminUser } from '@octoworkers/com'
+import type { AdminUser } from '@my-saas/com'
 import { apiFetch } from '../../../com/api/client'
 
 export function useUsers() {

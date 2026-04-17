@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import DOMPurify from 'dompurify'
-import type { Page } from '@octoworkers/com'
+import type { Page } from '@my-saas/com'
 import { Panel } from '../../../com/ui/Panel'
 import { usePages } from '../hooks/usePages'
 

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { AiCopySuggestion, AiCopySuggestionRequest } from '@octoworkers/com'
+import type { AiCopySuggestion, AiCopySuggestionRequest } from '@my-saas/com'
 import { apiFetch } from '../../../com/api/client'
 
 export function useAiCopy() {

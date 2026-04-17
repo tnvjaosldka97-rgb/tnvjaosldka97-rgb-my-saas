@@ -2,7 +2,7 @@
 
 ## 모듈 구조
 
-옥토워커스는 3글자 약어를 사용하는 모듈 구조를 따릅니다.
+my-saas는 3글자 약어를 사용하는 모듈 구조를 따릅니다.
 
 ```text
 worker/src/
@@ -45,7 +45,7 @@ worker/src/
 
 - `routes.ts`: GET /me, POST /login, POST /logout
 - `service.ts`: JWT 발급/검증, 쿠키 관리, 비밀번호 검증
-- 쿠키명: `__Host-octoworkers_admin` (12시간 만료)
+- 쿠키명: `__Host-my-saas_admin` (12시간 만료)
 
 ### pub/ (공개 API)
 
@@ -136,7 +136,7 @@ CREATE TABLE IF NOT EXISTS notifications (
 ```
 
 ```bash
-pnpm --filter @octoworkers/worker db:migrate:local
+pnpm --filter @my-saas/worker db:migrate:local
 ```
 
 ### 6. 테스트 추가

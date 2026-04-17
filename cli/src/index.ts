@@ -76,14 +76,14 @@ interface Cfg {
 
 function replace(s: string, c: Cfg): string {
   let r = s
-  r = r.replace(/octoworkers/g, c.slug)
-  r = r.replace(/@octoworkers\//g, `@${c.scope}/`)
-  r = r.replace(/"octoworkers"/g, `"${c.slug}"`)
-  r = r.replace(/"octoworkers-staging"/g, `"${c.slug}-staging"`)
-  r = r.replace(/octoworkers-doc-index/g, `${c.slug}-doc-index`)
-  r = r.replace(/octoworkers-staging-doc-index/g, `${c.slug}-staging-doc-index`)
-  r = r.replace(/octoworkers-media/g, `${c.slug}-media`)
-  r = r.replace(/octoworkers-staging-media/g, `${c.slug}-staging-media`)
+  r = r.replace(/my-saas/g, c.slug)
+  r = r.replace(/@my-saas\//g, `@${c.scope}/`)
+  r = r.replace(/"my-saas"/g, `"${c.slug}"`)
+  r = r.replace(/"my-saas-staging"/g, `"${c.slug}-staging"`)
+  r = r.replace(/my-saas-doc-index/g, `${c.slug}-doc-index`)
+  r = r.replace(/my-saas-staging-doc-index/g, `${c.slug}-staging-doc-index`)
+  r = r.replace(/my-saas-media/g, `${c.slug}-media`)
+  r = r.replace(/my-saas-staging-media/g, `${c.slug}-staging-media`)
   r = r.replace(/example\.com/g, c.appDomain)
   r = r.replace(/admin\.example\.com/g, c.adminDomain)
   if (c.accountId) r = r.replace(/REPLACE_WITH_ACCOUNT_ID/g, c.accountId)
@@ -94,8 +94,8 @@ function replace(s: string, c: Cfg): string {
     r = r.replace(/REPLACE_WITH_STAGING_IMAGES_DELIVERY_HASH/g, c.imagesHash)
   }
   if (c.email) r = r.replace(/founder@example\.com/g, c.email)
-  r = r.replace(/옥토워커스/g, c.name)
-  r = r.replace(/octoworkers/g, c.slug)
+  r = r.replace(/my-saas/g, c.name)
+  r = r.replace(/my-saas/g, c.slug)
   return r
 }
 
@@ -135,7 +135,7 @@ const TOTAL = 10
 
 async function main() {
   console.log()
-  console.log('  🚀 create-octoworkers')
+  console.log('  🚀 create-my-saas')
   console.log('  Cloudflare Workers SaaS — 서버 세팅부터 배포까지')
   console.log()
 
@@ -395,7 +395,7 @@ async function main() {
     sh('git init', target, true)
     if (await p.confirm('초기 커밋 생성?')) {
       sh('git add -A', target, true)
-      sh('git commit -m "Initial scaffold from 옥토워커스 boilerplate"', target, true)
+      sh('git commit -m "Initial scaffold from my-saas boilerplate"', target, true)
       ok('초기 커밋')
     }
 

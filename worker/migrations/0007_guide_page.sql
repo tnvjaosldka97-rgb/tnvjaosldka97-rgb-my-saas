@@ -5,7 +5,7 @@ VALUES (
   'Cloudflare Workers 실전 가이드',
   '# Cloudflare Workers 실전 가이드
 
-Cloudflare 계정 생성부터 옥토워커스 SaaS 배포까지, 단계별 발표자료 형식으로 안내합니다.
+Cloudflare 계정 생성부터 my-saas SaaS 배포까지, 단계별 발표자료 형식으로 안내합니다.
 
 ---
 
@@ -70,11 +70,11 @@ wrangler kv namespace create APP_KV --preview
 
 ---
 
-## 6. 옥토워커스 프로젝트 클론
+## 6. my-saas 프로젝트 클론
 
 ```
-git clone https://github.com/johunsang/octoworkers.git
-cd octoworkers
+git clone https://github.com/johunsang/my-saas.git
+cd my-saas
 pnpm install
 ```
 
@@ -118,7 +118,7 @@ pnpm dev
 - 랜딩 페이지: http://localhost:5173
 - 어드민 콘솔: http://localhost:5174
 - Worker API: http://localhost:8787
-- D1 로컬 마이그레이션: `pnpm --filter @octoworkers/worker db:migrate:local`
+- D1 로컬 마이그레이션: `pnpm --filter @my-saas/worker db:migrate:local`
 
 ---
 
@@ -167,12 +167,12 @@ Browser → Cloudflare Workers
 
 - **Cloudflare 무료 플랜**으로 시작 가능
 - **Workers + D1 + KV**로 풀스택 서버리스 구현
-- **옥토워커스**를 클론하면 즉시 SaaS 보일러플레이트 확보
+- **my-saas**를 클론하면 즉시 SaaS 보일러플레이트 확보
 - **pnpm dev** 한 줄로 로컬 개발 환경 실행
 - **pnpm deploy:prod** 한 줄로 프로덕션 배포 완료',
 
   '<h1>Cloudflare Workers 실전 가이드</h1>
-<p>Cloudflare 계정 생성부터 옥토워커스 SaaS 배포까지, 단계별 발표자료 형식으로 안내합니다.</p>
+<p>Cloudflare 계정 생성부터 my-saas SaaS 배포까지, 단계별 발표자료 형식으로 안내합니다.</p>
 
 <hr />
 
@@ -221,9 +221,9 @@ wrangler kv namespace create APP_KV --preview</code></pre>
 
 <hr />
 
-<h2>6. 옥토워커스 프로젝트 클론</h2>
-<pre><code>git clone https://github.com/johunsang/octoworkers.git
-cd octoworkers
+<h2>6. my-saas 프로젝트 클론</h2>
+<pre><code>git clone https://github.com/johunsang/my-saas.git
+cd my-saas
 pnpm install</code></pre>
 <ul><li>pnpm 워크스페이스 모노레포 구조</li>
 <li><code>worker/</code> — Hono API 서버</li>
@@ -255,7 +255,7 @@ pnpm install</code></pre>
 <ul><li>랜딩 페이지: http://localhost:5173</li>
 <li>어드민 콘솔: http://localhost:5174</li>
 <li>Worker API: http://localhost:8787</li>
-<li>D1 로컬 마이그레이션: <code>pnpm --filter @octoworkers/worker db:migrate:local</code></li></ul>
+<li>D1 로컬 마이그레이션: <code>pnpm --filter @my-saas/worker db:migrate:local</code></li></ul>
 
 <hr />
 
@@ -294,7 +294,7 @@ pnpm deploy:prod</code></pre>
 <h2>요약</h2>
 <ul><li><strong>Cloudflare 무료 플랜</strong>으로 시작 가능</li>
 <li><strong>Workers + D1 + KV</strong>로 풀스택 서버리스 구현</li>
-<li><strong>옥토워커스</strong>를 클론하면 즉시 SaaS 보일러플레이트 확보</li>
+<li><strong>my-saas</strong>를 클론하면 즉시 SaaS 보일러플레이트 확보</li>
 <li><strong>pnpm dev</strong> 한 줄로 로컬 개발 환경 실행</li>
 <li><strong>pnpm deploy:prod</strong> 한 줄로 프로덕션 배포 완료</li></ul>',
 

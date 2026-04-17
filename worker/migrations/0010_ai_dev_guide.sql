@@ -5,13 +5,13 @@ VALUES (
   'AI 개발 가이드: Claude Code & Codex',
   '# AI 개발 가이드: Claude Code & Codex
 
-옥토워커스는 AI 에이전트가 코드를 읽고, 수정하고, 배포까지 할 수 있도록 설계되었습니다. 이 가이드는 Claude Code와 OpenAI Codex로 옥토워커스를 개발하는 실전 방법을 다룹니다.
+my-saas는 AI 에이전트가 코드를 읽고, 수정하고, 배포까지 할 수 있도록 설계되었습니다. 이 가이드는 Claude Code와 OpenAI Codex로 my-saas를 개발하는 실전 방법을 다룹니다.
 
 ---
 
 ## 1. AI 에이전트 문서 구조
 
-옥토워커스는 에이전트가 프로젝트를 이해할 수 있도록 계층적 문서 시스템을 갖추고 있습니다.
+my-saas는 에이전트가 프로젝트를 이해할 수 있도록 계층적 문서 시스템을 갖추고 있습니다.
 
 ### CLAUDE.md / AGENTS.md (루트)
 
@@ -43,7 +43,7 @@ VALUES (
 
 ```
 npm install -g @anthropic-ai/claude-code
-cd octoworkers
+cd my-saas
 claude
 ```
 
@@ -98,12 +98,12 @@ pnpm check, pnpm test, pnpm build 실행해서
 
 ```
 npm install -g @openai/codex
-cd octoworkers
+cd my-saas
 codex
 ```
 
 - Codex도 AGENTS.md를 자동으로 읽어 컨텍스트 확보
-- 옥토워커스는 CLAUDE.md와 AGENTS.md를 항상 동기화하므로 두 에이전트 모두 동일한 정보 참조
+- my-saas는 CLAUDE.md와 AGENTS.md를 항상 동기화하므로 두 에이전트 모두 동일한 정보 참조
 
 ### Codex 실행 모드
 
@@ -137,7 +137,7 @@ priority 필드를 추가하고, 관련 파일을 모두 업데이트해줘."
 - **Where**: 어떤 파일/모듈을 수정할 것인지
 - **How**: 어떤 패턴/규칙을 따를 것인지
 
-### 옥토워커스 전용 컨텍스트 키워드
+### my-saas 전용 컨텍스트 키워드
 
 - **"3글자 모듈"** — 에이전트가 `biz/{3글자}/` 패턴을 이해
 - **"contracts.ts"** — 공유 타입 수정 필요 시
@@ -216,7 +216,7 @@ priority 필드를 추가하고, 관련 파일을 모두 업데이트해줘."
 
 ### Claude Code 커스텀 명령
 
-옥토워커스에는 프로젝트 전용 슬래시 커맨드가 설정되어 있습니다.
+my-saas에는 프로젝트 전용 슬래시 커맨드가 설정되어 있습니다.
 
 - `/commit` — 변경사항 분석 후 자동 커밋
 - `/review` — `git diff main...HEAD` 기반 코드 리뷰
@@ -261,12 +261,12 @@ priority 필드를 추가하고, 관련 파일을 모두 업데이트해줘."
 - **문서 유지**: 코드 변경 시 CLAUDE.md와 AGENTS.md 즉시 동기화',
 
   '<h1>AI 개발 가이드: Claude Code &amp; Codex</h1>
-<p>옥토워커스는 AI 에이전트가 코드를 읽고, 수정하고, 배포까지 할 수 있도록 설계되었습니다. 이 가이드는 Claude Code와 OpenAI Codex로 옥토워커스를 개발하는 실전 방법을 다룹니다.</p>
+<p>my-saas는 AI 에이전트가 코드를 읽고, 수정하고, 배포까지 할 수 있도록 설계되었습니다. 이 가이드는 Claude Code와 OpenAI Codex로 my-saas를 개발하는 실전 방법을 다룹니다.</p>
 
 <hr />
 
 <h2>1. AI 에이전트 문서 구조</h2>
-<p>옥토워커스는 에이전트가 프로젝트를 이해할 수 있도록 계층적 문서 시스템을 갖추고 있습니다.</p>
+<p>my-saas는 에이전트가 프로젝트를 이해할 수 있도록 계층적 문서 시스템을 갖추고 있습니다.</p>
 
 <h3>CLAUDE.md / AGENTS.md (루트)</h3>
 <ul><li>프로젝트 전체 구조, 기술 스택, 아키텍처를 설명</li>
@@ -293,7 +293,7 @@ priority 필드를 추가하고, 관련 파일을 모두 업데이트해줘."
 
 <h3>설치 및 시작</h3>
 <pre><code>npm install -g @anthropic-ai/claude-code
-cd octoworkers
+cd my-saas
 claude</code></pre>
 <ul><li>프로젝트 루트에서 <code>claude</code> 명령 실행</li>
 <li>CLAUDE.md를 자동으로 읽어 프로젝트 컨텍스트 확보</li>
@@ -330,10 +330,10 @@ CSS로 구현하고 외부 라이브러리 없이 만들어줘.</code></pre>
 
 <h3>설치 및 시작</h3>
 <pre><code>npm install -g @openai/codex
-cd octoworkers
+cd my-saas
 codex</code></pre>
 <ul><li>Codex도 AGENTS.md를 자동으로 읽어 컨텍스트 확보</li>
-<li>옥토워커스는 CLAUDE.md와 AGENTS.md를 항상 동기화하므로 두 에이전트 모두 동일한 정보 참조</li></ul>
+<li>my-saas는 CLAUDE.md와 AGENTS.md를 항상 동기화하므로 두 에이전트 모두 동일한 정보 참조</li></ul>
 
 <h3>Codex 실행 모드</h3>
 <ul><li><strong>suggest</strong>: 변경 제안만 (기본)</li>
@@ -356,7 +356,7 @@ priority 필드를 추가하고, 관련 파일을 모두 업데이트해줘."</c
 <li><strong>Where</strong>: 어떤 파일/모듈을 수정할 것인지</li>
 <li><strong>How</strong>: 어떤 패턴/규칙을 따를 것인지</li></ul>
 
-<h3>옥토워커스 전용 컨텍스트 키워드</h3>
+<h3>my-saas 전용 컨텍스트 키워드</h3>
 <ul><li><strong>&quot;3글자 모듈&quot;</strong> — 에이전트가 <code>biz/{3글자}/</code> 패턴을 이해</li>
 <li><strong>&quot;contracts.ts&quot;</strong> — 공유 타입 수정 필요 시</li>
 <li><strong>&quot;app.request() 테스트&quot;</strong> — 테스트 추가 요청 시</li>
@@ -424,7 +424,7 @@ priority 필드를 추가하고, 관련 파일을 모두 업데이트해줘."</c
 <h2>7. 자동화 슬래시 커맨드</h2>
 
 <h3>Claude Code 커스텀 명령</h3>
-<p>옥토워커스에는 프로젝트 전용 슬래시 커맨드가 설정되어 있습니다.</p>
+<p>my-saas에는 프로젝트 전용 슬래시 커맨드가 설정되어 있습니다.</p>
 <ul><li><code>/commit</code> — 변경사항 분석 후 자동 커밋</li>
 <li><code>/review</code> — <code>git diff main...HEAD</code> 기반 코드 리뷰</li>
 <li><code>/deploy</code> — 빌드 검증 후 staging/production 배포</li>

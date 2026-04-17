@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import type { LeadSubmissionInput } from '@octoworkers/com'
+import type { LeadSubmissionInput } from '@my-saas/com'
 import { apiFetch } from '../../../com/api/client'
 
 const initialForm: LeadSubmissionInput = {
@@ -34,7 +34,7 @@ export function LeadCapturePanel() {
     <section className="lead-capture" id="lead-capture">
       <div className="section-copy">
         <span>Contact</span>
-        <h2>옥토워커스로 SaaS를 시작하세요</h2>
+        <h2>my-saas로 SaaS를 시작하세요</h2>
         <p>문의를 남기시면 D1에 바로 저장되고, 어드민 콘솔에서 확인할 수 있습니다. 이 폼 자체가 보일러플레이트의 리드 캡처 데모입니다.</p>
       </div>
       <form className="lead-form" onSubmit={handleSubmit}>

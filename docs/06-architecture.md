@@ -174,13 +174,13 @@ GitHub
   └── develop branch → deploy-staging.yml   → wrangler deploy --env staging
 
 Cloudflare
-  ├── octoworkers (production Worker)
-  │   ├── D1: octoworkers
+  ├── my-saas (production Worker)
+  │   ├── D1: my-saas
   │   ├── KV: APP_KV
   │   └── custom domain: example.com, admin.example.com
   │
-  └── octoworkers-staging (staging Worker)
-      ├── D1: octoworkers-staging
+  └── my-saas-staging (staging Worker)
+      ├── D1: my-saas-staging
       ├── KV: APP_KV (staging)
       └── *.workers.dev
 ```

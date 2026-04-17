@@ -147,7 +147,7 @@
 
 ### pnpm workspace 의존성
 
-- `@octoworkers/com`은 `workspace:*`로 참조 — 로컬 패키지
+- `@my-saas/com`은 `workspace:*`로 참조 — 로컬 패키지
 - npm publish 시 `workspace:*`를 실제 버전으로 바꿔야 함 (현재 private이므로 해당 없음)
 
 ### wrangler.jsonc는 JSONC

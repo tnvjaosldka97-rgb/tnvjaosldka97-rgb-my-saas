@@ -1,8 +1,8 @@
-# CLI 스캐폴딩 도구 (create-octoworkers)
+# CLI 스캐폴딩 도구 (create-my-saas)
 
 ## 개요
 
-`create-octoworkers`는 옥토워커스 보일러플레이트를 복사하고, Cloudflare 리소스를 생성하고, 배포까지 하나의 대화형 CLI로 자동화하는 도구입니다.
+`create-my-saas`는 my-saas 보일러플레이트를 복사하고, Cloudflare 리소스를 생성하고, 배포까지 하나의 대화형 CLI로 자동화하는 도구입니다.
 
 ## 실행
 
@@ -60,11 +60,11 @@ Node.js, pnpm, git 버전을 확인합니다. pnpm이 없으면 `npm install -g 
 
 보일러플레이트 전체 파일을 복사하면서 자동으로 치환:
 
-- `octoworkers` → 프로젝트 슬러그
-- `@octoworkers/` → `@스코프/`
+- `my-saas` → 프로젝트 슬러그
+- `@my-saas/` → `@스코프/`
 - `example.com` → 실제 도메인
 - `REPLACE_WITH_*` → 입력한 Cloudflare ID
-- `옥토워커스` → 프로젝트 이름
+- `my-saas` → 프로젝트 이름
 - `founder@example.com` → 관리자 이메일
 
 제외 대상: `node_modules`, `.wrangler`, `dist`, `coverage`, `cli`, `pnpm-lock.yaml`, `worker/public`
@@ -128,7 +128,7 @@ node build.js
 
 ```
 cli/
-├── package.json    # create-octoworkers 패키지
+├── package.json    # create-my-saas 패키지
 ├── build.js        # esbuild 빌드 스크립트
 ├── src/
 │   └── index.ts    # CLI 소스

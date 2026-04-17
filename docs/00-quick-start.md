@@ -29,7 +29,7 @@ cd my-project
 pnpm install
 cp worker/.dev.vars.example worker/.dev.vars
 # .dev.vars 편집
-pnpm --filter @octoworkers/worker db:migrate:local
+pnpm --filter @my-saas/worker db:migrate:local
 pnpm dev
 ```
 

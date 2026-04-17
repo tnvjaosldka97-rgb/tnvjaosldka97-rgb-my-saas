@@ -3,8 +3,8 @@ import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { sign, verify } from 'hono/jwt'
 import type { AppBindings } from '../../com/bindings'
 
-const COOKIE_NAME = '__Host-octoworkers_admin'
-const STATE_COOKIE = '__Host-octoworkers_oauth_state'
+const COOKIE_NAME = '__Host-my-saas_admin'
+const STATE_COOKIE = '__Host-my-saas_oauth_state'
 
 type SessionPayload = {
   email: string

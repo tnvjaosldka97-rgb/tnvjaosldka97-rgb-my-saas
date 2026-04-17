@@ -1,4 +1,4 @@
-import type { AiCopySuggestion, AiCopySuggestionRequest, SiteSettings } from '@octoworkers/com'
+import type { AiCopySuggestion, AiCopySuggestionRequest, SiteSettings } from '@my-saas/com'
 import type { AppBindings } from './bindings'
 import { aiGatewayConfigured } from './env'
 

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import type { EmailTemplate, EmailTemplateInput, EmailLog } from '@octoworkers/com'
+import type { EmailTemplate, EmailTemplateInput, EmailLog } from '@my-saas/com'
 import { apiFetch } from '../../../com/api/client'
 
 export function useEmailTemplates() {

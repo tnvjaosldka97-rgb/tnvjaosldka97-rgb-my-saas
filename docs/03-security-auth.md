@@ -55,7 +55,7 @@
 로그인 성공 시:
 
 1. JWT 생성
-2. `__Host-octoworkers_admin` 쿠키 발급
+2. `__Host-my-saas_admin` 쿠키 발급
 3. admin API 접근 시 쿠키 검증
 
 ## Cloudflare Access 병행

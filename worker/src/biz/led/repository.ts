@@ -1,4 +1,4 @@
-import type { LeadRecord, LeadSubmissionInput, LeadDetail, LeadTag, LeadNote, LeadStatus } from '@octoworkers/com'
+import type { LeadRecord, LeadSubmissionInput, LeadDetail, LeadTag, LeadNote, LeadStatus } from '@my-saas/com'
 import type { D1DatabaseLike } from '../../com/bindings'
 import { allRows, isoNow } from '../../com/db'
 

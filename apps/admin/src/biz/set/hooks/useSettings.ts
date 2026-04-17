@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { SiteSettings } from '@octoworkers/com'
+import type { SiteSettings } from '@my-saas/com'
 import { apiFetch } from '../../../com/api/client'
 import { fallbackSiteSettings } from '../../ext/fallbackSiteSettings'
 

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { LeadDetail, LeadStatus } from '@octoworkers/com'
+import type { LeadDetail, LeadStatus } from '@my-saas/com'
 import { Panel } from '../../../com/ui/Panel'
 
 const STATUS_OPTIONS: LeadStatus[] = ['new', 'contacted', 'qualified', 'converted', 'lost']

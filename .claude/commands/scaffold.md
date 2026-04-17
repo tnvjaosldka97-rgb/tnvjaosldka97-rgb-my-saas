@@ -1,4 +1,4 @@
-새 프로젝트를 옥토워커스 보일러플레이트에서 스캐폴딩합니다: $ARGUMENTS
+새 프로젝트를 my-saas 보일러플레이트에서 스캐폴딩합니다: $ARGUMENTS
 
 ## 절차
 
@@ -22,7 +22,7 @@ cd /path/to/new-project
 # 이름 치환
 find . -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.json" -o -name "*.jsonc" -o -name "*.md" -o -name "*.yaml" -o -name "*.css" -o -name "*.html" \) \
   -not -path "*/node_modules/*" \
-  -exec sed -i '' 's/octoworkers/새슬러그/g; s/옥토워커스/새이름/g; s/example\.com/새도메인/g' {} +
+  -exec sed -i '' 's/my-saas/새슬러그/g; s/my-saas/새이름/g; s/example\.com/새도메인/g' {} +
 
 # 설치 + 마이그레이션
 pnpm install

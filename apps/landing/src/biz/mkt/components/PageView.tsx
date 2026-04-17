@@ -87,7 +87,7 @@ export function PageView({ slug }: { slug: string }) {
   return (
     <div className="page-view-shell">
       <nav className="page-view-nav">
-        <a href={homeUrl()} className="nav-brand">옥토워커스</a>
+        <a href={homeUrl()} className="nav-brand">my-saas</a>
         <div className="page-view-nav-links">
           {pages.map((p) => (
             <a key={p.id} href={pageUrl(p.slug)} className={p.slug === slug ? 'active' : ''}>{p.title}</a>
@@ -127,7 +127,7 @@ export function PageView({ slug }: { slug: string }) {
         <a href={homeUrl()}>Landing</a>
         <a href={adminUrl()}>Admin Console</a>
         <a href="/api/public/pages">Pages API</a>
-        <a href="https://github.com/johunsang/octoworkers" target="_blank" rel="noreferrer">GitHub</a>
+        <a href="https://github.com/johunsang/my-saas" target="_blank" rel="noreferrer">GitHub</a>
       </footer>
     </div>
   )

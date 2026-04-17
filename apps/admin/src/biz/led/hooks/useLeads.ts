@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import type { LeadRecord, LeadDetail, LeadStatus } from '@octoworkers/com'
+import type { LeadRecord, LeadDetail, LeadStatus } from '@my-saas/com'
 import { apiFetch } from '../../../com/api/client'
 
 export function useLeads() {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { AccessLog, ApiLog, SystemStats } from '@octoworkers/com'
+import type { AccessLog, ApiLog, SystemStats } from '@my-saas/com'
 import { apiFetch } from '../../../com/api/client'
 
 export function useAccessLogs() {

@@ -35,5 +35,5 @@ cp _templates/migration/0000_template.sql worker/migrations/0002_add_notificatio
 마이그레이션 적용:
 
 ```bash
-pnpm --filter @octoworkers/worker db:migrate:local
+pnpm --filter @my-saas/worker db:migrate:local
 ```

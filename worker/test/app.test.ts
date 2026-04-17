@@ -45,7 +45,7 @@ function createSettingsDb() {
           if (query.includes('FROM site_settings')) {
             return {
               id: 1,
-              brand: '옥토워커스',
+              brand: 'my-saas',
               hero_label: 'Cloudflare-native SaaS boilerplate',
               hero_title: 'Ship SaaS faster on Cloudflare.',
               hero_subtitle: 'Landing, admin, D1, Images, and AI Gateway in one runtime.',
@@ -973,6 +973,51 @@ describe('API endpoint smoke tests', () => {
     const app = createApp()
     const env = createTestEnv()
     const res = await app.request('http://localhost/api/public/pages/nonexistent', undefined, env)
+    expect(res.status).toBe(404)
+  })
+
+  it('should return empty project list when db has none', async () => {
+    const app = createApp()
+    const env = createTestEnv()
+    const res = await app.request('http://localhost/api/public/projects', undefined, env)
+    expect(res.status).toBe(200)
+    const data = (await res.json()) as { projects: unknown[] }
+    expect(Array.isArray(data.projects)).toBe(true)
+  })
+
+  it('should accept status and sort query params on project list', async () => {
+    const app = createApp()
+    const env = createTestEnv()
+    const res = await app.request(
+      'http://localhost/api/public/projects?status=recruiting&sort=closing',
+      undefined,
+      env,
+    )
+    expect(res.status).toBe(200)
+  })
+
+  it('should reject invalid sort on project list', async () => {
+    const app = createApp()
+    const env = createTestEnv()
+    const res = await app.request(
+      'http://localhost/api/public/projects?sort=not_a_sort',
+      undefined,
+      env,
+    )
+    expect(res.status).toBe(400)
+  })
+
+  it('should return 400 for invalid project id', async () => {
+    const app = createApp()
+    const env = createTestEnv()
+    const res = await app.request('http://localhost/api/public/projects/abc', undefined, env)
+    expect(res.status).toBe(400)
+  })
+
+  it('should return 404 for unknown project id', async () => {
+    const app = createApp()
+    const env = createTestEnv()
+    const res = await app.request('http://localhost/api/public/projects/99999', undefined, env)
     expect(res.status).toBe(404)
   })
 

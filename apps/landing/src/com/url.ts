@@ -1,6 +1,6 @@
 const hostname = window.location.hostname
 
-const isCustomDomain = hostname === 'octoworkers.com' || hostname === 'app.octoworkers.com'
+const isCustomDomain = hostname === 'my-saas.com' || hostname === 'app.my-saas.com'
 const isSaas = hostname.startsWith('app.')
 
 export function landingUrl(path = '/') {
@@ -9,8 +9,8 @@ export function landingUrl(path = '/') {
 }
 
 export function adminUrl(path = '/') {
-  if (hostname === 'admin.octoworkers.com') return path
-  if (isCustomDomain) return `https://admin.octoworkers.com${path}`
+  if (hostname === 'admin.my-saas.com') return path
+  if (isCustomDomain) return `https://admin.my-saas.com${path}`
   return `/admin${path}`
 }
 

@@ -1,4 +1,4 @@
-import type { SiteSettings } from '@octoworkers/com'
+import type { SiteSettings } from '@my-saas/com'
 import type { D1DatabaseLike } from '../../com/bindings'
 import { isoNow } from '../../com/db'
 

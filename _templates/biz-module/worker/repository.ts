@@ -17,7 +17,7 @@ type __ITEM__Row = {
 
 // ── contracts 타입으로 변환 ──
 
-// import type { __ITEM__Record } from '@octoworkers/com'
+// import type { __ITEM__Record } from '@my-saas/com'
 // function map__ITEM__(row: __ITEM__Row): __ITEM__Record {
 //   return {
 //     id: row.id,

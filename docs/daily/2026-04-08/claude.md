@@ -5,7 +5,7 @@
 ### 1. Claude Code 문서 전체 업데이트 (12개 파일)
 - `CLAUDE.md` — 프로젝트 개요, 기술 스택, 구조, 명령어
 - `.claude/settings.json` — pnpm 권한, wrangler 허용, 원격 D1 차단
-- `.claude/commands/` — review, fix-issue, deploy (옥토워커스 특화)
+- `.claude/commands/` — review, fix-issue, deploy (my-saas 특화)
 - `.claude/rules/` — code-style, testing, api-conventions
 - `.claude/skills/` — deploy, security-review
 - `.claude/agents/` — code-reviewer, security-auditor

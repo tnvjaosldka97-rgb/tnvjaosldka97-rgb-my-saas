@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { MediaAsset } from '@octoworkers/com'
+import type { MediaAsset } from '@my-saas/com'
 
 type MediaManagerProps = {
   media: MediaAsset[]

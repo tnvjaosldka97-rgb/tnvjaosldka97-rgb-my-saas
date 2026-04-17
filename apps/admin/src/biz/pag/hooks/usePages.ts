@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import type { PageSummary, Page, PageInput } from '@octoworkers/com'
+import type { PageSummary, Page, PageInput } from '@my-saas/com'
 import { apiFetch } from '../../../com/api/client'
 
 export function usePages() {
