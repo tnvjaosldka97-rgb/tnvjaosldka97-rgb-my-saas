@@ -146,6 +146,60 @@ publicRoutes.get('/projects/:id', async (c) => {
   return c.json({ project, quotes: [] })
 })
 
+publicRoutes.get('/agencies/:slug', async (c) => {
+  const slug = c.req.param('slug')
+  const agencyRow = await c.env.DB
+    .prepare(
+      `SELECT id, slug, name, description, specialties, verified, rating,
+              completed_projects, total_reviews, created_at
+       FROM agencies WHERE slug = ?1 LIMIT 1`,
+    )
+    .bind(slug)
+    .first<{
+      id: number; slug: string; name: string; description: string
+      specialties: string; verified: number; rating: number
+      completed_projects: number; total_reviews: number; created_at: string
+    }>()
+
+  if (!agencyRow) return c.json({ error: 'Agency not found' }, 404)
+
+  const reviewsRes = await c.env.DB
+    .prepare(
+      `SELECT r.id, r.project_id, p.title AS project_title,
+              r.rating, r.comment, r.created_at
+       FROM reviews r
+       JOIN projects p ON p.id = r.project_id
+       WHERE r.agency_id = ?1
+       ORDER BY r.created_at DESC
+       LIMIT 30`,
+    )
+    .bind(agencyRow.id)
+    .all<{ id: number; project_id: number; project_title: string; rating: number; comment: string; created_at: string }>()
+
+  return c.json({
+    agency: {
+      id: agencyRow.id,
+      slug: agencyRow.slug,
+      name: agencyRow.name,
+      description: agencyRow.description,
+      specialties: parseJson(agencyRow.specialties),
+      verified: agencyRow.verified === 1,
+      rating: agencyRow.rating,
+      completedProjects: agencyRow.completed_projects,
+      totalReviews: agencyRow.total_reviews,
+      createdAt: agencyRow.created_at,
+    },
+    reviews: (reviewsRes.results ?? []).map((r) => ({
+      id: r.id,
+      projectId: r.project_id,
+      projectTitle: r.project_title,
+      rating: r.rating,
+      comment: r.comment,
+      createdAt: r.created_at,
+    })),
+  })
+})
+
 const consultationSchema = z.object({
   projectId: z.number().int().positive(),
   agencyId: z.number().int().positive().nullable().optional(),

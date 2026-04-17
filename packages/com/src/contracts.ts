@@ -28,6 +28,33 @@ export type LeadRecord = {
   createdAt: string
 }
 
+export type PublicAgencyDetail = {
+  id: number
+  slug: string
+  name: string
+  description: string
+  specialties: string[]
+  verified: boolean
+  rating: number
+  completedProjects: number
+  totalReviews: number
+  createdAt: string
+}
+
+export type PublicAgencyReview = {
+  id: number
+  projectId: number
+  projectTitle: string
+  rating: number
+  comment: string
+  createdAt: string
+}
+
+export type PublicAgencyResponse = {
+  agency: PublicAgencyDetail
+  reviews: PublicAgencyReview[]
+}
+
 export type MarketSummary = {
   activeProjects: number
   verifiedAgencies: number

@@ -18,6 +18,7 @@ import { useAgencyMypage, type ApplicationWithProject } from '../hooks/useAgency
 import { useAdvertiserFunnel } from '../hooks/useAdvertiserFunnel'
 import { useNotifications } from '../hooks/useNotifications'
 import { useToast } from '../../../com/ui/Toast'
+import { Skeleton, SkeletonStack } from '../../../com/ui/Skeleton'
 import { ReviewModal } from './ReviewModal'
 import '../../../landing-page.css'
 
@@ -145,7 +146,7 @@ function AdvertiserView({ name }: { name: string }) {
             <a href="/project/create" className="oc-btn oc-btn-primary oc-btn-sm">+ 새 프로젝트 등록</a>
           </div>
 
-          {loading && <div className="oc-grid-empty">불러오는 중…</div>}
+          {loading && <DashboardListSkeleton />}
           {!loading && filtered.length === 0 && (
             <div className="oc-grid-empty">이 단계에 해당하는 프로젝트가 없습니다.</div>
           )}
@@ -295,7 +296,7 @@ function AgencyView({ name }: { name: string }) {
             </label>
           </div>
 
-          {loading && <div className="oc-grid-empty">불러오는 중…</div>}
+          {loading && <DashboardListSkeleton />}
           {error && <div className="oc-grid-empty" role="alert">{error}</div>}
           {!loading && !error && filtered.length === 0 && (
             <div className="oc-grid-empty">이 단계에 해당하는 프로젝트가 없습니다.</div>
@@ -457,6 +458,28 @@ function ActivityTimeline({ items, loading }: { items: NotiItem[]; loading: bool
         </li>
       ))}
     </ul>
+  )
+}
+
+function DashboardListSkeleton() {
+  return (
+    <div className="oc-mypage-list" aria-hidden>
+      {Array.from({ length: 3 }).map((_, i) => (
+        <article key={i} className="oc-mypage-card oc-mypage-card-v2">
+          <div style={{ display: 'flex', gap: 10 }}>
+            <Skeleton width={60} height={18} radius={6} />
+            <Skeleton width={72} height={20} radius={10} />
+          </div>
+          <Skeleton width="80%" height={22} style={{ marginTop: 6 }} />
+          <SkeletonStack rows={1} />
+          <div style={{ display: 'flex', gap: 6 }}>
+            <Skeleton width={48} height={22} radius={12} />
+            <Skeleton width={62} height={22} radius={12} />
+            <Skeleton width={44} height={22} radius={12} />
+          </div>
+        </article>
+      ))}
+    </div>
   )
 }
 

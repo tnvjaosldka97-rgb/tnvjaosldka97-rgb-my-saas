@@ -1428,6 +1428,161 @@
   .oc-kpi-value { font-size: 18px; }
 }
 
+/* === Agency Detail Page === */
+.oc-agency-main {
+  padding: 40px 0 80px;
+  background: var(--oc-cream);
+  min-height: 70vh;
+}
+.oc-agency-hero {
+  display: flex;
+  gap: 24px;
+  padding: 28px;
+  background: white;
+  border: 1px solid var(--oc-gray-100);
+  border-radius: var(--oc-radius-lg);
+  box-shadow: var(--oc-shadow-soft);
+  margin: 20px 0 28px;
+}
+.oc-agency-hero-mark {
+  flex-shrink: 0;
+  width: 88px; height: 88px;
+  border-radius: 22px;
+  display: grid; place-items: center;
+  background: linear-gradient(135deg, var(--oc-navy), var(--oc-royal));
+  color: white;
+  font-weight: 800;
+  font-size: 32px;
+  letter-spacing: -0.03em;
+}
+.oc-agency-hero-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.oc-agency-hero-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.oc-agency-hero-row h1 {
+  font-size: 24px; font-weight: 800; margin: 0;
+  letter-spacing: -0.025em;
+  color: var(--oc-navy);
+}
+.oc-agency-desc {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--oc-gray-500);
+}
+.oc-agency-stats {
+  list-style: none; margin: 8px 0 0; padding: 0;
+  display: flex; gap: 28px;
+  flex-wrap: wrap;
+}
+.oc-agency-stats li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--oc-gray-500);
+}
+.oc-agency-stats strong {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--oc-navy);
+  margin-right: 2px;
+}
+.oc-agency-stats li:first-child { color: var(--oc-amber-hot); }
+.oc-agency-stats li:first-child strong { color: var(--oc-navy); }
+
+.oc-agency-section {
+  margin-bottom: 28px;
+}
+.oc-agency-section h2 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--oc-navy);
+  margin: 0 0 12px;
+  letter-spacing: -0.015em;
+  display: flex; align-items: baseline; gap: 10px;
+}
+.oc-agency-reviews-count {
+  font-size: 12.5px;
+  color: var(--oc-gray-500);
+  font-weight: 500;
+}
+.oc-agency-specialty-wall { display: flex; gap: 8px; flex-wrap: wrap; }
+.oc-agency-specialty {
+  padding: 7px 14px;
+  background: rgba(29, 78, 216, 0.08);
+  color: var(--oc-royal);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.oc-agency-reviews {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.oc-agency-review-card {
+  padding: 16px 18px;
+  background: white;
+  border: 1px solid var(--oc-gray-100);
+  border-radius: var(--oc-radius);
+  display: flex; flex-direction: column; gap: 6px;
+}
+.oc-agency-review-head {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.oc-agency-review-stars {
+  font-size: 14px;
+  color: var(--oc-amber-hot);
+  letter-spacing: 2px;
+}
+.oc-agency-review-stars-dim { color: rgba(11, 30, 63, 0.15); }
+.oc-agency-review-head time { font-size: 11.5px; color: var(--oc-gray-300); }
+.oc-agency-review-comment {
+  margin: 2px 0 0;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--oc-gray-700);
+}
+.oc-agency-review-project {
+  font-size: 12px;
+  color: var(--oc-gray-500);
+  font-weight: 600;
+}
+.oc-agency-reviews-empty {
+  padding: 32px 16px;
+  background: white;
+  border: 1px dashed var(--oc-gray-200);
+  border-radius: var(--oc-radius-lg);
+  text-align: center;
+  font-size: 13px;
+  color: var(--oc-gray-500);
+}
+.oc-agency-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 24px 28px;
+  background: linear-gradient(135deg, rgba(29, 78, 216, 0.08), rgba(11, 30, 63, 0.04));
+  border-radius: var(--oc-radius-lg);
+  border: 1px solid rgba(29, 78, 216, 0.12);
+  flex-wrap: wrap;
+}
+.oc-agency-cta h3 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--oc-navy);
+}
+.oc-agency-cta p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--oc-gray-500);
+}
+@media (max-width: 639px) {
+  .oc-agency-hero { flex-direction: column; padding: 20px; }
+  .oc-agency-hero-mark { width: 64px; height: 64px; font-size: 24px; border-radius: 16px; }
+  .oc-agency-cta { flex-direction: column; align-items: flex-start; }
+}
+
 /* === Trusted Agencies (Social Proof) === */
 .oc-section-trust {
   padding: 56px 0 64px;

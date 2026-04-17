@@ -12,6 +12,7 @@ import { DashboardPage } from './biz/mkt/components/DashboardPage'
 import { CreateProjectPage } from './biz/mkt/components/CreateProjectPage'
 import { SubmitQuotePage } from './biz/mkt/components/SubmitQuotePage'
 import { NotFoundPage } from './biz/mkt/components/NotFoundPage'
+import { AgencyDetailPage } from './biz/mkt/components/AgencyDetailPage'
 import { ToastProvider } from './com/ui/Toast'
 import { isSaas } from './com/url'
 import './styles.css'
@@ -37,6 +38,12 @@ function Router() {
   const projectMatch = path.match(/^\/project\/(\d+)$/)
   if (projectMatch) {
     return <ProjectDetailPage id={Number.parseInt(projectMatch[1], 10)} />
+  }
+
+  // /agency/:slug 대행사 상세
+  const agencyMatch = path.match(/^\/agency\/([a-z0-9가-힣-]+)$/)
+  if (agencyMatch) {
+    return <AgencyDetailPage slug={agencyMatch[1]} />
   }
 
   if (path === '/project/create') return <CreateProjectPage />
