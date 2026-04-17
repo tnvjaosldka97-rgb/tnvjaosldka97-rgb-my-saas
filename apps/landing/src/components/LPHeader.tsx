@@ -137,11 +137,20 @@ export function LPHeader() {
 
       {open && (
         <div className="oc-container oc-mobile-drawer">
+          <a href="/search" onClick={() => setOpen(false)}>🔍 전체 검색</a>
           {NAV.map((item) => (
             <a key={item.label} href={item.href} onClick={() => setOpen(false)}>{item.label}</a>
           ))}
-          <a href="/#lead-start" onClick={() => setOpen(false)}>프로젝트 알림</a>
-          {!user && <a href="/login" onClick={() => setOpen(false)}>로그인 / 회원가입</a>}
+          <a href="/#lead-start" onClick={() => setOpen(false)}>프로젝트 접수</a>
+          {user ? (
+            <>
+              <a href="/dashboard" onClick={() => setOpen(false)}>대시보드 · {user.name}님</a>
+              <a href="/notifications" onClick={() => setOpen(false)}>알림 {noti.unread > 0 && <span className="oc-drawer-badge">{noti.unread}</span>}</a>
+              <button type="button" onClick={() => { void logout().then(() => { window.location.href = '/' }) }} className="oc-drawer-logout">로그아웃</button>
+            </>
+          ) : (
+            <a href="/login" onClick={() => setOpen(false)}>로그인 / 회원가입</a>
+          )}
         </div>
       )}
     </header>

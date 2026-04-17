@@ -31,8 +31,28 @@ export function LPAnnouncementModal() {
     } catch {
       // localStorage 접근 실패해도 열기
     }
-    const t = setTimeout(() => setOpen(true), 3000)
-    return () => clearTimeout(t)
+
+    // 트리거: 페이지 스크롤 65% 도달 or 16초 경과 (둘 중 먼저) — 즉시 팝업 안티패턴 회피
+    let triggered = false
+    const trigger = () => {
+      if (triggered) return
+      triggered = true
+      setOpen(true)
+      window.removeEventListener('scroll', onScroll)
+      clearTimeout(t)
+    }
+    const onScroll = () => {
+      const total = document.documentElement.scrollHeight - window.innerHeight
+      if (total <= 0) return
+      const ratio = window.scrollY / total
+      if (ratio >= 0.65) trigger()
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    const t = setTimeout(trigger, 16000)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      clearTimeout(t)
+    }
   }, [])
 
   useEffect(() => {

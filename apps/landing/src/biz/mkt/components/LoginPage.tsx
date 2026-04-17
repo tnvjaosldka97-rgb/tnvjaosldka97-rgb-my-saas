@@ -90,7 +90,7 @@ export function LoginPage() {
               </button>
 
               <div className="oc-auth-footer">
-                <a href="/forgot">비밀번호를 잊어버리셨나요?</a>
+                <a href="/pages/contact">비밀번호 문의</a>
                 <span className="oc-auth-footer-sep">·</span>
                 <a href="/register">회원가입</a>
               </div>

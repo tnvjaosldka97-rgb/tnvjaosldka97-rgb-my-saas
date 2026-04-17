@@ -1,19 +1,27 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { MarketAgency, CreateQuoteInput } from '@my-saas/com'
 import { LPHeader } from '../../../components/LPHeader'
 import { LPFooter } from '../../../components/LPFooter'
 import { useAuth } from '../hooks/useAuth'
 import { useProjectDetail } from '../hooks/useProjectDetail'
 import { apiFetch } from '../../../com/api/client'
+import { useToast } from '../../../com/ui/Toast'
 import '../../../landing-page.css'
 
-// 프런트에서 대행사 목록을 별도로 갖고 오지 않고, 상세 응답의 quotes에서 agency 목록을 추리기 어렵기 때문에
-// 가장 간단하게 사용자가 직접 대행사 ID를 입력하거나(임시) 기존 quotes 기반으로 선택한다.
-// MVP: 기존 견적 기반 목록에서 이미 제출한 대행사가 있으면 해당 대행사 이름을 표시. 없으면 수동 입력.
+type PublicAgency = {
+  id: number
+  slug: string
+  name: string
+  verified: boolean
+  rating: number
+  completedProjects: number
+  specialties: string[]
+}
 
 export function SubmitQuotePage({ id }: { id: number }) {
   const { user, loading: authLoading } = useAuth()
   const { data, loading, error } = useProjectDetail(id)
+  const toast = useToast()
 
   const [form, setForm] = useState<CreateQuoteInput & { agencyId: string }>({
     agencyId: '',
@@ -28,13 +36,30 @@ export function SubmitQuotePage({ id }: { id: number }) {
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [done, setDone] = useState(false)
+  const [publicAgencies, setPublicAgencies] = useState<PublicAgency[]>([])
 
   useEffect(() => {
     if (!authLoading && !user) window.location.href = '/login'
   }, [authLoading, user])
 
+  useEffect(() => {
+    apiFetch<{ metrics: { market: { recentAgencies: PublicAgency[] } | null } }>('/api/public/bootstrap')
+      .then((r) => setPublicAgencies(r.metrics?.market?.recentAgencies ?? []))
+      .catch(() => { /* ignore */ })
+  }, [])
+
+  // 기존 제출 견적의 대행사 + 검증 대행사 전체를 합집합으로 노출
   const knownAgencies: MarketAgency[] = data?.quotes.map((q) => q.agency) ?? []
-  const uniqueAgencies = Array.from(new Map(knownAgencies.map((a) => [a.id, a])).values())
+  const agenciesForSelect = useMemo(() => {
+    const byId = new Map<number, { id: number; name: string; rating: number; verified?: boolean }>()
+    for (const a of publicAgencies) {
+      byId.set(a.id, { id: a.id, name: a.name, rating: a.rating, verified: a.verified })
+    }
+    for (const a of knownAgencies) {
+      byId.set(a.id, { id: a.id, name: a.name, rating: a.rating, verified: a.verified })
+    }
+    return [...byId.values()].sort((a, b) => b.rating - a.rating)
+  }, [publicAgencies, knownAgencies])
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -65,8 +90,11 @@ export function SubmitQuotePage({ id }: { id: number }) {
         }),
       })
       setDone(true)
+      toast.success('견적이 제출되었습니다. 광고주 검토 결과가 나오면 알림으로 안내드립니다.')
     } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : '제출에 실패했습니다.')
+      const msg = err instanceof Error ? err.message : '제출에 실패했습니다.'
+      setSubmitError(msg)
+      toast.error(msg)
     } finally {
       setSubmitting(false)
     }
@@ -118,21 +146,21 @@ export function SubmitQuotePage({ id }: { id: number }) {
             ) : (
               <form onSubmit={onSubmit} className="oc-auth-form">
                 <label className="oc-field">
-                  <span>대행사 선택</span>
-                  {uniqueAgencies.length > 0 ? (
+                  <span>본인 대행사 선택</span>
+                  {agenciesForSelect.length > 0 ? (
                     <select required className="oc-select" value={form.agencyId}
                       onChange={(e) => setForm((f) => ({ ...f, agencyId: e.target.value }))}>
-                      <option value="">선택</option>
-                      {uniqueAgencies.map((a) => (
-                        <option key={a.id} value={a.id}>{a.name} (평점 {a.rating.toFixed(1)})</option>
+                      <option value="">검증 대행사 중 본인을 선택하세요</option>
+                      {agenciesForSelect.map((a) => (
+                        <option key={a.id} value={a.id}>{a.name} · ★ {a.rating.toFixed(1)}</option>
                       ))}
                     </select>
                   ) : (
-                    <input type="number" required min={1} className="oc-input"
-                      placeholder="대행사 ID (예: 1)"
-                      value={form.agencyId}
-                      onChange={(e) => setForm((f) => ({ ...f, agencyId: e.target.value }))} />
+                    <div className="oc-auth-error" role="alert">
+                      대행사 목록을 불러오지 못했습니다. 잠시 후 다시 시도하거나 <a href="/pages/contact">문의</a>해주세요.
+                    </div>
                   )}
+                  <small className="oc-field-counter">목록에 없는 대행사라면 먼저 파트너 지원 절차를 마쳐야 합니다.</small>
                 </label>
 
                 <div className="oc-form-row">

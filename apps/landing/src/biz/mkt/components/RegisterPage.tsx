@@ -7,11 +7,17 @@ import '../../../landing-page.css'
 
 export function RegisterPage() {
   const { register } = useAuth()
+  const initialType: MarketUserType = (() => {
+    try {
+      const q = new URLSearchParams(window.location.search).get('as')
+      return q === 'agency' ? 'agency' : 'advertiser'
+    } catch { return 'advertiser' }
+  })()
   const [form, setForm] = useState({
     email: '',
     password: '',
     name: '',
-    userType: 'advertiser' as MarketUserType,
+    userType: initialType,
     phone: '',
   })
   const [submitting, setSubmitting] = useState(false)

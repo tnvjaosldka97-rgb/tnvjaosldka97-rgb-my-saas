@@ -124,10 +124,10 @@ export function PageView({ slug }: { slug: string }) {
       </main>
 
       <footer className="page-view-footer">
-        <a href={homeUrl()}>Landing</a>
-        <a href={adminUrl()}>Admin Console</a>
-        <a href="/api/public/pages">Pages API</a>
-        <a href="https://github.com/johunsang/my-saas" target="_blank" rel="noreferrer">GitHub</a>
+        <a href={homeUrl()}>홈으로</a>
+        <a href="/pages/contact">문의</a>
+        <a href="/pages/terms">이용약관</a>
+        <a href="/pages/privacy">개인정보처리방침</a>
       </footer>
     </div>
   )
