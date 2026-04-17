@@ -45,7 +45,7 @@ export function LPHowItWorks() {
           <span className="oc-section-eyebrow">이용 가이드</span>
           <h2>복잡한 대행사 선정, 4단계로 끝냅니다.</h2>
           <p className="oc-section-sub">
-            직접 연락하고 견적 받고 비교하던 일을 모두 OnlyUp Compare가 대신합니다.
+            직접 연락하고 견적 받고 비교하던 일을 모두 마케팅천재가 대신합니다.
           </p>
         </div>
 

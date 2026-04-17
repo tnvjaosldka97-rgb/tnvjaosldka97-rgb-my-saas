@@ -1,4 +1,4 @@
-/* === Design Tokens (OnlyUp Compare — shared palette with landing .onlyup-scope) === */
+/* === Design Tokens (마케팅천재 — shared palette with landing .onlyup-scope) === */
 :root {
   --oc-navy: #0B1E3F;
   --oc-royal: #1D4ED8;
@@ -77,25 +77,24 @@ button, input, textarea { font: inherit; }
 
 .sidebar-brand h1 {
   margin: 12px 0 0;
-  font-size: 1.15rem;
-  letter-spacing: -0.025em;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  font-size: 1.25rem;
+  letter-spacing: -0.035em;
   font-weight: 800;
   color: var(--oc-navy);
 }
+.brand-wordmark { letter-spacing: -0.04em; }
 .brand-mark {
-  width: 26px;
+  width: 32px;
   height: 26px;
   border-radius: 7px;
   background: linear-gradient(135deg, var(--oc-navy), var(--oc-royal));
   display: inline-grid;
   place-items: center;
   color: #fff;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 900;
-  letter-spacing: 0.02em;
+  letter-spacing: -0.02em;
+  padding: 0 3px;
 }
 .nav-icon-svg {
   opacity: 0.75;
@@ -628,7 +627,7 @@ button, input, textarea { font: inherit; }
 }
 
 /* ============================================================================
-   Market Panel (OnlyUp Compare 슈퍼 어드민 — Sprint C3)
+   Market Panel (마케팅천재 슈퍼 어드민 — Sprint C3)
 ============================================================================ */
 .market-panel { display: flex; flex-direction: column; gap: 18px; }
 

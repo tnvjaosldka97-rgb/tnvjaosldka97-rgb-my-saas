@@ -66,7 +66,7 @@ export function LoginPage() {
 
             <div className="oc-brand-stack">
               <span className="oc-brand-sub">광고대행사 매칭 플랫폼</span>
-              <span className="oc-brand-main">OnlyUp Compare</span>
+              <span className="oc-brand-main">마케팅천재</span>
             </div>
 
             <form onSubmit={onSubmit} className="oc-auth-form">
