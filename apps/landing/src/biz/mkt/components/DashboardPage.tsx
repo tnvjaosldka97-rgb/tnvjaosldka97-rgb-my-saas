@@ -162,6 +162,7 @@ function AdvertiserView({ name }: { name: string }) {
         <aside className="oc-dash-side-col" aria-label="최근 활동">
           <h3 className="oc-dash-side-title"><Bell size={15} strokeWidth={2} aria-hidden /> 최근 활동</h3>
           <ActivityTimeline items={noti.items} loading={noti.loading} />
+          <WeeklyChart items={projects} label="지난 7주 프로젝트 등록" />
         </aside>
       </section>
 
@@ -310,6 +311,7 @@ function AgencyView({ name }: { name: string }) {
         <aside className="oc-dash-side-col" aria-label="최근 활동">
           <h3 className="oc-dash-side-title"><Bell size={15} strokeWidth={2} aria-hidden /> 최근 활동</h3>
           <ActivityTimeline items={noti.items} loading={noti.loading} />
+          <WeeklyChart items={applications} label="지난 7주 지원 내역" />
         </aside>
       </section>
     </>
@@ -434,6 +436,53 @@ function FunnelViz({ steps, active, onStep }: {
 }
 
 type NotiItem = ReturnType<typeof useNotifications>['items'][number]
+
+function WeeklyChart({ items, label = '지난 7주 활동' }: { items: Array<{ createdAt: string }>; label?: string }) {
+  const now = Date.now()
+  const weekMs = 7 * 24 * 3600 * 1000
+  const buckets = Array.from({ length: 7 }, (_, i) => {
+    const end = now - i * weekMs
+    const start = end - weekMs
+    const count = items.filter((p) => {
+      const t = new Date(p.createdAt).getTime()
+      return t >= start && t < end
+    }).length
+    return { idx: i, count }
+  }).reverse()
+  const max = Math.max(1, ...buckets.map((b) => b.count))
+
+  return (
+    <div className="oc-dash-chart-card">
+      <h3 className="oc-dash-side-title">{label}</h3>
+      <svg viewBox="0 0 280 120" className="oc-dash-chart" role="img" aria-label={label}>
+        <defs>
+          <linearGradient id="oc-bar-g" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#1D4ED8" />
+            <stop offset="1" stopColor="#3B82F6" />
+          </linearGradient>
+        </defs>
+        {buckets.map((b, i) => {
+          const x = i * 38 + 14
+          const h = Math.max(2, (b.count / max) * 80)
+          const y = 90 - h
+          return (
+            <g key={i}>
+              <rect x={x} y={y} width={26} height={h} fill="url(#oc-bar-g)" rx={4} />
+              {b.count > 0 && (
+                <text x={x + 13} y={y - 4} textAnchor="middle" fontSize="9" fill="#0B1E3F" fontWeight={700}>
+                  {b.count}
+                </text>
+              )}
+              <text x={x + 13} y={106} textAnchor="middle" fontSize="9" fill="#94A3B8">
+                {i === 6 ? '이번주' : `${6 - i}주전`}
+              </text>
+            </g>
+          )
+        })}
+      </svg>
+    </div>
+  )
+}
 
 function ActivityTimeline({ items, loading }: { items: NotiItem[]; loading: boolean }) {
   if (loading) return <div className="oc-timeline-empty">불러오는 중…</div>

@@ -68,6 +68,7 @@ export function createApp() {
   app.use('/api/auth/login', rateLimit({ maxRequests: 10, windowSeconds: 60 }))
   app.use('/api/auth/github', rateLimit({ maxRequests: 10, windowSeconds: 60 }))
   app.use('/api/public/leads', rateLimit({ maxRequests: 5, windowSeconds: 60 }))
+  app.use('/api/public/project-drafts', rateLimit({ maxRequests: 3, windowSeconds: 60 }))
   app.use('/api/admin/email/send', rateLimit({ maxRequests: 10, windowSeconds: 60 }))
   app.use('/api/admin/ai/*', rateLimit({ maxRequests: 20, windowSeconds: 60 }))
 

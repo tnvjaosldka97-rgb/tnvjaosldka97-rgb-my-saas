@@ -1,9 +1,11 @@
 import './landing-page.css'
 import { LPHeader } from './components/LPHeader'
 import { LPHero } from './components/LPHero'
+import { LPHotProjects } from './components/LPHotProjects'
 import { LPLiveTicker } from './components/LPLiveTicker'
 import { LPProjectGrid } from './components/LPProjectGrid'
 import { LPTrustedAgencies } from './components/LPTrustedAgencies'
+import { LPPricing } from './components/LPPricing'
 import { LPHowItWorks } from './components/LPHowItWorks'
 import { LPLeadStart } from './components/LPLeadStart'
 import { LPPartner } from './components/LPPartner'
@@ -18,9 +20,11 @@ export function LandingPage() {
       <LPHeader />
       <main>
         <LPHero />
+        <LPHotProjects />
         <LPLiveTicker />
         <LPProjectGrid />
         <LPTrustedAgencies />
+        <LPPricing />
         <LPHowItWorks />
         <LPLeadStart />
         <LPPartner />

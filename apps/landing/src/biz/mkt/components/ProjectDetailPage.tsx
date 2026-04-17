@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { MessageCircle, ArrowLeft } from 'lucide-react'
 import type { MarketProject, MarketProjectDetail, ProjectApplication, BudgetType } from '@my-saas/com'
+import { useProjects } from '../hooks/useProjects'
 import { LPHeader } from '../../../components/LPHeader'
 import { LPFooter } from '../../../components/LPFooter'
 import { useProjectDetail } from '../hooks/useProjectDetail'
@@ -308,6 +309,37 @@ function ProjectDetailLayout({ project }: { project: MarketProjectDetail }) {
           onClose={() => setConsultOpen(false)}
         />
       )}
+
+      <div className="oc-detail-col-main" style={{ gridColumn: '1 / -1', marginTop: 24 }}>
+        <SimilarProjects currentId={project.id} industry={project.industry} />
+      </div>
     </div>
+  )
+}
+
+function SimilarProjects({ currentId, industry }: { currentId: number; industry: string }) {
+  const { projects, loading } = useProjects({ sort: 'latest' })
+  if (loading) return null
+  const similar = projects
+    .filter((p) => p.id !== currentId && p.industry === industry && (p.status === 'recruiting' || p.status === 'closing'))
+    .slice(0, 3)
+  if (similar.length === 0) return null
+
+  return (
+    <section className="oc-detail-similar" aria-label="비슷한 프로젝트">
+      <h3>같은 업종의 최근 프로젝트</h3>
+      <div className="oc-detail-similar-grid">
+        {similar.map((p) => (
+          <a key={p.id} href={`/project/${p.id}`} className="oc-similar-card">
+            <span className="oc-similar-industry" style={{ color: p.industryColor }}>{p.industry}</span>
+            <h4>{p.title}</h4>
+            <div className="oc-similar-meta">
+              <span>월 {p.budgetMin.toLocaleString('ko-KR')}만원~</span>
+              <span>지원자 {p.applicantCount}</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
   )
 }
