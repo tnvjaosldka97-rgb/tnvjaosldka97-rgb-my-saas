@@ -13,7 +13,7 @@
     "build:admin": "pnpm --filter @my-saas/admin build:cloudflare",
     "check": "pnpm --recursive run check",
     "test": "pnpm --filter @my-saas/worker test",
-    "deploy:staging": "pnpm build && pnpm --filter @my-saas/worker db:migrate:remote:staging && pnpm --filter @my-saas/worker deploy:staging",
-    "deploy:prod": "pnpm build && pnpm --filter @my-saas/worker db:migrate:remote && pnpm --filter @my-saas/worker deploy"
+    "deploy:staging": "pnpm build && pnpm --filter @my-saas/worker run db:migrate:remote:staging && pnpm --filter @my-saas/worker run deploy:staging",
+    "deploy:prod": "pnpm build && pnpm --filter @my-saas/worker run db:migrate:remote && pnpm --filter @my-saas/worker run deploy"
   }
 }

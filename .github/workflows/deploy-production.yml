@@ -37,12 +37,12 @@ jobs:
       - name: Build
         run: pnpm build
       - name: D1 migrations (remote)
-        run: pnpm --filter @my-saas/worker db:migrate:remote
+        run: pnpm --filter @my-saas/worker run db:migrate:remote
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       - name: Deploy to Cloudflare Workers
-        run: pnpm --filter @my-saas/worker deploy
+        run: pnpm --filter @my-saas/worker run deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
