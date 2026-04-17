@@ -146,6 +146,69 @@ publicRoutes.get('/projects/:id', async (c) => {
   return c.json({ project, quotes: [] })
 })
 
+publicRoutes.get('/recent-activity', async (c) => {
+  type QuoteRow = {
+    id: number; created_at: string; agency_name: string; project_title: string
+    industry: string; price_min: number
+  }
+  type ReviewRow = {
+    id: number; created_at: string; agency_name: string; project_title: string; rating: number
+  }
+
+  const quotesRes = await c.env.DB
+    .prepare(
+      `SELECT q.id, q.created_at, q.price_min,
+              a.name AS agency_name,
+              p.title AS project_title, p.industry
+         FROM quotes q
+         JOIN agencies a ON a.id = q.agency_id
+         JOIN projects p ON p.id = q.project_id
+        ORDER BY q.created_at DESC
+        LIMIT 14`,
+    )
+    .all<QuoteRow>()
+
+  const reviewsRes = await c.env.DB
+    .prepare(
+      `SELECT r.id, r.created_at, r.rating,
+              a.name AS agency_name,
+              p.title AS project_title
+         FROM reviews r
+         JOIN agencies a ON a.id = r.agency_id
+         JOIN projects p ON p.id = r.project_id
+        ORDER BY r.created_at DESC
+        LIMIT 6`,
+    )
+    .all<ReviewRow>()
+
+  const combined = [
+    ...(quotesRes.results ?? []).map((q) => ({
+      id: `q-${q.id}`,
+      kind: 'quote' as const,
+      at: q.created_at,
+      agencyName: q.agency_name,
+      projectTitle: q.project_title,
+      industry: q.industry,
+      priceMin: q.price_min,
+      rating: null,
+    })),
+    ...(reviewsRes.results ?? []).map((r) => ({
+      id: `r-${r.id}`,
+      kind: 'review' as const,
+      at: r.created_at,
+      agencyName: r.agency_name,
+      projectTitle: r.project_title,
+      industry: '',
+      priceMin: 0,
+      rating: r.rating,
+    })),
+  ]
+    .sort((a, b) => (a.at < b.at ? 1 : -1))
+    .slice(0, 12)
+
+  return c.json({ items: combined })
+})
+
 publicRoutes.get('/agencies/:slug', async (c) => {
   const slug = c.req.param('slug')
   const agencyRow = await c.env.DB

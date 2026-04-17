@@ -123,10 +123,21 @@ function AgencyContent({ agency, reviews }: { agency: PublicAgencyDetail; review
 
       <section className="oc-agency-cta">
         <div>
-          <h3>이 파트너와 협업해보고 싶다면</h3>
-          <p>관심 있는 프로젝트에 직접 상담을 요청해보세요.</p>
+          <h3>{agency.name}과 협업해보고 싶다면</h3>
+          <p>
+            프로젝트를 등록하면 {agency.name}을 포함한 검증 대행사가 자동으로 매칭되어 견적을 제출합니다.
+            평균 <strong>28시간</strong> 안에 첫 견적이 도착합니다.
+          </p>
+          <ul className="oc-agency-cta-steps">
+            <li>1&nbsp;· 프로젝트 1분 등록 (무료)</li>
+            <li>2&nbsp;· 검증 파트너가 자동 매칭</li>
+            <li>3&nbsp;· 가격·일정·실적 한 화면에서 비교</li>
+          </ul>
         </div>
-        <a href="/#market" className="oc-btn oc-btn-primary oc-btn-lg">관련 프로젝트 보기</a>
+        <div className="oc-agency-cta-actions">
+          <a href="/project/create" className="oc-btn oc-btn-primary oc-btn-lg">새 프로젝트 등록 →</a>
+          <a href="/#market" className="oc-btn oc-btn-outline oc-btn-sm">지금 진행 중인 프로젝트 보기</a>
+        </div>
       </section>
     </>
   )

@@ -156,8 +156,9 @@ export function LPProjectGrid() {
             {filtered.map((p) => {
               const d = dday(p.daysLeft, p.status)
               const statusMeta = STATUS_META[p.status]
+              const peek = computePeek(p)
               return (
-                <a key={p.id} href={`/project/${p.id}`} className="oc-project-card" aria-label={`${p.title} 자세히 보기`}>
+                <a key={p.id} href={`/project/${p.id}`} className="oc-project-card" data-peek={peek} aria-label={`${p.title} 자세히 보기`}>
                   <div className="oc-project-art-wrap">
                     <IndustryArt industry={p.industry} color={p.industryColor} title={p.title} />
                     {p.verifiedOnly && <span className="oc-verified-stamp" title="인증 대행사만 지원 가능">✓ 인증</span>}
@@ -203,6 +204,16 @@ export function LPProjectGrid() {
       </div>
     </section>
   )
+}
+
+function computePeek(p: MarketProject): string {
+  if (p.status === 'closing') return `D-${p.daysLeft} · 마감 임박 · 지원자 ${p.applicantCount}명`
+  if (p.status === 'in_progress') return `광고 집행 중 · 파트너 선정 완료`
+  if (p.status === 'completed') return `프로젝트 완료 · 리뷰 공개됨`
+  // recruiting (기본)
+  if (p.applicantCount >= 6) return `지원자 ${p.applicantCount}명 · 경쟁률 높은 프로젝트`
+  if (p.applicantCount >= 3) return `견적 ${p.applicantCount}건 도착 · 평균 응답 28시간`
+  return `견적 대기 중 · 평균 응답 28시간 · 초기 진입 기회`
 }
 
 function ProjectCardSkeleton() {
