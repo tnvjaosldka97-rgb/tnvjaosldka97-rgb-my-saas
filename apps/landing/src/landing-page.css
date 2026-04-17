@@ -188,6 +188,14 @@
   pointer-events: none;
   z-index: 0;
 }
+@media (max-width: 639px) {
+  .oc-hero::after {
+    right: -40%;
+    width: 220px;
+    height: 220px;
+    filter: blur(32px);
+  }
+}
 
 /* Hot/Ticker도 Hero 그라데이션의 여운으로 자연스럽게 */
 .oc-hot, .oc-section-ticker {
