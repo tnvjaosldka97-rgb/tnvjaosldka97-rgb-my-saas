@@ -87,38 +87,30 @@ function HeroIllustration() {
         </filter>
       </defs>
 
-      {/* 배경 부드러운 블롭 */}
-      <circle cx="360" cy="60" r="110" fill="url(#hero-blob-blue)" />
-      <circle cx="70" cy="280" r="120" fill="url(#hero-blob-amber)" />
-      <circle cx="380" cy="280" r="70" fill="url(#hero-blob-blue)" />
+      {/* 배경 부드러운 블롭 — 네이비 톤 단일화 */}
+      <circle cx="360" cy="60" r="120" fill="url(#hero-blob-blue)" opacity="0.75" />
+      <circle cx="80" cy="280" r="100" fill="url(#hero-blob-blue)" opacity="0.5" />
 
-      {/* 우상단 성과 배지 */}
+      {/* 우상단 성과 배지 — 네이비 톤으로 변경 (신뢰) */}
       <g filter="url(#hero-shadow-sm)" transform="translate(296 14)">
-        <rect width="126" height="34" rx="17" fill="url(#hero-pill-mint)" />
-        <circle cx="17" cy="17" r="5" fill="white" fillOpacity="0.95" />
-        <path d="M14 17l2 2 4-4" fill="none" stroke="#059669" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        <text x="30" y="21" fill="white" fontSize="11" fontWeight="800" letterSpacing="-0.02em">검증 완료 · 15곳</text>
-      </g>
-
-      {/* sparkles */}
-      <g fill="#F59E0B" opacity="0.85">
-        <path d="M22 80l2 4 4 2-4 2-2 4-2-4-4-2 4-2z" />
-        <path d="M420 160l1.5 3 3 1.5-3 1.5-1.5 3-1.5-3-3-1.5 3-1.5z" />
-        <path d="M148 22l1.2 2.4 2.4 1.2-2.4 1.2-1.2 2.4-1.2-2.4-2.4-1.2 2.4-1.2z" />
+        <rect width="126" height="34" rx="17" fill="white" stroke="#E2E8F0" />
+        <circle cx="17" cy="17" r="7" fill="#0B1E3F" />
+        <path d="M14 17l2 2 4-4" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <text x="30" y="21" fill="#0B1E3F" fontSize="11" fontWeight="800" letterSpacing="-0.02em">검증 완료 · 15곳</text>
       </g>
 
       {/* 메인 카드 — 프로젝트 */}
       <g filter="url(#hero-shadow-md)" transform="translate(56 58)">
         <rect width="272" height="164" rx="18" fill="url(#hero-card)" stroke="#E2E8F0" strokeWidth="1" />
-        {/* status row */}
+        {/* status row — 단일 블루 톤 */}
         <rect x="20" y="22" width="62" height="20" rx="5" fill="#DBEAFE" />
         <circle cx="30" cy="32" r="3" fill="#1D4ED8" />
         <text x="38" y="36" fill="#1E40AF" fontSize="10" fontWeight="800">모집중</text>
-        <rect x="88" y="22" width="48" height="20" rx="5" fill="#FEF3C7" />
-        <text x="112" y="36" fill="#B45309" fontSize="10" fontWeight="800" textAnchor="middle">D-9</text>
-        {/* industry icon */}
-        <rect x="222" y="18" width="32" height="32" rx="8" fill="#EF4444" fillOpacity="0.12" />
-        <path d="M232 26v16M238 26v16M246 26v8c0 2 2 3 4 3" stroke="#EF4444" strokeWidth="2" strokeLinecap="round" />
+        <rect x="88" y="22" width="48" height="20" rx="5" fill="#F1F5F9" />
+        <text x="112" y="36" fill="#475569" fontSize="10" fontWeight="800" textAnchor="middle">D-9</text>
+        {/* industry icon — 중성 gray tone (업종 아이콘이므로 구분만) */}
+        <rect x="222" y="18" width="32" height="32" rx="8" fill="#F1F5F9" />
+        <path d="M232 26v16M238 26v16M246 26v8c0 2 2 3 4 3" stroke="#475569" strokeWidth="2" strokeLinecap="round" />
         {/* title */}
         <text x="20" y="72" fill="#0B1E3F" fontSize="15" fontWeight="800" letterSpacing="-0.02em">프리미엄 한우 · 6개월</text>
         <text x="20" y="90" fill="#64748B" fontSize="11.5">월 예산 480 ~ 620만원 · 외식</text>
@@ -145,14 +137,14 @@ function HeroIllustration() {
         {/* name + verified */}
         <text x="58" y="28" fill="#0B1E3F" fontSize="12.5" fontWeight="800">오로라 미디어</text>
         <g transform="translate(148 18)">
-          <rect width="36" height="14" rx="7" fill="#D1FAE5" />
-          <path d="M8 7l2 2 4-4" fill="none" stroke="#059669" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          <text x="26" y="10.5" fill="#047857" fontSize="8.5" fontWeight="800" textAnchor="middle">인증</text>
+          <rect width="36" height="14" rx="7" fill="#DBEAFE" />
+          <path d="M8 7l2 2 4-4" fill="none" stroke="#1E40AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <text x="26" y="10.5" fill="#1E40AF" fontSize="8.5" fontWeight="800" textAnchor="middle">인증</text>
         </g>
         <text x="58" y="42" fill="#64748B" fontSize="10">★ 4.8 · 완료 42건 · 외식/병원</text>
-        {/* tiny mini chart */}
-        <polyline points="14,70 30,66 46,62 62,58 78,54 94,52 110,48 126,46 142,44 158,40" fill="none" stroke="url(#hero-bar-amber)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        <circle cx="158" cy="40" r="3" fill="#F59E0B" stroke="white" strokeWidth="2" />
+        {/* tiny mini chart — royal 단일 톤 */}
+        <polyline points="14,70 30,66 46,62 62,58 78,54 94,52 110,48 126,46 142,44 158,40" fill="none" stroke="url(#hero-bar-royal)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="158" cy="40" r="3" fill="#1D4ED8" stroke="white" strokeWidth="2" />
       </g>
 
       {/* 응답시간 배지 */}
