@@ -97,6 +97,7 @@ type Overview = {
   avgRating: number
   totalDrafts?: number
   pendingDrafts?: number
+  weeklyProjects?: number[]
   industryDistribution: Array<{ industry: string; count: number }>
   recentActivity: Array<{ kind: string; label: string; at: string }>
 }
@@ -124,6 +125,13 @@ function OverviewTab() {
         <KpiBox title="지원서" primary={data.totalApplications} sub={`검토 대기 ${data.pendingApplications}`} tone="amber" />
         <KpiBox title="상담 요청" primary={data.totalConsultations} sub={`미응대 ${data.pendingConsultations}`} tone="mint" />
       </div>
+
+      {data.weeklyProjects && data.weeklyProjects.length === 7 && (
+        <section className="market-card">
+          <h3>지난 7주 프로젝트 등록</h3>
+          <WeeklyBarChart buckets={data.weeklyProjects} />
+        </section>
+      )}
 
       <div className="market-grid-2">
         <section className="market-card">
@@ -162,6 +170,36 @@ function OverviewTab() {
         </section>
       </div>
     </div>
+  )
+}
+
+function WeeklyBarChart({ buckets }: { buckets: number[] }) {
+  const max = Math.max(1, ...buckets)
+  return (
+    <svg viewBox="0 0 420 140" className="market-chart" role="img" aria-label="지난 7주 프로젝트 등록 분포">
+      <defs>
+        <linearGradient id="mkt-bar-g" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#1D4ED8" />
+          <stop offset="1" stopColor="#3B82F6" />
+        </linearGradient>
+      </defs>
+      {buckets.map((count, i) => {
+        const x = i * 56 + 22
+        const h = Math.max(3, (count / max) * 94)
+        const y = 108 - h
+        return (
+          <g key={i}>
+            <rect x={x} y={y} width={38} height={h} rx={5} fill="url(#mkt-bar-g)" />
+            {count > 0 && (
+              <text x={x + 19} y={y - 5} textAnchor="middle" fontSize="10.5" fill="#0B1E3F" fontWeight={800}>{count}</text>
+            )}
+            <text x={x + 19} y={126} textAnchor="middle" fontSize="10" fill="#94A3B8">
+              {i === 6 ? '이번주' : `${6 - i}주전`}
+            </text>
+          </g>
+        )
+      })}
+    </svg>
   )
 }
 

@@ -1226,6 +1226,12 @@ button, input, textarea { font: inherit; }
   margin-right: 4px;
   cursor: pointer;
 }
+.market-chart {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 .market-draft-card.is-selected {
   background: #EFF6FF;
   border-color: var(--oc-royal);

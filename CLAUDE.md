@@ -137,6 +137,15 @@ Browser
 0008_guide_pricing       요금제 가이드 seed
 0009_pricing_guide_page  요금제 가이드 페이지 보강
 0010_ai_dev_guide        AI 개발 가이드 seed
+0011_replace_cms_with_onlyup  CMS 페이지 → OnlyUp Compare 페이지 4종으로 교체
+0012_market_schema       projects/agencies/quotes/consultations/reviews + 시드
+0013_market_auth         market_users + 인증 컬럼
+0014_applications        project_applications + OAuth identities + project.stage
+0015_notifications_reviews  notifications + project_reviews
+0016_onlyup_brand_and_legal_pages  site_settings OnlyUp + 약관/개인정보/사업자정보 페이지
+0017_rich_campaign_seeds  agencies +10 / projects +30 / quotes·reviews·consultations 풍부화
+0018_enrich_agencies     agencies에 founded_year/region/team_size/avg_response_hour/portfolio_note/case_studies 6필드 추가
+0019_project_drafts      비회원 프로젝트 접수 → 슈퍼어드민 승인 큐 테이블
 ```
 
 주요 테이블: `site_settings`(싱글톤), `leads`, `lead_tags`, `lead_notes`, `media_assets`, `email_templates`, `email_logs`, `pages`, `admin_users`, `access_logs`, `api_logs`.

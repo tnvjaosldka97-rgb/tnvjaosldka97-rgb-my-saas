@@ -100,6 +100,7 @@ export type MarketOverviewMetrics = {
   avgRating: number
   totalDrafts: number
   pendingDrafts: number
+  weeklyProjects: number[] // 7 buckets, index 0 = 6주전, index 6 = 이번주
   industryDistribution: Array<{ industry: string; count: number }>
   recentActivity: Array<{ kind: string; label: string; at: string }>
 }
@@ -482,6 +483,20 @@ export async function adminMarketOverview(db: D1DatabaseLike): Promise<MarketOve
 
   const reviews = await db.prepare(`SELECT COUNT(*) AS total FROM reviews`).first<{ total: number }>()
 
+  // 지난 7주 프로젝트 등록 bucket
+  const weeklyRes = await allRows<{ age: number }>(
+    db.prepare(
+      `SELECT CAST((julianday('now') - julianday(created_at)) AS INTEGER) AS age
+         FROM projects
+        WHERE julianday('now') - julianday(created_at) < 49`,
+    ),
+  ).catch(() => [])
+  const weeklyProjects = Array<number>(7).fill(0)
+  for (const row of weeklyRes) {
+    const week = 6 - Math.min(6, Math.floor(row.age / 7))
+    if (week >= 0 && week <= 6) weeklyProjects[week]++
+  }
+
   const distRows = await allRows<{ industry: string; cnt: number }>(
     db.prepare(`SELECT industry, COUNT(*) AS cnt FROM projects GROUP BY industry ORDER BY cnt DESC`),
   )
@@ -522,6 +537,7 @@ export async function adminMarketOverview(db: D1DatabaseLike): Promise<MarketOve
     avgRating: Math.round(((agencies?.avg_rating ?? 0)) * 10) / 10,
     totalDrafts: drafts?.total ?? 0,
     pendingDrafts: drafts?.pending ?? 0,
+    weeklyProjects,
     industryDistribution: distRows.map((d) => ({ industry: d.industry, count: d.cnt })),
     recentActivity: activity,
   }
