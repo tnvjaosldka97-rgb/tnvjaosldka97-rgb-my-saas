@@ -67,6 +67,11 @@ export function LPHeader() {
         </nav>
 
         <div className="oc-header-cta-group">
+          <a href="/search" className="oc-header-search" aria-label="전체 검색">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+          </a>
           {!loading && user ? (
             <>
               <div className="oc-noti-wrap" ref={notiRef}>
@@ -101,6 +106,9 @@ export function LPHeader() {
                         </li>
                       ))}
                     </ul>
+                    {noti.items.length > 0 && (
+                      <a href="/notifications" className="oc-noti-footer">전체 알림 보기 →</a>
+                    )}
                   </div>
                 )}
               </div>

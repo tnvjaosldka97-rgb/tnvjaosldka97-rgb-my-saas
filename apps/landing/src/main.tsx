@@ -13,6 +13,8 @@ import { CreateProjectPage } from './biz/mkt/components/CreateProjectPage'
 import { SubmitQuotePage } from './biz/mkt/components/SubmitQuotePage'
 import { NotFoundPage } from './biz/mkt/components/NotFoundPage'
 import { AgencyDetailPage } from './biz/mkt/components/AgencyDetailPage'
+import { NotificationsPage } from './biz/mkt/components/NotificationsPage'
+import { SearchPage } from './biz/mkt/components/SearchPage'
 import { ToastProvider } from './com/ui/Toast'
 import { ErrorBoundary } from './com/ui/ErrorBoundary'
 import { isSaas } from './com/url'
@@ -51,6 +53,11 @@ function Router() {
   if (path === '/login') return <LoginPage />
   if (path === '/register') return <RegisterPage />
   if (path === '/dashboard') return <DashboardPage />
+  if (path === '/notifications') return <NotificationsPage />
+  if (path === '/search') {
+    const q = new URLSearchParams(window.location.search).get('q') ?? ''
+    return <SearchPage initialQuery={q} />
+  }
   if (path === '/quotes/compare') {
     const initialId = new URLSearchParams(window.location.search).get('projectId')
     return <QuoteComparePage initialProjectId={initialId ? Number.parseInt(initialId, 10) : undefined} />
