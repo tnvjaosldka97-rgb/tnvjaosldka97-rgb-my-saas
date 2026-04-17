@@ -273,8 +273,9 @@ export async function createQuote(
       userId,
     )
     .run()
+  // NOTE: applicant_count는 createApplication에서만 증가시킴. quote는 apply 이후 단계라 중복 카운트 방지.
   await db
-    .prepare('UPDATE projects SET applicant_count = applicant_count + 1, updated_at = ?1 WHERE id = ?2')
+    .prepare('UPDATE projects SET updated_at = ?1 WHERE id = ?2')
     .bind(now, projectId)
     .run()
 }
