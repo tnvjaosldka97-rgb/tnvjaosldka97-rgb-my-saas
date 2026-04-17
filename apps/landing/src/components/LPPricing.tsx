@@ -1,113 +1,75 @@
-import { Check, Sparkles } from 'lucide-react'
+import { CheckCircle2, RotateCcw, BadgeCheck } from 'lucide-react'
 
-type Plan = {
-  name: string
-  subtitle: string
-  price: string
-  priceSuffix?: string
-  features: string[]
-  cta: { label: string; href: string }
-  highlight?: 'free' | 'popular' | 'pro'
+type PolicyItem = {
+  tag: string
+  amount: string
+  sub: string
+  detail: string
+  accent: 'amber' | 'royal' | 'mint'
+  Icon: typeof CheckCircle2
 }
 
-const PLANS: Plan[] = [
+const POLICY: PolicyItem[] = [
   {
-    name: '광고주',
-    subtitle: '언제나 무료',
-    price: '₩0',
-    features: [
-      '프로젝트 등록 · 견적 수신 무제한',
-      '대행사 15곳+ 자동 매칭',
-      '가격·일정·실적 한 화면 비교',
-      '계약 및 리뷰 작성',
-      '운영팀 분쟁 중재',
-    ],
-    cta: { label: '프로젝트 1분 등록', href: '/#lead-start' },
-    highlight: 'free',
+    tag: '광고주 등록비',
+    amount: '₩10,000',
+    sub: '노쇼 방지금 · 계약 성사 시 전액 환불',
+    detail: '매칭만 받고 연락이 끊기는 사례를 방지하기 위한 최소 안전장치입니다. 실제 계약이 성사되면 등록비를 그대로 돌려드립니다.',
+    accent: 'amber',
+    Icon: RotateCcw,
   },
   {
-    name: 'Partner',
-    subtitle: '대행사 활성 플랜',
-    price: '₩49,000',
-    priceSuffix: '/ 월',
-    features: [
-      '월 무제한 견적 제출',
-      '상위 노출 가중치',
-      '광고주 사전 알림 (등록 직후)',
-      '전용 운영 담당자',
-      '실적 · 리뷰 자동 누적',
-    ],
-    cta: { label: '파트너 지원', href: '/register?as=agency' },
-    highlight: 'popular',
+    tag: '플랫폼 성공 수수료',
+    amount: '10%',
+    sub: '성사된 계약 금액 한정 · 광고주 청구',
+    detail: '계약이 실제 체결된 경우에만 부과됩니다. 대행사 지원·견적 제출·상담 단계에서는 어떠한 비용도 발생하지 않습니다.',
+    accent: 'royal',
+    Icon: CheckCircle2,
   },
   {
-    name: 'Partner Plus',
-    subtitle: '전문 영역 플랜',
-    price: '₩149,000',
-    priceSuffix: '/ 월',
-    features: [
-      'Partner 모든 기능 포함',
-      '독점 카테고리 제안권',
-      'API 연동 (CRM · 분석 툴)',
-      '맞춤 리포트 · 인사이트',
-      '전담 계정 매니저',
-    ],
-    cta: { label: '파트너 문의', href: '/pages/contact' },
-    highlight: 'pro',
+    tag: '대행사 참여',
+    amount: '무료',
+    sub: '월정액 · 수주 수수료 모두 0원',
+    detail: '검증 심사만 통과하면 별도 비용 없이 모든 프로젝트에 지원·수주할 수 있습니다. 실적·리뷰가 쌓일수록 상위에 노출됩니다.',
+    accent: 'mint',
+    Icon: BadgeCheck,
   },
 ]
 
 export function LPPricing() {
   return (
-    <section id="pricing" className="oc-section oc-section-pricing">
+    <section id="pricing" className="oc-section oc-section-policy">
       <div className="oc-container">
-        <div className="oc-pricing-head">
-          <span className="oc-section-eyebrow">요금 안내</span>
-          <h2>광고주는 무료, 대행사는 실적이 쌓이는 만큼 커집니다.</h2>
+        <div className="oc-policy-head">
+          <span className="oc-section-eyebrow">요금 정책</span>
+          <h2>숨은 수수료 없이, 성사된 계약에만 과금합니다.</h2>
           <p className="oc-section-sub">
-            숨은 수수료 없이, 모든 요금과 혜택을 투명하게 공개합니다. 언제든 변경·해지할 수 있습니다.
+            광고주는 노쇼 방지금 1만원만 선결제, 계약 성사 시 전액 환불됩니다.
+            마케팅천재야는 체결된 계약 금액의 10%만 성공 수수료로 받습니다.
           </p>
         </div>
 
-        <div className="oc-pricing-grid">
-          {PLANS.map((p) => (
-            <article
-              key={p.name}
-              className={`oc-plan oc-plan-${p.highlight ?? 'free'}${p.highlight === 'popular' ? ' is-popular' : ''}`}
-            >
-              {p.highlight === 'popular' && (
-                <span className="oc-plan-badge">
-                  <Sparkles size={11} strokeWidth={2.4} aria-hidden /> 가장 인기
-                </span>
-              )}
-              <header className="oc-plan-head">
-                <h3>{p.name}</h3>
-                <p>{p.subtitle}</p>
-              </header>
-              <div className="oc-plan-price">
-                <strong>{p.price}</strong>
-                {p.priceSuffix && <span>{p.priceSuffix}</span>}
-              </div>
-              <ul className="oc-plan-features">
-                {p.features.map((f) => (
-                  <li key={f}>
-                    <Check size={13} strokeWidth={2.4} aria-hidden /> {f}
-                  </li>
-                ))}
-              </ul>
-              <a
-                href={p.cta.href}
-                className={`oc-btn ${p.highlight === 'popular' ? 'oc-btn-primary' : 'oc-btn-outline'} oc-btn-block`}
-              >
-                {p.cta.label}
-              </a>
-            </article>
-          ))}
+        <div className="oc-policy-grid">
+          {POLICY.map((p) => {
+            const Icon = p.Icon
+            return (
+              <article key={p.tag} className={`oc-policy-card oc-policy-${p.accent}`}>
+                <div className="oc-policy-icon" aria-hidden><Icon size={18} strokeWidth={2.2} /></div>
+                <span className="oc-policy-tag">{p.tag}</span>
+                <span className="oc-policy-amount">{p.amount}</span>
+                <span className="oc-policy-sub">{p.sub}</span>
+                <p className="oc-policy-detail">{p.detail}</p>
+              </article>
+            )
+          })}
         </div>
 
-        <div className="oc-pricing-note">
-          <strong>부가세 별도 · 월 단위 구독 · 언제든 해지</strong>
-          <span>엔터프라이즈(연 단위 · 채널 제휴 · 다수 계정)는 <a href="/pages/contact">별도 문의</a>로 확인해주세요.</span>
+        <div className="oc-policy-note">
+          <strong>결제 방식</strong>
+          <span>
+            등록비는 네이버페이·카카오페이·계좌이체로 선결제 · 성공 수수료는 계약 체결 후 익월 정산 ·
+            세금계산서는 법인/사업자 요청 시 발행합니다.
+          </span>
         </div>
       </div>
     </section>

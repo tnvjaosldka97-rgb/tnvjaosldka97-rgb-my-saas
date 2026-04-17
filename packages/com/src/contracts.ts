@@ -337,6 +337,8 @@ export type MarketProject = {
   verifiedOnly: boolean
   daysLeft: number
   closesAt: string | null
+  /** 카드 대문 이미지 URL (Unsplash 또는 업로드 이미지). null 이면 SVG fallback */
+  imageUrl: string | null
   createdAt: string
 }
 
@@ -348,6 +350,8 @@ export type MarketProjectDetail = MarketProject & {
   /** 업종별 대표 메뉴·시술·상품 리스트 (예: 외식=메뉴명, 병원=시술명, 커머스=상품명) */
   menuItems: string[]
 }
+
+// MarketProject에 imageUrl 필드 추가 (카드 대문 사진)
 
 export type MarketAgency = {
   id: number

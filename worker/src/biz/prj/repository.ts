@@ -40,6 +40,7 @@ type ProjectRow = {
   timeline: string | null
   closes_at: string | null
   menu_items: string | null
+  image_url: string | null
   created_at: string
   updated_at: string
 }
@@ -104,6 +105,7 @@ function mapProjectCard(row: ProjectRow): MarketProject {
     verifiedOnly: row.verified_only === 1,
     daysLeft: row.days_left,
     closesAt: row.closes_at,
+    imageUrl: row.image_url,
     createdAt: row.created_at,
   }
 }
@@ -472,6 +474,7 @@ export async function listApplicationsByAgency(
       timeline: r.timeline,
       closes_at: r.closes_at,
       menu_items: null,
+      image_url: null,
       created_at: r.p_created_at,
       updated_at: r.updated_at,
     }

@@ -160,7 +160,7 @@ export function LPProjectGrid() {
               return (
                 <a key={p.id} href={`/project/${p.id}`} className="oc-project-card" data-peek={peek} aria-label={`${p.title} 자세히 보기`}>
                   <div className="oc-project-art-wrap">
-                    <IndustryArt industry={p.industry} color={p.industryColor} title={p.title} />
+                    <IndustryArt industry={p.industry} color={p.industryColor} title={p.title} imageUrl={p.imageUrl} />
                     {p.verifiedOnly && <span className="oc-verified-stamp" title="인증 대행사만 지원 가능">✓ 인증</span>}
                     {d && <span className="oc-dday-stamp">{d}</span>}
                     <div className="oc-project-art-overlay">

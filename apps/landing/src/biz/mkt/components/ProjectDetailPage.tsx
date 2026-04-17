@@ -158,7 +158,7 @@ function ProjectDetailLayout({ project }: { project: MarketProjectDetail }) {
           </header>
 
           <div className="oc-detail-cover">
-            <IndustryArt industry={project.industry} color={project.industryColor} title={project.title} className="oc-detail-cover-art" />
+            <IndustryArt industry={project.industry} color={project.industryColor} title={project.title} imageUrl={project.imageUrl} className="oc-detail-cover-art" />
           </div>
 
           <h2 className="oc-detail-title">{project.title}</h2>

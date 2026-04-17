@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   UtensilsCrossed, Wine, Coffee,
   Stethoscope, HeartPulse, Pill,
@@ -13,6 +14,7 @@ type Props = {
   industry: string
   color: string
   title: string
+  imageUrl?: string | null
   className?: string
 }
 
@@ -54,10 +56,8 @@ function SceneBackground({ kind, accent }: { kind: SceneKind; accent: string }) 
   const soft = hexToRgba(accent, 0.18)
   const faint = hexToRgba(accent, 0.09)
 
-  // 업종별 배경 패턴 SVG
   return (
     <svg className="oc-art-scene" viewBox="0 0 200 150" preserveAspectRatio="xMidYMid slice" aria-hidden>
-      {/* layer 1: 강한 그라디언트 */}
       <defs>
         <radialGradient id={`art-bg-a-${kind}`} cx="80%" cy="0%" r="80%">
           <stop offset="0" stopColor={strong} />
@@ -78,10 +78,8 @@ function SceneBackground({ kind, accent }: { kind: SceneKind; accent: string }) 
 
       {kind === 'food' && (
         <>
-          {/* wave: 소스 흐름 */}
           <path d="M-10 120 Q 40 100, 80 118 T 160 112 T 220 118" fill="none" stroke={soft} strokeWidth="2.5" />
           <path d="M-10 135 Q 40 115, 80 132 T 160 126 T 220 132" fill="none" stroke={faint} strokeWidth="2" />
-          {/* dot: 들깨/후추 */}
           {[[30, 40], [150, 20], [175, 65], [40, 90], [110, 35]].map(([x, y], i) => (
             <circle key={i} cx={x} cy={y} r="1.8" fill={strong} opacity={0.5} />
           ))}
@@ -89,12 +87,10 @@ function SceneBackground({ kind, accent }: { kind: SceneKind; accent: string }) 
       )}
       {kind === 'medical' && (
         <>
-          {/* heartbeat line */}
           <polyline
             points="-5,90 20,90 26,75 34,105 42,85 50,90 70,90 76,70 84,110 92,85 100,90 200,90"
             fill="none" stroke={strong} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity="0.7"
           />
-          {/* grid cross */}
           <g stroke={faint} strokeWidth="1">
             <path d="M0 30 L200 30" />
             <path d="M0 120 L200 120" />
@@ -103,13 +99,11 @@ function SceneBackground({ kind, accent }: { kind: SceneKind; accent: string }) 
       )}
       {kind === 'beauty' && (
         <>
-          {/* sparkle petals */}
           {[[30, 30], [165, 25], [40, 110], [170, 100], [100, 130]].map(([x, y], i) => (
             <g key={i} transform={`translate(${x} ${y})`}>
               <path d="M0 -6 L1.8 -1.8 L6 0 L1.8 1.8 L0 6 L-1.8 1.8 L-6 0 L-1.8 -1.8 Z" fill={strong} opacity={0.45} />
             </g>
           ))}
-          {/* soft dot */}
           {[[60, 55], [140, 80], [90, 95]].map(([x, y], i) => (
             <circle key={`d-${i}`} cx={x} cy={y} r="2" fill={soft} />
           ))}
@@ -117,19 +111,16 @@ function SceneBackground({ kind, accent }: { kind: SceneKind; accent: string }) 
       )}
       {kind === 'edu' && (
         <>
-          {/* diagonal lines: 공책 */}
           <g stroke={soft} strokeWidth="1">
             {Array.from({ length: 10 }).map((_, i) => (
               <path key={i} d={`M${-20 + i * 24} 160 L${10 + i * 24} 0`} />
             ))}
           </g>
-          {/* 책갈피 dot */}
           <circle cx="170" cy="30" r="3" fill={strong} opacity="0.6" />
         </>
       )}
       {kind === 'commerce' && (
         <>
-          {/* 상승 차트 bar + 번개 */}
           <g fill={soft}>
             <rect x="20" y="105" width="6" height="18" rx="1" />
             <rect x="32" y="98" width="6" height="25" rx="1" />
@@ -142,7 +133,6 @@ function SceneBackground({ kind, accent }: { kind: SceneKind; accent: string }) 
       )}
       {kind === 'service' && (
         <>
-          {/* dot grid */}
           <g fill={soft}>
             {Array.from({ length: 7 }).map((_, row) =>
               Array.from({ length: 12 }).map((_, col) => (
@@ -150,13 +140,11 @@ function SceneBackground({ kind, accent }: { kind: SceneKind; accent: string }) 
               ))
             )}
           </g>
-          {/* 연결선 */}
           <path d="M30 120 Q 100 80, 170 120" fill="none" stroke={strong} strokeWidth="1.6" strokeDasharray="3 4" opacity="0.55" />
         </>
       )}
       {kind === 'other' && (
         <>
-          {/* 추상 기하 */}
           <g stroke={soft} strokeWidth="1" fill="none">
             <circle cx="40" cy="30" r="22" />
             <circle cx="170" cy="115" r="30" />
@@ -165,35 +153,48 @@ function SceneBackground({ kind, accent }: { kind: SceneKind; accent: string }) 
         </>
       )}
 
-      {/* 하단 브랜드 그라디언트 라인 */}
       <rect x="0" y="146" width="200" height="4" fill={`url(#art-stripe-${kind})`} />
     </svg>
   )
 }
 
-export function IndustryArt({ industry, color, className }: Props) {
+export function IndustryArt({ industry, color, imageUrl, title, className }: Props) {
   const def = INDUSTRY_MAP[industry] ?? DEFAULTS
   const accent = color && color.startsWith('#') ? color : def.accent
   const { Main, SubA, SubB } = def
+  const [imgFailed, setImgFailed] = useState(false)
+  const showPhoto = Boolean(imageUrl) && !imgFailed
 
   return (
-    <div className={`oc-art oc-art-v3 ${className ?? ''}`.trim()} aria-hidden>
-      <SceneBackground kind={def.kind} accent={accent} />
-
-      {/* 좌상단 보조 아이콘 (희미) */}
-      <span className="oc-art-sub oc-art-sub-a" style={{ color: hexToRgba(accent, 0.35) }}>
-        <SubA size={22} strokeWidth={1.6} />
-      </span>
-
-      {/* 우하단 보조 아이콘 (희미) */}
-      <span className="oc-art-sub oc-art-sub-b" style={{ color: hexToRgba(accent, 0.35) }}>
-        <SubB size={18} strokeWidth={1.6} />
-      </span>
-
-      {/* 중앙 메인 아이콘 카드 */}
-      <div className="oc-art-icon-wrap" style={{ color: accent }}>
-        <Main size={58} strokeWidth={1.6} />
-      </div>
+    <div className={`oc-art oc-art-v3 ${showPhoto ? 'oc-art-photo' : ''} ${className ?? ''}`.trim()} aria-hidden>
+      {showPhoto ? (
+        <>
+          <img
+            src={imageUrl ?? undefined}
+            alt={title}
+            loading="lazy"
+            decoding="async"
+            className="oc-art-img"
+            onError={() => setImgFailed(true)}
+          />
+          {/* 업종 색 accent 오버레이 — 사진 위에 브랜드 톤 */}
+          <span className="oc-art-img-overlay" style={{ background: `linear-gradient(180deg, ${hexToRgba(accent, 0)} 40%, ${hexToRgba(accent, 0.28)} 100%)` }} aria-hidden />
+          <span className="oc-art-stripe" style={{ background: accent }} aria-hidden />
+        </>
+      ) : (
+        <>
+          <SceneBackground kind={def.kind} accent={accent} />
+          <span className="oc-art-sub oc-art-sub-a" style={{ color: hexToRgba(accent, 0.35) }}>
+            <SubA size={22} strokeWidth={1.6} />
+          </span>
+          <span className="oc-art-sub oc-art-sub-b" style={{ color: hexToRgba(accent, 0.35) }}>
+            <SubB size={18} strokeWidth={1.6} />
+          </span>
+          <div className="oc-art-icon-wrap" style={{ color: accent }}>
+            <Main size={58} strokeWidth={1.6} />
+          </div>
+        </>
+      )}
     </div>
   )
 }
