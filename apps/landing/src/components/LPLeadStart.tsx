@@ -39,27 +39,56 @@ export function LPLeadStart() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (state === 'submitting') return
+
+    // 클라이언트 측 검증 — 빈 필드가 서버까지 가서 ZodError 뜨는 것을 미리 차단
+    const missing: string[] = []
+    if (!form.requesterName.trim()) missing.push('성함 또는 회사명')
+    if (!form.industry) missing.push('업종')
+    if (!form.marketing) missing.push('원하는 마케팅')
+    if (!form.budget) missing.push('월 예산')
+    const contactDigits = form.contact.replace(/\D/g, '').length
+    if (!form.contact.trim()) missing.push('연락처')
+
+    if (missing.length > 0) {
+      const msg = `${missing[0]}을(를) 입력해주세요.`
+      setErrorMessage(msg)
+      setState('error')
+      toast.error(msg)
+      return
+    }
+    if (contactDigits < 9) {
+      const msg = '연락처를 010-0000-0000 형식으로 입력해주세요.'
+      setErrorMessage(msg)
+      setState('error')
+      toast.error(msg)
+      return
+    }
+
     setState('submitting')
     setErrorMessage(null)
     try {
       await apiFetch('/api/public/project-drafts', {
         method: 'POST',
         body: JSON.stringify({
-          requesterName: form.requesterName || '간편 등록',
-          requesterContact: form.contact,
+          requesterName: form.requesterName.trim(),
+          requesterContact: form.contact.trim(),
           industry: form.industry,
           marketingType: form.marketing,
           budgetRange: form.budget,
-          message: form.message || '',
+          message: form.message.trim() || '',
         }),
       })
       setState('done')
       toast.success('프로젝트 초안이 접수되었습니다. 운영팀 검토 후 24시간 내 공개됩니다.')
     } catch (err) {
-      const msg = err instanceof Error ? err.message : '전송에 실패했습니다. 잠시 후 다시 시도해주세요.'
-      setErrorMessage(msg)
+      const raw = err instanceof Error ? err.message : '전송에 실패했습니다. 잠시 후 다시 시도해주세요.'
+      // 서버 ZodError 응답일 때 이용자에게 친숙하게 변환
+      const friendly = raw.includes('ZodError')
+        ? '입력값을 다시 확인해주세요. 업종·마케팅 유형·예산·연락처·성함이 모두 필요합니다.'
+        : raw
+      setErrorMessage(friendly)
       setState('error')
-      toast.error(msg)
+      toast.error(friendly)
     }
   }
 
