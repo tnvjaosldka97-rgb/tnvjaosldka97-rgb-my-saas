@@ -345,6 +345,8 @@ export type MarketProjectDetail = MarketProject & {
   advertiserName: string | null
   timeline: string | null
   updatedAt: string
+  /** 업종별 대표 메뉴·시술·상품 리스트 (예: 외식=메뉴명, 병원=시술명, 커머스=상품명) */
+  menuItems: string[]
 }
 
 export type MarketAgency = {

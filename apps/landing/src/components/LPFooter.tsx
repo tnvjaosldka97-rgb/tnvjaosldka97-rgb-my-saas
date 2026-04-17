@@ -21,8 +21,8 @@ export function LPFooter() {
     <footer className="oc-footer">
       <div className="oc-container">
         <div className="oc-footer-top">
-          <a href="/" className="oc-logo oc-footer-logo" aria-label="마케팅천재 홈">
-            <strong className="oc-logo-wordmark">마케팅천재</strong>
+          <a href="/" className="oc-logo oc-footer-logo" aria-label="마케팅천재야 홈">
+            <strong className="oc-logo-wordmark">마케팅천재야</strong>
           </a>
           <nav className="oc-footer-links" aria-label="주요 메뉴">
             {PRIMARY_LINKS.map((l) => <a key={l.label} href={l.href}>{l.label}</a>)}
@@ -42,7 +42,7 @@ export function LPFooter() {
 
         <div className="oc-footer-biz">
           <div>
-            <strong>(주)마케팅천재</strong>
+            <strong>(주)마케팅천재야</strong>
             <span>대표 · 운영 시점에 공지</span>
             <span>사업자등록번호 · 운영 시점에 공지</span>
             <span>통신판매업 신고번호 · 운영 시점에 공지</span>
@@ -55,9 +55,9 @@ export function LPFooter() {
         </div>
 
         <div className="oc-footer-bottom">
-          <span>© 2026 마케팅천재(MCY). All rights reserved.</span>
+          <span>© 2026 마케팅천재야(MCY). All rights reserved.</span>
           <span className="oc-footer-note">
-            마케팅천재는 광고주-대행사 간 중개 플랫폼으로, 개별 계약의 당사자가 아닙니다.
+            마케팅천재야는 광고주-대행사 간 중개 플랫폼으로, 개별 계약의 당사자가 아닙니다.
             이메일 무단수집을 거부하며 위반 시 정보통신망법에 의해 처벌됩니다.
           </span>
         </div>

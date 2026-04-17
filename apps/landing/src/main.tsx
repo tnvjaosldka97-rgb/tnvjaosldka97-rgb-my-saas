@@ -91,7 +91,7 @@ function Router() {
 createRoot(document.getElementById('app')!).render(
   <StrictMode>
     <ToastProvider>
-      <ErrorBoundary appName="마케팅천재">
+      <ErrorBoundary appName="마케팅천재야">
         <Router />
       </ErrorBoundary>
     </ToastProvider>

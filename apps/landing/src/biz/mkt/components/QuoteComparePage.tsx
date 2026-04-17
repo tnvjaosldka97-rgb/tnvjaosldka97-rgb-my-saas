@@ -14,7 +14,7 @@ export function QuoteComparePage({ initialProjectId }: { initialProjectId?: numb
           <div className="oc-auth-card">
             <h1>견적서는 공개되지 않습니다</h1>
             <p className="oc-auth-sub">
-              마케팅천재는 <strong>오픈 입찰</strong> 모델로 운영됩니다.
+              마케팅천재야는 <strong>오픈 입찰</strong> 모델로 운영됩니다.
               프로젝트에 지원한 대행사의 견적서는 <strong>비공개</strong>이며, 광고주가 지원자를 검토한 뒤 선정된 파트너에게만 공개됩니다.
             </p>
             <ul className="oc-cta-perks" style={{ marginTop: 14, marginBottom: 20 }}>

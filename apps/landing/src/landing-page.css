@@ -1,4 +1,4 @@
-/* === 마케팅천재 (MCY) Landing ===
+/* === 마케팅천재야 (MCY) Landing ===
    구조: Header / Hero(미니) / Filter+Card Grid / Modal / Footer
    팔레트: Navy #0B1E3F · Royal #1D4ED8 · Amber #F59E0B · Off-white #F8FAFC
 */
@@ -2740,6 +2740,53 @@
   width: 100%;
   height: auto;
   display: block;
+}
+
+/* === 프로젝트 대표 메뉴/상품/시술 === */
+.oc-detail-menu h3 {
+  margin: 0 0 14px;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--oc-navy);
+}
+.oc-menu-chips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px 10px;
+}
+.oc-menu-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #F8FAFC;
+  border: 1px solid var(--oc-gray-100);
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--oc-gray-900);
+  font-weight: 500;
+  transition: border-color 160ms, background 160ms, transform 160ms;
+}
+.oc-menu-chip:hover {
+  border-color: var(--oc-royal-soft);
+  background: white;
+  transform: translateY(-1px);
+}
+.oc-menu-chip-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--oc-royal);
+  opacity: 0.55;
+  flex-shrink: 0;
+}
+@media (max-width: 767px) {
+  .oc-menu-chips { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 479px) {
+  .oc-menu-chips { grid-template-columns: 1fr; }
 }
 
 /* === ProjectDetail Polish === */

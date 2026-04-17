@@ -107,7 +107,7 @@ function AuthenticatedAdmin({ email, logout }: { email: string; logout: () => Pr
       <aside className={`admin-sidebar${sidebarOpen ? ' open' : ''}`}>
         <div className="sidebar-brand">
           <span className="brand-badge">Super Admin</span>
-          <h1 className="brand-wordmark">마케팅천재</h1>
+          <h1 className="brand-wordmark">마케팅천재야</h1>
         </div>
 
         <nav className="sidebar-nav">

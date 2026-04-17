@@ -1,4 +1,4 @@
-/* === Design Tokens (마케팅천재 — shared palette with landing .onlyup-scope) === */
+/* === Design Tokens (마케팅천재야 — shared palette with landing .onlyup-scope) === */
 :root {
   --oc-navy: #0B1E3F;
   --oc-royal: #1D4ED8;
@@ -627,7 +627,7 @@ button, input, textarea { font: inherit; }
 }
 
 /* ============================================================================
-   Market Panel (마케팅천재 슈퍼 어드민 — Sprint C3)
+   Market Panel (마케팅천재야 슈퍼 어드민 — Sprint C3)
 ============================================================================ */
 .market-panel { display: flex; flex-direction: column; gap: 18px; }
 

@@ -223,6 +223,23 @@ function ProjectDetailLayout({ project }: { project: MarketProjectDetail }) {
 
           <hr className="oc-detail-divider" />
 
+          {project.menuItems && project.menuItems.length > 0 && (
+            <>
+              <section className="oc-detail-menu">
+                <h3>대표 메뉴 · 제공 아이템</h3>
+                <ul className="oc-menu-chips">
+                  {project.menuItems.map((m, i) => (
+                    <li key={i} className="oc-menu-chip">
+                      <span className="oc-menu-chip-dot" aria-hidden />
+                      {m}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+              <hr className="oc-detail-divider" />
+            </>
+          )}
+
           <section className="oc-detail-description">
             <h3>프로젝트 설명</h3>
             <p>{project.description}</p>

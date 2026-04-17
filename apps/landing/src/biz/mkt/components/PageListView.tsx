@@ -23,7 +23,7 @@ export function PageListView() {
         <div className="oc-container">
           <header className="oc-pagelist-header">
             <span className="oc-section-eyebrow">공식 문서</span>
-            <h1>마케팅천재 가이드 & 정책</h1>
+            <h1>마케팅천재야 가이드 & 정책</h1>
             <p>이용 안내, 요금, 법적 고지 등 모든 공식 문서를 한곳에서 확인하세요.</p>
             <div className="oc-pagelist-meta">총 <strong>{pages.length}</strong>개 문서</div>
           </header>

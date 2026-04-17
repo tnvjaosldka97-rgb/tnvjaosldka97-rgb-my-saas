@@ -39,6 +39,7 @@ type ProjectRow = {
   advertiser_name: string | null
   timeline: string | null
   closes_at: string | null
+  menu_items: string | null
   created_at: string
   updated_at: string
 }
@@ -114,6 +115,7 @@ function mapProjectDetail(row: ProjectRow): MarketProjectDetail {
     advertiserName: row.advertiser_name,
     timeline: row.timeline,
     updatedAt: row.updated_at,
+    menuItems: parseJsonArray(row.menu_items ?? '[]'),
   }
 }
 
@@ -469,6 +471,7 @@ export async function listApplicationsByAgency(
       advertiser_name: r.advertiser_name,
       timeline: r.timeline,
       closes_at: r.closes_at,
+      menu_items: null,
       created_at: r.p_created_at,
       updated_at: r.updated_at,
     }

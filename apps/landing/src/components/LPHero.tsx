@@ -53,7 +53,7 @@ export function LPHero() {
 
 function HeroIllustration() {
   return (
-    <svg viewBox="0 0 440 340" xmlns="http://www.w3.org/2000/svg" className="oc-hero-illus" role="img" aria-label="마케팅천재 서비스 요약 일러스트">
+    <svg viewBox="0 0 440 340" xmlns="http://www.w3.org/2000/svg" className="oc-hero-illus" role="img" aria-label="마케팅천재야 서비스 요약 일러스트">
       <defs>
         <radialGradient id="hero-blob-blue" cx="50%" cy="50%" r="50%">
           <stop offset="0" stopColor="#1D4ED8" stopOpacity="0.25" />

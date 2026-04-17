@@ -42,8 +42,8 @@ export function LPHeader() {
   return (
     <header className="oc-header">
       <div className="oc-container oc-header-inner">
-        <a href="/" className="oc-logo" aria-label="마케팅천재 홈">
-          <strong className="oc-logo-wordmark">마케팅천재</strong>
+        <a href="/" className="oc-logo" aria-label="마케팅천재야 홈">
+          <strong className="oc-logo-wordmark">마케팅천재야</strong>
         </a>
 
         <nav className="oc-nav" aria-label="주요 메뉴">

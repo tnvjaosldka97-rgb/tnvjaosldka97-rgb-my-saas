@@ -137,7 +137,7 @@ Browser
 0008_guide_pricing       요금제 가이드 seed
 0009_pricing_guide_page  요금제 가이드 페이지 보강
 0010_ai_dev_guide        AI 개발 가이드 seed
-0011_replace_cms_with_onlyup  CMS 페이지 → OnlyUp Compare 페이지 4종으로 교체
+0011_replace_cms_with_onlyup  CMS 페이지 → 마케팅천재야 페이지 4종으로 교체
 0012_market_schema       projects/agencies/quotes/consultations/reviews + 시드
 0013_market_auth         market_users + 인증 컬럼
 0014_applications        project_applications + OAuth identities + project.stage
