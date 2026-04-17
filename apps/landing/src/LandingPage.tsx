@@ -7,6 +7,8 @@ import { LPTrustedAgencies } from './components/LPTrustedAgencies'
 import { LPHowItWorks } from './components/LPHowItWorks'
 import { LPLeadStart } from './components/LPLeadStart'
 import { LPPartner } from './components/LPPartner'
+import { LPFaq } from './components/LPFaq'
+import { LPFinalCta } from './components/LPFinalCta'
 import { LPFooter } from './components/LPFooter'
 import { LPAnnouncementModal } from './components/LPAnnouncementModal'
 
@@ -22,6 +24,8 @@ export function LandingPage() {
         <LPHowItWorks />
         <LPLeadStart />
         <LPPartner />
+        <LPFaq />
+        <LPFinalCta />
       </main>
       <LPFooter />
       <LPAnnouncementModal />
