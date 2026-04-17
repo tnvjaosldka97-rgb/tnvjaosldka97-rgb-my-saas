@@ -947,3 +947,68 @@ button, input, textarea { font: inherit; }
 @media (max-width: 639px) {
   .market-kpis { grid-template-columns: 1fr 1fr; gap: 8px; }
 }
+
+/* ============================================================================
+   Admin Toast (Sprint D++)
+============================================================================ */
+.admin-toast-stack {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 8px;
+  z-index: 9999;
+  max-width: calc(100vw - 40px);
+  width: 360px;
+}
+.admin-toast {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 30px rgba(11, 30, 63, 0.14), 0 2px 6px rgba(11, 30, 63, 0.06);
+  font-size: 13px;
+  color: var(--text-primary);
+  animation: admin-toast-in 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.admin-toast::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: 0;
+  height: 3px;
+  background: currentColor;
+  opacity: 0.35;
+  animation: admin-toast-bar linear forwards;
+  transform-origin: left;
+}
+.admin-toast-success { border-left: 3px solid #10B981; color: #047857; }
+.admin-toast-error   { border-left: 3px solid #DC2626; color: #991B1B; }
+.admin-toast-info    { border-left: 3px solid var(--oc-royal); color: var(--oc-royal); }
+.admin-toast-warn    { border-left: 3px solid var(--oc-amber); color: #B45309; }
+.admin-toast-icon { flex-shrink: 0; margin-top: 1px; }
+.admin-toast-msg { flex: 1; color: var(--text-primary); line-height: 1.5; }
+.admin-toast-close {
+  flex-shrink: 0;
+  width: 22px; height: 22px;
+  display: grid; place-items: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  border-radius: 4px;
+  transition: background 160ms, color 160ms;
+}
+.admin-toast-close:hover { background: rgba(11, 30, 63, 0.06); color: var(--text-primary); }
+@keyframes admin-toast-in {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes admin-toast-bar {
+  from { width: 100%; }
+  to   { width: 0%; }
+}

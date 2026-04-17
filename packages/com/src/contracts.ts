@@ -28,9 +28,28 @@ export type LeadRecord = {
   createdAt: string
 }
 
+export type MarketSummary = {
+  activeProjects: number
+  verifiedAgencies: number
+  totalQuotes: number
+  avgFirstQuoteHour: number
+  avgRating: number
+  totalIndustries: number
+  recentAgencies: Array<{
+    id: number
+    slug: string
+    name: string
+    verified: boolean
+    rating: number
+    completedProjects: number
+    specialties: string[]
+  }>
+}
+
 export type PublicMetrics = {
   totalLeads: number
   totalMedia: number
+  market: MarketSummary | null
   updatedAt: string
 }
 

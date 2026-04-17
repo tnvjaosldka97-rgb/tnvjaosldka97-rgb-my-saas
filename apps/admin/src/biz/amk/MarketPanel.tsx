@@ -12,6 +12,7 @@ import {
   Trash2,
 } from 'lucide-react'
 import { apiFetch } from '../../com/api/client'
+import { useToast } from '../../com/ui/Toast'
 
 type Tab = 'overview' | 'projects' | 'agencies' | 'applications' | 'consultations' | 'reviews'
 
@@ -185,6 +186,7 @@ type Project = {
 }
 
 function ProjectsTab() {
+  const toast = useToast()
   const [items, setItems] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<string>('all')
@@ -198,11 +200,16 @@ function ProjectsTab() {
   useEffect(load, [])
 
   async function changeStage(id: number, stage: Project['stage']) {
-    await apiFetch(`/api/admin/market/projects/${id}/stage`, {
-      method: 'PATCH',
-      body: JSON.stringify({ stage }),
-    })
-    load()
+    try {
+      await apiFetch(`/api/admin/market/projects/${id}/stage`, {
+        method: 'PATCH',
+        body: JSON.stringify({ stage }),
+      })
+      toast.success(`프로젝트 #${id} 단계를 "${stage}"로 전환했습니다.`)
+      load()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : '단계 전환 실패')
+    }
   }
 
   const filtered = filter === 'all' ? items : items.filter((i) => i.stage === filter)
@@ -287,6 +294,7 @@ type Agency = {
 }
 
 function AgenciesTab() {
+  const toast = useToast()
   const [items, setItems] = useState<Agency[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -299,11 +307,16 @@ function AgenciesTab() {
   useEffect(load, [])
 
   async function toggleVerified(id: number, verified: boolean) {
-    await apiFetch(`/api/admin/market/agencies/${id}/verified`, {
-      method: 'PATCH',
-      body: JSON.stringify({ verified }),
-    })
-    load()
+    try {
+      await apiFetch(`/api/admin/market/agencies/${id}/verified`, {
+        method: 'PATCH',
+        body: JSON.stringify({ verified }),
+      })
+      toast.success(verified ? `대행사 #${id} 인증 승인` : `대행사 #${id} 인증 해제`)
+      load()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : '인증 상태 변경 실패')
+    }
   }
 
   return (
@@ -417,6 +430,7 @@ type Consultation = {
 }
 
 function ConsultationsTab() {
+  const toast = useToast()
   const [items, setItems] = useState<Consultation[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -429,11 +443,17 @@ function ConsultationsTab() {
   useEffect(load, [])
 
   async function setStatus(id: number, status: 'pending' | 'contacted' | 'closed') {
-    await apiFetch(`/api/admin/market/consultations/${id}/status`, {
-      method: 'PATCH',
-      body: JSON.stringify({ status }),
-    })
-    load()
+    try {
+      await apiFetch(`/api/admin/market/consultations/${id}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status }),
+      })
+      const labelMap = { pending: '대기', contacted: '연락 완료', closed: '종료' }
+      toast.success(`상담 #${id} 상태를 "${labelMap[status]}"로 변경`)
+      load()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : '상태 변경 실패')
+    }
   }
 
   if (loading) return <div className="market-skeleton">불러오는 중…</div>
@@ -481,6 +501,7 @@ type Review = {
 }
 
 function ReviewsTab() {
+  const toast = useToast()
   const [items, setItems] = useState<Review[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -494,8 +515,13 @@ function ReviewsTab() {
 
   async function remove(id: number) {
     if (!confirm('이 리뷰를 삭제하시겠습니까? 이 동작은 되돌릴 수 없습니다.')) return
-    await apiFetch(`/api/admin/market/reviews/${id}`, { method: 'DELETE' })
-    load()
+    try {
+      await apiFetch(`/api/admin/market/reviews/${id}`, { method: 'DELETE' })
+      toast.success(`리뷰 #${id} 삭제 완료`)
+      load()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : '리뷰 삭제 실패')
+    }
   }
 
   if (loading) return <div className="market-skeleton">불러오는 중…</div>

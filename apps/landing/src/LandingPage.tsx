@@ -2,6 +2,7 @@ import './landing-page.css'
 import { LPHeader } from './components/LPHeader'
 import { LPHero } from './components/LPHero'
 import { LPProjectGrid } from './components/LPProjectGrid'
+import { LPTrustedAgencies } from './components/LPTrustedAgencies'
 import { LPHowItWorks } from './components/LPHowItWorks'
 import { LPLeadStart } from './components/LPLeadStart'
 import { LPPartner } from './components/LPPartner'
@@ -15,6 +16,7 @@ export function LandingPage() {
       <main>
         <LPHero />
         <LPProjectGrid />
+        <LPTrustedAgencies />
         <LPHowItWorks />
         <LPLeadStart />
         <LPPartner />

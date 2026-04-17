@@ -11,6 +11,7 @@ import { RegisterPage } from './biz/mkt/components/RegisterPage'
 import { DashboardPage } from './biz/mkt/components/DashboardPage'
 import { CreateProjectPage } from './biz/mkt/components/CreateProjectPage'
 import { SubmitQuotePage } from './biz/mkt/components/SubmitQuotePage'
+import { NotFoundPage } from './biz/mkt/components/NotFoundPage'
 import { ToastProvider } from './com/ui/Toast'
 import { isSaas } from './com/url'
 import './styles.css'
@@ -65,8 +66,11 @@ function Router() {
     return <PageListView />
   }
 
-  // my-saas.com: 마케팅 랜딩
-  return <App />
+  // my-saas.com 루트: 마케팅 랜딩
+  if (path === '/') return <App />
+
+  // my-saas.com의 정의되지 않은 경로 — 404
+  return <NotFoundPage />
 }
 
 createRoot(document.getElementById('app')!).render(

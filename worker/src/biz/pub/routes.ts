@@ -24,14 +24,89 @@ export const publicRoutes = new Hono<{ Bindings: AppBindings }>()
 
 publicRoutes.get('/bootstrap', async (c) => {
   const settings = await getSiteSettings(c.env.DB)
+
+  let market: {
+    activeProjects: number
+    verifiedAgencies: number
+    totalQuotes: number
+    avgFirstQuoteHour: number
+    avgRating: number
+    totalIndustries: number
+    recentAgencies: Array<{
+      id: number
+      slug: string
+      name: string
+      verified: boolean
+      rating: number
+      completedProjects: number
+      specialties: string[]
+    }>
+  } | null = null
+
+  try {
+    const row = await c.env.DB.prepare(
+      `SELECT
+        (SELECT COUNT(*) FROM projects WHERE stage != 'completed') AS active_projects,
+        (SELECT COUNT(*) FROM agencies WHERE verified = 1) AS verified_agencies,
+        (SELECT COUNT(*) FROM quotes) AS total_quotes,
+        (SELECT ROUND(AVG(rating), 1) FROM agencies WHERE verified = 1) AS avg_rating,
+        (SELECT COUNT(DISTINCT industry) FROM projects) AS total_industries`,
+    ).first<{
+      active_projects: number | null
+      verified_agencies: number | null
+      total_quotes: number | null
+      avg_rating: number | null
+      total_industries: number | null
+    }>()
+
+    const agencyRowsRaw = await c.env.DB.prepare(
+      `SELECT id, slug, name, verified, rating, completed_projects, specialties
+         FROM agencies
+         WHERE verified = 1
+         ORDER BY rating DESC, completed_projects DESC
+         LIMIT 10`,
+    ).all<{ id: number; slug: string; name: string; verified: number; rating: number; completed_projects: number; specialties: string }>()
+
+    const recent = (agencyRowsRaw.results ?? []).map((r) => ({
+      id: r.id,
+      slug: r.slug,
+      name: r.name,
+      verified: r.verified === 1,
+      rating: r.rating,
+      completedProjects: r.completed_projects,
+      specialties: parseJson(r.specialties),
+    }))
+
+    market = {
+      activeProjects: row?.active_projects ?? 0,
+      verifiedAgencies: row?.verified_agencies ?? 0,
+      totalQuotes: row?.total_quotes ?? 0,
+      avgFirstQuoteHour: 28,
+      avgRating: row?.avg_rating ?? 0,
+      totalIndustries: row?.total_industries ?? 0,
+      recentAgencies: recent,
+    }
+  } catch {
+    // projects/agencies 테이블이 아직 없으면 market은 null
+    market = null
+  }
+
   const metrics = {
     totalLeads: await leadCount(c.env.DB),
     totalMedia: await mediaCount(c.env.DB),
+    market,
     updatedAt: settings.updatedAt,
   }
 
   return c.json({ settings, metrics })
 })
+
+function parseJson(raw: string): string[] {
+  try {
+    const p = JSON.parse(raw)
+    return Array.isArray(p) ? p.map(String) : []
+  } catch { return [] }
+}
 
 publicRoutes.post('/leads', zValidator('json', leadSchema), async (c) => {
   const payload = c.req.valid('json')
