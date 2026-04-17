@@ -58,6 +58,22 @@ export type AdminConsultationRow = {
   createdAt: string
 }
 
+export type AdminDraftRow = {
+  id: number
+  requesterName: string
+  requesterContact: string
+  industry: string
+  marketingType: string
+  budgetRange: string
+  message: string
+  status: string
+  submittedAt: string
+  reviewedAt: string | null
+  reviewedBy: string | null
+  approvedProjectId: number | null
+  rejectReason: string | null
+}
+
 export type AdminReviewRow = {
   id: number
   projectId: number
@@ -82,6 +98,8 @@ export type MarketOverviewMetrics = {
   pendingConsultations: number
   totalReviews: number
   avgRating: number
+  totalDrafts: number
+  pendingDrafts: number
   industryDistribution: Array<{ industry: string; count: number }>
   recentActivity: Array<{ kind: string; label: string; at: string }>
 }
@@ -271,6 +289,162 @@ export async function adminDeleteReview(db: D1DatabaseLike, id: number): Promise
 }
 
 // ============================================================================
+// Project Drafts (비회원 접수 → 슈퍼어드민 승인)
+// ============================================================================
+
+const INDUSTRY_COLOR: Record<string, string> = {
+  외식:   '#EF4444',
+  병원:   '#06B6D4',
+  뷰티:   '#EC4899',
+  학원:   '#6366F1',
+  커머스: '#F59E0B',
+  서비스: '#14B8A6',
+  기타:   '#64748B',
+}
+
+const BUDGET_RANGE_MAP: Record<string, { min: number; max: number | null }> = {
+  '월 100만원 이하':     { min: 50, max: 100 },
+  '월 100~300만원':      { min: 100, max: 300 },
+  '월 300~500만원':      { min: 300, max: 500 },
+  '월 500만원 이상':     { min: 500, max: 1500 },
+  '아직 정하지 못함':    { min: 100, max: 500 },
+}
+
+function slugifyForDraft(label: string, id: number): string {
+  const base = label
+    .toLowerCase()
+    .replace(/[^a-z0-9가-힣\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .slice(0, 40) || 'draft'
+  return `${base}-${id}-${Math.random().toString(36).slice(2, 6)}`
+}
+
+export async function adminListDrafts(
+  db: D1DatabaseLike,
+  statusFilter?: string,
+): Promise<AdminDraftRow[]> {
+  type Row = {
+    id: number; requester_name: string; requester_contact: string
+    industry: string; marketing_type: string; budget_range: string
+    message: string; status: string; submitted_at: string
+    reviewed_at: string | null; reviewed_by: string | null
+    approved_project_id: number | null; reject_reason: string | null
+  }
+  const where = statusFilter && statusFilter !== 'all' ? 'WHERE status = ?1' : ''
+  const stmt = db.prepare(
+    `SELECT id, requester_name, requester_contact, industry, marketing_type,
+            budget_range, message, status, submitted_at,
+            reviewed_at, reviewed_by, approved_project_id, reject_reason
+       FROM project_drafts
+       ${where}
+       ORDER BY submitted_at DESC
+       LIMIT 200`,
+  )
+  const bound = statusFilter && statusFilter !== 'all' ? stmt.bind(statusFilter) : stmt
+  const rows = await allRows<Row>(bound)
+  return rows.map((r) => ({
+    id: r.id,
+    requesterName: r.requester_name,
+    requesterContact: r.requester_contact,
+    industry: r.industry,
+    marketingType: r.marketing_type,
+    budgetRange: r.budget_range,
+    message: r.message,
+    status: r.status,
+    submittedAt: r.submitted_at,
+    reviewedAt: r.reviewed_at,
+    reviewedBy: r.reviewed_by,
+    approvedProjectId: r.approved_project_id,
+    rejectReason: r.reject_reason,
+  }))
+}
+
+export async function adminGetDraft(db: D1DatabaseLike, id: number): Promise<AdminDraftRow | null> {
+  const rows = await adminListDrafts(db)
+  return rows.find((r) => r.id === id) ?? null
+}
+
+export async function adminApproveDraft(
+  db: D1DatabaseLike,
+  id: number,
+  reviewer: string,
+): Promise<number> {
+  const draft = await adminGetDraft(db, id)
+  if (!draft) throw new Error('Draft not found')
+  if (draft.status !== 'pending') throw new Error('이미 처리된 초안입니다.')
+
+  const now = isoNow()
+  const industry = draft.industry
+  const industryColor = INDUSTRY_COLOR[industry] ?? '#64748B'
+  const budget = BUDGET_RANGE_MAP[draft.budgetRange] ?? { min: 200, max: 400 }
+  const title = `${industry} · ${draft.marketingType} — ${draft.requesterName}님 의뢰 프로젝트`
+  const description = draft.message.trim().length >= 20
+    ? draft.message
+    : `${industry} 업종의 ${draft.marketingType} 마케팅을 진행할 파트너를 찾고 있습니다. 예산 범위: ${draft.budgetRange}. 상세 조건은 접수 시 담당자가 요청자와 조율합니다.`
+
+  const slug = slugifyForDraft(draft.marketingType, id)
+  await db
+    .prepare(
+      `INSERT INTO projects (
+         slug, industry, industry_color, title, description,
+         marketing_types, hashtags, budget_min, budget_max, budget_type,
+         status, applicant_count, verified_only, days_left,
+         advertiser_name, timeline, closes_at, created_at, updated_at, user_id
+       ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, 'monthly',
+         'recruiting', 0, 0, 14, ?10, NULL, datetime('now','+14 days'), ?11, ?11, NULL)`,
+    )
+    .bind(
+      slug,
+      industry,
+      industryColor,
+      title,
+      description,
+      JSON.stringify([draft.marketingType]),
+      JSON.stringify([]),
+      budget.min,
+      budget.max,
+      draft.requesterName,
+      now,
+    )
+    .run()
+
+  const createdRow = await db
+    .prepare('SELECT id FROM projects WHERE slug = ?1 LIMIT 1')
+    .bind(slug)
+    .first<{ id: number }>()
+  const newProjectId = createdRow?.id ?? 0
+
+  await db
+    .prepare(
+      `UPDATE project_drafts
+         SET status = 'approved', reviewed_at = ?1, reviewed_by = ?2, approved_project_id = ?3
+       WHERE id = ?4`,
+    )
+    .bind(now, reviewer, newProjectId, id)
+    .run()
+
+  return newProjectId
+}
+
+export async function adminRejectDraft(
+  db: D1DatabaseLike,
+  id: number,
+  reviewer: string,
+  reason: string,
+): Promise<void> {
+  const now = isoNow()
+  await db
+    .prepare(
+      `UPDATE project_drafts
+         SET status = 'rejected', reviewed_at = ?1, reviewed_by = ?2, reject_reason = ?3
+       WHERE id = ?4 AND status = 'pending'`,
+    )
+    .bind(now, reviewer, reason, id)
+    .run()
+}
+
+// ============================================================================
 // Overview (KPI + distribution + activity)
 // ============================================================================
 
@@ -288,6 +462,13 @@ export async function adminMarketOverview(db: D1DatabaseLike): Promise<MarketOve
     `SELECT COUNT(*) AS total, SUM(CASE WHEN verified = 1 THEN 1 ELSE 0 END) AS verified, AVG(rating) AS avg_rating
      FROM agencies`,
   ).first<{ total: number; verified: number; avg_rating: number | null }>()
+
+  const drafts = await db.prepare(
+    `SELECT
+       SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) AS pending,
+       COUNT(*) AS total
+     FROM project_drafts`,
+  ).first<{ pending: number | null; total: number | null }>().catch(() => null)
 
   const apps = await db.prepare(
     `SELECT COUNT(*) AS total, SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) AS pending
@@ -339,6 +520,8 @@ export async function adminMarketOverview(db: D1DatabaseLike): Promise<MarketOve
     pendingConsultations: cons?.pending ?? 0,
     totalReviews: reviews?.total ?? 0,
     avgRating: Math.round(((agencies?.avg_rating ?? 0)) * 10) / 10,
+    totalDrafts: drafts?.total ?? 0,
+    pendingDrafts: drafts?.pending ?? 0,
     industryDistribution: distRows.map((d) => ({ industry: d.industry, count: d.cnt })),
     recentActivity: activity,
   }

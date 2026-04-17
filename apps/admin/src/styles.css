@@ -1084,3 +1084,130 @@ button, input, textarea { font: inherit; }
   color: white;
   border-color: var(--accent);
 }
+
+/* === Market Drafts tab === */
+.market-tab-badge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: #DC2626;
+  color: white;
+  font-size: 10.5px;
+  font-weight: 800;
+  border-radius: 999px;
+  margin-left: 3px;
+}
+.market-draft-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.market-draft-card {
+  padding: 16px 18px;
+  background: white;
+  border: 1px solid var(--border);
+  border-left: 3px solid #F59E0B;
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.market-draft-card.status-approved { border-left-color: #10B981; opacity: 0.75; }
+.market-draft-card.status-rejected { border-left-color: rgba(11, 30, 63, 0.3); opacity: 0.55; }
+.market-draft-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.market-draft-head > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.market-draft-id {
+  font-family: ui-monospace, "JetBrains Mono", monospace;
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+.market-draft-head strong {
+  font-size: 14px;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+.market-draft-contact {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: ui-monospace, "JetBrains Mono", monospace;
+}
+.market-draft-meta {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.market-draft-chip {
+  padding: 3px 9px;
+  background: rgba(11, 30, 63, 0.05);
+  color: var(--text-secondary);
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+.market-draft-msg {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-primary);
+  padding: 10px 12px;
+  background: rgba(11, 30, 63, 0.02);
+  border-radius: var(--radius-sm);
+}
+.market-draft-reject-note,
+.market-draft-approved-note {
+  margin: 0;
+  padding: 8px 12px;
+  font-size: 12px;
+  border-radius: var(--radius-sm);
+}
+.market-draft-reject-note {
+  background: #FEF2F2;
+  color: #991B1B;
+  border: 1px solid #FECACA;
+}
+.market-draft-approved-note {
+  background: #ECFDF5;
+  color: #047857;
+  border: 1px solid #A7F3D0;
+}
+.market-draft-approved-note a { color: #047857; font-weight: 700; text-decoration: underline; }
+.market-draft-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border);
+}
+.market-draft-footer time {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+.market-draft-actions {
+  display: flex;
+  gap: 6px;
+}
+.market-btn-approve {
+  background: #10B981;
+  color: white;
+  border-color: #10B981;
+}
+.market-btn-approve:hover {
+  background: #059669;
+  border-color: #059669;
+  color: white;
+}

@@ -1428,6 +1428,139 @@
   .oc-kpi-value { font-size: 18px; }
 }
 
+/* === AgencyDetail additions === */
+.oc-agency-info {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 28px;
+  margin: 0;
+  padding: 18px 20px;
+  background: #F8FAFC;
+  border: 1px solid var(--oc-gray-100);
+  border-radius: var(--oc-radius);
+}
+.oc-agency-info > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.oc-agency-info dt {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--oc-gray-500);
+  letter-spacing: -0.005em;
+}
+.oc-agency-info dd {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--oc-navy);
+  font-weight: 600;
+}
+.oc-agency-years {
+  color: var(--oc-royal);
+  font-weight: 500;
+}
+.oc-agency-portfolio-note {
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, rgba(29, 78, 216, 0.05), rgba(11, 30, 63, 0.02));
+  border: 1px solid rgba(29, 78, 216, 0.12);
+  border-left: 3px solid var(--oc-royal);
+  border-radius: var(--oc-radius);
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--oc-gray-700);
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.oc-agency-portfolio-note svg {
+  flex-shrink: 0;
+  color: var(--oc-royal);
+  margin-top: 1px;
+}
+
+.oc-agency-cases {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.oc-agency-case-card {
+  padding: 16px 18px;
+  background: white;
+  border: 1px solid var(--oc-gray-100);
+  border-radius: var(--oc-radius);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: transform 180ms cubic-bezier(0.4, 0, 0.2, 1), border-color 160ms;
+}
+.oc-agency-case-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--oc-royal-soft);
+}
+.oc-agency-case-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--oc-gray-500);
+}
+.oc-agency-case-industry {
+  padding: 2px 8px;
+  background: rgba(29, 78, 216, 0.1);
+  color: var(--oc-royal);
+  border-radius: 4px;
+  font-weight: 700;
+}
+.oc-agency-case-card h3 {
+  margin: 2px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--oc-navy);
+  letter-spacing: -0.015em;
+  line-height: 1.4;
+}
+.oc-agency-case-card p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--oc-gray-700);
+}
+@media (max-width: 959px) {
+  .oc-agency-cases { grid-template-columns: repeat(2, 1fr); }
+  .oc-agency-info { grid-template-columns: 1fr; gap: 10px; }
+}
+@media (max-width: 639px) {
+  .oc-agency-cases { grid-template-columns: 1fr; }
+}
+
+/* === Lead trust note === */
+.oc-lead-trust {
+  margin-top: 20px;
+  padding: 12px 14px;
+  background: rgba(29, 78, 216, 0.05);
+  border-left: 3px solid var(--oc-royal);
+  border-radius: 6px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--oc-gray-700);
+}
+.oc-lead-trust small {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--oc-gray-500);
+}
+
 /* === Error Boundary === */
 .oc-errbound {
   min-height: 100vh;

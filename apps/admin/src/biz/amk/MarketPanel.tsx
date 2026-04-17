@@ -10,16 +10,20 @@ import {
   X,
   RefreshCw,
   Trash2,
+  ClipboardList,
+  CheckCircle2,
+  XCircle,
 } from 'lucide-react'
 import { apiFetch } from '../../com/api/client'
 import { useToast } from '../../com/ui/Toast'
 
-type Tab = 'overview' | 'projects' | 'agencies' | 'applications' | 'consultations' | 'reviews'
+type Tab = 'overview' | 'drafts' | 'projects' | 'agencies' | 'applications' | 'consultations' | 'reviews'
 
-type TabDef = { key: Tab; label: string; Icon: typeof LayoutDashboard }
+type TabDef = { key: Tab; label: string; Icon: typeof LayoutDashboard; badge?: 'pending' }
 
 const TABS: TabDef[] = [
   { key: 'overview',      label: 'Overview',      Icon: LayoutDashboard },
+  { key: 'drafts',        label: '승인 대기',     Icon: ClipboardList, badge: 'pending' },
   { key: 'projects',      label: 'Projects',      Icon: Briefcase },
   { key: 'agencies',      label: 'Agencies',      Icon: BadgeCheck },
   { key: 'applications',  label: 'Applications',  Icon: Send },
@@ -29,6 +33,13 @@ const TABS: TabDef[] = [
 
 export function MarketPanel() {
   const [tab, setTab] = useState<Tab>('overview')
+  const [pendingCount, setPendingCount] = useState(0)
+
+  useEffect(() => {
+    void apiFetch<Overview>('/api/admin/market/overview')
+      .then((d) => setPendingCount(d.pendingDrafts ?? 0))
+      .catch(() => { /* ignore */ })
+  }, [tab]) // 탭 바뀔 때마다 카운트 갱신
 
   return (
     <section className="market-panel">
@@ -36,6 +47,7 @@ export function MarketPanel() {
         {TABS.map((t) => {
           const Icon = t.Icon
           const active = tab === t.key
+          const showBadge = t.badge === 'pending' && pendingCount > 0
           return (
             <button
               key={t.key}
@@ -47,6 +59,7 @@ export function MarketPanel() {
             >
               <Icon size={14} strokeWidth={2} aria-hidden />
               {t.label}
+              {showBadge && <span className="market-tab-badge">{pendingCount}</span>}
             </button>
           )
         })}
@@ -54,6 +67,7 @@ export function MarketPanel() {
 
       <div className="market-tab-panel">
         {tab === 'overview' && <OverviewTab />}
+        {tab === 'drafts' && <DraftsTab />}
         {tab === 'projects' && <ProjectsTab />}
         {tab === 'agencies' && <AgenciesTab />}
         {tab === 'applications' && <ApplicationsTab />}
@@ -81,6 +95,8 @@ type Overview = {
   pendingConsultations: number
   totalReviews: number
   avgRating: number
+  totalDrafts?: number
+  pendingDrafts?: number
   industryDistribution: Array<{ industry: string; count: number }>
   recentActivity: Array<{ kind: string; label: string; at: string }>
 }
@@ -171,6 +187,165 @@ function fmtRel(iso: string): string {
   if (diff < 60 * 60 * 1000) return `${Math.round(diff / 60000)}분 전`
   if (diff < 24 * 60 * 60 * 1000) return `${Math.round(diff / (60 * 60000))}시간 전`
   return `${Math.round(diff / (24 * 60 * 60 * 1000))}일 전`
+}
+
+/* =============================================================
+   Drafts (비회원 프로젝트 접수 승인 큐)
+============================================================= */
+
+type Draft = {
+  id: number
+  requesterName: string
+  requesterContact: string
+  industry: string
+  marketingType: string
+  budgetRange: string
+  message: string
+  status: string
+  submittedAt: string
+  reviewedAt: string | null
+  approvedProjectId: number | null
+  rejectReason: string | null
+}
+
+function DraftsTab() {
+  const toast = useToast()
+  const [items, setItems] = useState<Draft[]>([])
+  const [loading, setLoading] = useState(true)
+  const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('pending')
+  const [busy, setBusy] = useState<number | null>(null)
+
+  function load() {
+    setLoading(true)
+    void apiFetch<{ items: Draft[] }>(`/api/admin/market/drafts?status=${filter}`)
+      .then((r) => setItems(r.items))
+      .finally(() => setLoading(false))
+  }
+
+  useEffect(load, [filter])
+
+  async function approve(id: number) {
+    setBusy(id)
+    try {
+      const res = await apiFetch<{ ok: true; projectId: number }>(
+        `/api/admin/market/drafts/${id}/approve`,
+        { method: 'POST' },
+      )
+      toast.success(`초안 #${id} 승인 완료 — 프로젝트 #${res.projectId} 공개`)
+      load()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : '승인 실패')
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  async function reject(id: number) {
+    const reason = prompt('반려 사유를 입력해주세요 (요청자에게는 보이지 않습니다):', '')
+    if (reason === null) return
+    setBusy(id)
+    try {
+      await apiFetch(`/api/admin/market/drafts/${id}/reject`, {
+        method: 'POST',
+        body: JSON.stringify({ reason: reason || '반려' }),
+      })
+      toast.info(`초안 #${id} 반려 완료`)
+      load()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : '반려 실패')
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  return (
+    <div className="market-tab-content">
+      <div className="market-toolbar">
+        <select value={filter} onChange={(e) => setFilter(e.target.value as typeof filter)} className="market-select">
+          <option value="pending">승인 대기</option>
+          <option value="approved">승인됨</option>
+          <option value="rejected">반려됨</option>
+          <option value="all">전체</option>
+        </select>
+        <span className="market-count"><strong>{items.length}</strong>건</span>
+        <button type="button" className="market-btn" onClick={load}><RefreshCw size={12} strokeWidth={2} /> 새로고침</button>
+      </div>
+
+      {loading ? (
+        <div className="market-skeleton">불러오는 중…</div>
+      ) : items.length === 0 ? (
+        <div className="market-empty">
+          {filter === 'pending' ? '승인 대기 중인 초안이 없습니다. 🎉' : '해당 상태의 초안이 없습니다.'}
+        </div>
+      ) : (
+        <ul className="market-draft-list">
+          {items.map((d) => (
+            <li key={d.id} className={`market-draft-card status-${d.status}`}>
+              <header className="market-draft-head">
+                <div>
+                  <span className="market-draft-id">#{d.id}</span>
+                  <strong>{d.requesterName}</strong>
+                  <span className="market-draft-contact">{d.requesterContact}</span>
+                </div>
+                <StatusPill status={d.status} />
+              </header>
+
+              <div className="market-draft-meta">
+                <span className="market-draft-chip">{d.industry}</span>
+                <span className="market-draft-chip">{d.marketingType}</span>
+                <span className="market-draft-chip">{d.budgetRange}</span>
+              </div>
+
+              {d.message && <p className="market-draft-msg">{d.message}</p>}
+
+              {d.status === 'rejected' && d.rejectReason && (
+                <div className="market-draft-reject-note">반려 사유: {d.rejectReason}</div>
+              )}
+              {d.status === 'approved' && d.approvedProjectId && (
+                <div className="market-draft-approved-note">
+                  ✓ 프로젝트 <a href={`/project/${d.approvedProjectId}`} target="_blank" rel="noopener">#{d.approvedProjectId}</a>로 공개됨
+                </div>
+              )}
+
+              <div className="market-draft-footer">
+                <time>{fmtRel(d.submittedAt)}</time>
+                {d.status === 'pending' && (
+                  <div className="market-draft-actions">
+                    <button
+                      type="button"
+                      className="market-btn-sm market-btn-approve"
+                      onClick={() => approve(d.id)}
+                      disabled={busy === d.id}
+                    >
+                      <CheckCircle2 size={11} /> 승인 · 공개
+                    </button>
+                    <button
+                      type="button"
+                      className="market-btn-sm market-btn-danger"
+                      onClick={() => reject(d.id)}
+                      disabled={busy === d.id}
+                    >
+                      <XCircle size={11} /> 반려
+                    </button>
+                  </div>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+
+function StatusPill({ status }: { status: string }) {
+  const map: Record<string, { label: string; cls: string }> = {
+    pending:  { label: '대기', cls: 'badge-amber' },
+    approved: { label: '승인', cls: 'badge-mint' },
+    rejected: { label: '반려', cls: 'badge-gray' },
+  }
+  const m = map[status] ?? { label: status, cls: 'badge-gray' }
+  return <span className={`market-pill ${m.cls}`}>{m.label}</span>
 }
 
 /* =============================================================

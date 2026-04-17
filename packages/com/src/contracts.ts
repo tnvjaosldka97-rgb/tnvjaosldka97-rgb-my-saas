@@ -28,6 +28,12 @@ export type LeadRecord = {
   createdAt: string
 }
 
+export type AgencyCaseStudy = {
+  title: string
+  industry: string
+  result: string
+}
+
 export type PublicAgencyDetail = {
   id: number
   slug: string
@@ -38,7 +44,40 @@ export type PublicAgencyDetail = {
   rating: number
   completedProjects: number
   totalReviews: number
+  foundedYear: number | null
+  region: string | null
+  teamSize: string | null
+  avgResponseHour: number | null
+  portfolioNote: string | null
+  caseStudies: AgencyCaseStudy[]
   createdAt: string
+}
+
+export type ProjectDraftInput = {
+  requesterName: string
+  requesterContact: string
+  industry: string
+  marketingType: string
+  budgetRange: string
+  message?: string
+}
+
+export type ProjectDraftStatus = 'pending' | 'approved' | 'rejected'
+
+export type ProjectDraft = {
+  id: number
+  requesterName: string
+  requesterContact: string
+  industry: string
+  marketingType: string
+  budgetRange: string
+  message: string
+  status: ProjectDraftStatus
+  submittedAt: string
+  reviewedAt: string | null
+  reviewedBy: string | null
+  approvedProjectId: number | null
+  rejectReason: string | null
 }
 
 export type PublicAgencyReview = {

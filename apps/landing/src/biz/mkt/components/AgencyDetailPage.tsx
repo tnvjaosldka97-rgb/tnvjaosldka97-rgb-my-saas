@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { BadgeCheck, Star, Briefcase, MessageSquare, ArrowLeft } from 'lucide-react'
+import { BadgeCheck, Star, Briefcase, MessageSquare, ArrowLeft, MapPin, Users, Clock, Calendar, Award } from 'lucide-react'
 import type { PublicAgencyDetail, PublicAgencyReview } from '@my-saas/com'
 import { LPHeader } from '../../../components/LPHeader'
 import { LPFooter } from '../../../components/LPFooter'
@@ -85,6 +85,42 @@ function AgencyContent({ agency, reviews }: { agency: PublicAgencyDetail; review
       </header>
 
       <section className="oc-agency-section">
+        <h2>운영 정보</h2>
+        <dl className="oc-agency-info">
+          {agency.foundedYear && (
+            <div>
+              <dt><Calendar size={13} strokeWidth={2} aria-hidden /> 설립 연도</dt>
+              <dd>{agency.foundedYear}년 · <span className="oc-agency-years">활동 {new Date().getFullYear() - agency.foundedYear}년차</span></dd>
+            </div>
+          )}
+          {agency.region && (
+            <div>
+              <dt><MapPin size={13} strokeWidth={2} aria-hidden /> 활동 지역</dt>
+              <dd>{agency.region}</dd>
+            </div>
+          )}
+          {agency.teamSize && (
+            <div>
+              <dt><Users size={13} strokeWidth={2} aria-hidden /> 팀 규모</dt>
+              <dd>{agency.teamSize}</dd>
+            </div>
+          )}
+          {agency.avgResponseHour !== null && (
+            <div>
+              <dt><Clock size={13} strokeWidth={2} aria-hidden /> 평균 응답</dt>
+              <dd>{agency.avgResponseHour}시간 이내</dd>
+            </div>
+          )}
+        </dl>
+
+        {agency.portfolioNote && (
+          <div className="oc-agency-portfolio-note">
+            <Award size={14} strokeWidth={2} aria-hidden /> {agency.portfolioNote}
+          </div>
+        )}
+      </section>
+
+      <section className="oc-agency-section">
         <h2>전문 분야</h2>
         <div className="oc-agency-specialty-wall">
           {agency.specialties.map((s) => (
@@ -92,6 +128,24 @@ function AgencyContent({ agency, reviews }: { agency: PublicAgencyDetail; review
           ))}
         </div>
       </section>
+
+      {agency.caseStudies.length > 0 && (
+        <section className="oc-agency-section">
+          <h2>대표 사례 <span className="oc-agency-reviews-count">· {agency.caseStudies.length}건</span></h2>
+          <ul className="oc-agency-cases">
+            {agency.caseStudies.map((cs, i) => (
+              <li key={i} className="oc-agency-case-card">
+                <div className="oc-agency-case-head">
+                  <span className="oc-agency-case-industry">{cs.industry}</span>
+                  <span className="oc-agency-case-index">CASE {String(i + 1).padStart(2, '0')}</span>
+                </div>
+                <h3>{cs.title}</h3>
+                <p>{cs.result}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section className="oc-agency-section">
         <h2>

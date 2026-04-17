@@ -13,27 +13,21 @@ const BENEFITS = [
 ]
 
 type FormState = {
+  requesterName: string
   industry: string
   marketing: (typeof MARKETING_TYPES)[number] | ''
   budget: string
   contact: string
+  message: string
 }
 
-const INITIAL: FormState = { industry: '', marketing: '', budget: '', contact: '' }
-
-function syntheticLeadPayload(form: FormState) {
-  const digits = form.contact.replace(/\D/g, '')
-  const syntheticEmail = digits
-    ? `p${digits}@pending.onlyup-compare.com`
-    : 'lead@pending.onlyup-compare.com'
-  const name = form.industry ? `간편 견적 — ${form.industry}` : '간편 견적 요청'
-  const message =
-    `[간편 견적 요청]\n` +
-    `업종: ${form.industry || '-'}\n` +
-    `마케팅 유형: ${form.marketing || '-'}\n` +
-    `월 예산: ${form.budget || '-'}\n` +
-    `연락처: ${form.contact || '-'}`
-  return { name, email: syntheticEmail, company: form.industry || undefined, message }
+const INITIAL: FormState = {
+  requesterName: '',
+  industry: '',
+  marketing: '',
+  budget: '',
+  contact: '',
+  message: '',
 }
 
 export function LPLeadStart() {
@@ -48,12 +42,19 @@ export function LPLeadStart() {
     setState('submitting')
     setErrorMessage(null)
     try {
-      await apiFetch('/api/public/leads', {
+      await apiFetch('/api/public/project-drafts', {
         method: 'POST',
-        body: JSON.stringify(syntheticLeadPayload(form)),
+        body: JSON.stringify({
+          requesterName: form.requesterName || '간편 등록',
+          requesterContact: form.contact,
+          industry: form.industry,
+          marketingType: form.marketing,
+          budgetRange: form.budget,
+          message: form.message || '',
+        }),
       })
       setState('done')
-      toast.success('견적 요청이 접수되었습니다. 담당자가 24시간 내 연락드립니다.')
+      toast.success('프로젝트 초안이 접수되었습니다. 운영팀 검토 후 24시간 내 공개됩니다.')
     } catch (err) {
       const msg = err instanceof Error ? err.message : '전송에 실패했습니다. 잠시 후 다시 시도해주세요.'
       setErrorMessage(msg)
@@ -92,6 +93,12 @@ export function LPLeadStart() {
               </li>
             ))}
           </ul>
+
+          <div className="oc-lead-trust">
+            운영팀이 직접 검토해 부적격 의뢰는 공개되지 않습니다.
+            <br />
+            <small>접수 → 운영팀 검토 → 공개 (평균 6~12시간)</small>
+          </div>
         </div>
 
         <form className="oc-lead-form" onSubmit={onSubmit} aria-label="프로젝트 간편 등록" noValidate>
@@ -99,7 +106,7 @@ export function LPLeadStart() {
             <div className="oc-lead-done" role="status" aria-live="polite">
               <span className="oc-lead-done-icon" aria-hidden>✅</span>
               <h3>접수 완료</h3>
-              <p>담당자가 확인 후 24시간 이내에 연락드립니다.</p>
+              <p>운영팀이 검토 후 24시간 내로 프로젝트를 공개하고,<br />연락처로 진행 상황을 안내해드립니다.</p>
               <button type="button" className="oc-btn oc-btn-text" onClick={reset}>
                 다시 등록하기
               </button>
@@ -112,32 +119,47 @@ export function LPLeadStart() {
               </div>
 
               <label className="oc-field">
-                <span>업종</span>
-                <select
+                <span>성함 또는 회사명</span>
+                <input
                   required
-                  value={form.industry}
-                  onChange={(e) => setForm((f) => ({ ...f, industry: e.target.value }))}
-                  className="oc-select"
-                  autoComplete="off"
-                >
-                  <option value="">업종을 선택하세요</option>
-                  {INDUSTRIES.map((v) => <option key={v} value={v}>{v}</option>)}
-                </select>
+                  type="text"
+                  placeholder="예: 김정우 대표 / (주)온리업"
+                  value={form.requesterName}
+                  onChange={(e) => setForm((f) => ({ ...f, requesterName: e.target.value }))}
+                  className="oc-input"
+                  minLength={2}
+                  maxLength={40}
+                  autoComplete="name"
+                />
               </label>
 
-              <label className="oc-field">
-                <span>원하는 마케팅</span>
-                <select
-                  required
-                  value={form.marketing}
-                  onChange={(e) => setForm((f) => ({ ...f, marketing: e.target.value as FormState['marketing'] }))}
-                  className="oc-select"
-                  autoComplete="off"
-                >
-                  <option value="">마케팅 유형을 선택하세요</option>
-                  {MARKETING_TYPES.map((v) => <option key={v} value={v}>{v}</option>)}
-                </select>
-              </label>
+              <div className="oc-form-row">
+                <label className="oc-field">
+                  <span>업종</span>
+                  <select
+                    required
+                    value={form.industry}
+                    onChange={(e) => setForm((f) => ({ ...f, industry: e.target.value }))}
+                    className="oc-select"
+                  >
+                    <option value="">업종 선택</option>
+                    {INDUSTRIES.map((v) => <option key={v} value={v}>{v}</option>)}
+                  </select>
+                </label>
+
+                <label className="oc-field">
+                  <span>원하는 마케팅</span>
+                  <select
+                    required
+                    value={form.marketing}
+                    onChange={(e) => setForm((f) => ({ ...f, marketing: e.target.value as FormState['marketing'] }))}
+                    className="oc-select"
+                  >
+                    <option value="">유형 선택</option>
+                    {MARKETING_TYPES.map((v) => <option key={v} value={v}>{v}</option>)}
+                  </select>
+                </label>
+              </div>
 
               <label className="oc-field">
                 <span>월 예산</span>
@@ -146,7 +168,6 @@ export function LPLeadStart() {
                   value={form.budget}
                   onChange={(e) => setForm((f) => ({ ...f, budget: e.target.value }))}
                   className="oc-select"
-                  autoComplete="off"
                 >
                   <option value="">예산 범위를 선택하세요</option>
                   {BUDGETS.map((v) => <option key={v} value={v}>{v}</option>)}
@@ -169,6 +190,18 @@ export function LPLeadStart() {
                 />
               </label>
 
+              <label className="oc-field">
+                <span>상세 요청사항 (선택)</span>
+                <textarea
+                  className="oc-input oc-textarea"
+                  rows={3}
+                  maxLength={800}
+                  placeholder="예산 외 특별한 조건이나 목표가 있다면 적어주세요. (선택 입력)"
+                  value={form.message}
+                  onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
+                />
+              </label>
+
               {errorMessage && (
                 <div className="oc-auth-error" role="alert">{errorMessage}</div>
               )}
@@ -178,9 +211,9 @@ export function LPLeadStart() {
                 className="oc-btn oc-btn-primary oc-btn-lg oc-btn-block"
                 disabled={submitting}
               >
-                {submitting ? '전송 중…' : '견적 받기 →'}
+                {submitting ? '전송 중…' : '프로젝트 접수하기 →'}
               </button>
-              <p className="oc-lead-note">가입이나 결제 없이 견적만 확인할 수 있습니다.</p>
+              <p className="oc-lead-note">가입이나 결제 없이 운영팀이 직접 검토해드립니다.</p>
             </>
           )}
         </form>

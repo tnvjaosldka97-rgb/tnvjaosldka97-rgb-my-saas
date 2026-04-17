@@ -52,6 +52,18 @@ export function createApp() {
   }))
   app.use('/api/*', etag())
 
+  // 한글 응답 안정성 — charset=utf-8 강제 주입 (etag/caching 경유 시 charset 탈락 방지)
+  app.use('/api/*', async (c, next) => {
+    await next()
+    const ct = c.res.headers.get('Content-Type') ?? ''
+    if ((ct.startsWith('application/json') || ct.startsWith('text/plain') || ct.startsWith('text/html')) && !ct.toLowerCase().includes('charset')) {
+      const headers = new Headers(c.res.headers)
+      const base = ct.split(';')[0].trim()
+      headers.set('Content-Type', `${base}; charset=utf-8`)
+      c.res = new Response(c.res.body, { status: c.res.status, statusText: c.res.statusText, headers })
+    }
+  })
+
   // H-3: Rate Limiting (로그인, 리드, 이메일, AI)
   app.use('/api/auth/login', rateLimit({ maxRequests: 10, windowSeconds: 60 }))
   app.use('/api/auth/github', rateLimit({ maxRequests: 10, windowSeconds: 60 }))

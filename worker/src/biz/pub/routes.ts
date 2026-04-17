@@ -146,6 +146,38 @@ publicRoutes.get('/projects/:id', async (c) => {
   return c.json({ project, quotes: [] })
 })
 
+// 비회원 프로젝트 초안 접수 (LPLeadStart)
+const projectDraftSchema = z.object({
+  requesterName: z.string().min(1).max(40).default('간편 등록'),
+  requesterContact: z.string().min(6).max(60),
+  industry: z.string().min(1).max(20),
+  marketingType: z.string().min(1).max(40),
+  budgetRange: z.string().min(1).max(40),
+  message: z.string().max(1000).optional(),
+})
+
+publicRoutes.post('/project-drafts', zValidator('json', projectDraftSchema), async (c) => {
+  const input = c.req.valid('json')
+  const now = new Date().toISOString()
+  await c.env.DB
+    .prepare(
+      `INSERT INTO project_drafts
+         (requester_name, requester_contact, industry, marketing_type, budget_range, message, status, submitted_at)
+       VALUES (?1, ?2, ?3, ?4, ?5, ?6, 'pending', ?7)`,
+    )
+    .bind(
+      input.requesterName,
+      input.requesterContact,
+      input.industry,
+      input.marketingType,
+      input.budgetRange,
+      input.message ?? '',
+      now,
+    )
+    .run()
+  return c.json({ ok: true, submittedAt: now }, 201)
+})
+
 publicRoutes.get('/recent-activity', async (c) => {
   type QuoteRow = {
     id: number; created_at: string; agency_name: string; project_title: string
@@ -214,7 +246,9 @@ publicRoutes.get('/agencies/:slug', async (c) => {
   const agencyRow = await c.env.DB
     .prepare(
       `SELECT id, slug, name, description, specialties, verified, rating,
-              completed_projects, total_reviews, created_at
+              completed_projects, total_reviews, created_at,
+              founded_year, region, team_size, avg_response_hour,
+              portfolio_note, case_studies
        FROM agencies WHERE slug = ?1 LIMIT 1`,
     )
     .bind(slug)
@@ -222,6 +256,8 @@ publicRoutes.get('/agencies/:slug', async (c) => {
       id: number; slug: string; name: string; description: string
       specialties: string; verified: number; rating: number
       completed_projects: number; total_reviews: number; created_at: string
+      founded_year: number | null; region: string | null; team_size: string | null
+      avg_response_hour: number | null; portfolio_note: string | null; case_studies: string
     }>()
 
   if (!agencyRow) return c.json({ error: 'Agency not found' }, 404)
@@ -239,6 +275,21 @@ publicRoutes.get('/agencies/:slug', async (c) => {
     .bind(agencyRow.id)
     .all<{ id: number; project_id: number; project_title: string; rating: number; comment: string; created_at: string }>()
 
+  type CaseStudyShape = { title: string; industry: string; result: string }
+  let caseStudies: CaseStudyShape[] = []
+  try {
+    const parsed = JSON.parse(agencyRow.case_studies ?? '[]')
+    if (Array.isArray(parsed)) {
+      caseStudies = parsed
+        .filter((x): x is CaseStudyShape => !!x && typeof x === 'object' && 'title' in x)
+        .map((x) => ({
+          title: String(x.title ?? ''),
+          industry: String(x.industry ?? ''),
+          result: String(x.result ?? ''),
+        }))
+    }
+  } catch { /* ignore malformed JSON */ }
+
   return c.json({
     agency: {
       id: agencyRow.id,
@@ -250,6 +301,12 @@ publicRoutes.get('/agencies/:slug', async (c) => {
       rating: agencyRow.rating,
       completedProjects: agencyRow.completed_projects,
       totalReviews: agencyRow.total_reviews,
+      foundedYear: agencyRow.founded_year,
+      region: agencyRow.region,
+      teamSize: agencyRow.team_size,
+      avgResponseHour: agencyRow.avg_response_hour,
+      portfolioNote: agencyRow.portfolio_note,
+      caseStudies,
       createdAt: agencyRow.created_at,
     },
     reviews: (reviewsRes.results ?? []).map((r) => ({
