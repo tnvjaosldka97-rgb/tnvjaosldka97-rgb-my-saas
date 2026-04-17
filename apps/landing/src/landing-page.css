@@ -1428,6 +1428,24 @@
   .oc-kpi-value { font-size: 18px; }
 }
 
+/* === ProjectDetail Polish === */
+.oc-btn-consult {
+  margin-top: 12px;
+  font-size: 13px;
+  gap: 6px;
+}
+.oc-cta-sub-note {
+  margin: 6px 0 0;
+  font-size: 11.5px;
+  color: var(--oc-gray-500);
+  text-align: center;
+}
+.oc-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
 /* === Live Activity Ticker === */
 .oc-section-ticker {
   padding: 0;

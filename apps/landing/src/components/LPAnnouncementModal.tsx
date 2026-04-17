@@ -79,11 +79,11 @@ export function LPAnnouncementModal() {
     >
       <div className="oc-modal" ref={modalRef}>
         <button type="button" ref={closeBtnRef} className="oc-modal-close" onClick={close} aria-label="닫기">×</button>
-        <div className="oc-modal-emoji" aria-hidden>🛡</div>
-        <h3 id="oc-modal-title">이번 달 신규 보증 가입 50% 마감</h3>
+        <div className="oc-modal-emoji" aria-hidden>🎁</div>
+        <h3 id="oc-modal-title">이번 주 신규 광고주 혜택</h3>
         <p>
-          Pro Shield 월정액을 2개월 무료로 제공하는 프로모션이 진행 중입니다.
-          선착순 140건 중 <b>68건 남았습니다.</b>
+          첫 프로젝트 등록 시, 운영팀이 <b>무료 매칭 컨설팅</b>을 도와드립니다.
+          어떤 대행사가 우리 업종에 맞는지 30분 통화로 먼저 진단받으세요.
         </p>
         <div className="oc-modal-row">
           <label className="oc-modal-skip">

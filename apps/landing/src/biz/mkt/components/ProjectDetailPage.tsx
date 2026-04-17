@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react'
+import { MessageCircle, ArrowLeft } from 'lucide-react'
 import type { MarketProject, MarketProjectDetail, ProjectApplication, BudgetType } from '@my-saas/com'
 import { LPHeader } from '../../../components/LPHeader'
 import { LPFooter } from '../../../components/LPFooter'
 import { useProjectDetail } from '../hooks/useProjectDetail'
 import { useAuth } from '../hooks/useAuth'
 import { apiFetch } from '../../../com/api/client'
+import { useToast } from '../../../com/ui/Toast'
+import { Skeleton, SkeletonStack } from '../../../com/ui/Skeleton'
 import { IndustryArt } from './IndustryArt'
+import { ConsultationModal } from './ConsultationModal'
 import '../../../landing-page.css'
 
 const STATUS_META: Record<MarketProject['status'], { label: string; cls: string }> = {
@@ -35,9 +39,9 @@ export function ProjectDetailPage({ id }: { id: number }) {
       <LPHeader />
       <main className="oc-detail-main">
         <div className="oc-container">
-          <a href="/" className="oc-back-link">+ 목록으로 돌아가기</a>
+          <a href="/" className="oc-back-link"><ArrowLeft size={14} strokeWidth={2} aria-hidden /> 목록으로 돌아가기</a>
 
-          {loading && <div className="oc-detail-skeleton" aria-busy>프로젝트 정보를 불러오는 중…</div>}
+          {loading && <ProjectDetailSkeleton />}
 
           {error && (
             <div className="oc-detail-error" role="alert">
@@ -55,13 +59,53 @@ export function ProjectDetailPage({ id }: { id: number }) {
   )
 }
 
+function ProjectDetailSkeleton() {
+  return (
+    <div className="oc-detail-grid" aria-hidden>
+      <div className="oc-detail-col-main">
+        <article className="oc-detail-card">
+          <div style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
+            <Skeleton width={68} height={22} radius={10} />
+            <Skeleton width={44} height={22} radius={10} />
+            <Skeleton width={80} height={22} radius={10} />
+          </div>
+          <Skeleton variant="card" height={200} style={{ marginBottom: 24 }} />
+          <Skeleton width="70%" height={26} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 20 }}>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} style={{ display: 'flex', gap: 20 }}>
+                <Skeleton width={80} height={16} />
+                <Skeleton width="60%" height={16} />
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop: 28, paddingTop: 20, borderTop: '1px solid #E5E5E5' }}>
+            <Skeleton width={120} height={18} style={{ marginBottom: 12 }} />
+            <SkeletonStack rows={4} />
+          </div>
+        </article>
+      </div>
+      <aside className="oc-detail-col-side">
+        <div className="oc-cta-card">
+          <Skeleton width="70%" height={20} />
+          <Skeleton width="90%" height={14} style={{ marginTop: 10 }} />
+          <Skeleton width="100%" height={46} radius={8} style={{ marginTop: 18 }} />
+          <Skeleton width="100%" height={40} radius={8} style={{ marginTop: 8 }} />
+        </div>
+      </aside>
+    </div>
+  )
+}
+
 function ProjectDetailLayout({ project }: { project: MarketProjectDetail }) {
   const { user } = useAuth()
+  const toast = useToast()
   const statusMeta = STATUS_META[project.status]
   const [myApplication, setMyApplication] = useState<ProjectApplication | null>(null)
   const [loadingApp, setLoadingApp] = useState(false)
   const [applying, setApplying] = useState(false)
   const [applyError, setApplyError] = useState<string | null>(null)
+  const [consultOpen, setConsultOpen] = useState(false)
 
   useEffect(() => {
     if (!user || user.userType !== 'agency') return
@@ -84,8 +128,11 @@ function ProjectDetailLayout({ project }: { project: MarketProjectDetail }) {
         { method: 'POST', credentials: 'include', body: JSON.stringify({}) },
       )
       setMyApplication(res.application)
+      toast.success('지원이 완료되었습니다. 광고주 확인을 기다려주세요.')
     } catch (e) {
-      setApplyError(e instanceof Error ? e.message : '지원에 실패했습니다.')
+      const msg = e instanceof Error ? e.message : '지원에 실패했습니다.'
+      setApplyError(msg)
+      toast.error(msg)
     } finally {
       setApplying(false)
     }
@@ -242,8 +289,25 @@ function ProjectDetailLayout({ project }: { project: MarketProjectDetail }) {
             <li>✓ 견적서는 선정된 파트너에게만 공개</li>
             <li>✓ 가입·수수료 없이 100% 무료</li>
           </ul>
+
+          <button
+            type="button"
+            className="oc-btn oc-btn-outline oc-btn-block oc-btn-consult"
+            onClick={() => setConsultOpen(true)}
+          >
+            <MessageCircle size={14} strokeWidth={2} aria-hidden /> 비회원 빠른 상담
+          </button>
+          <p className="oc-cta-sub-note">가입 없이 연락처만 남기면 담당자가 연결해드립니다.</p>
         </div>
       </aside>
+
+      {consultOpen && (
+        <ConsultationModal
+          projectId={project.id}
+          projectTitle={project.title}
+          onClose={() => setConsultOpen(false)}
+        />
+      )}
     </div>
   )
 }

@@ -79,18 +79,38 @@ export function createApp() {
     return c.text(`User-agent: *\nAllow: /\nDisallow: /api/admin/\nDisallow: /admin/\n\nSitemap: https://${domain}/sitemap.xml`)
   })
 
-  // SEO: sitemap.xml
+  // SEO: sitemap.xml — 랜딩 / CMS 페이지 / 공개 프로젝트 / 공개 대행사
   app.get('/sitemap.xml', async (c) => {
     const domain = c.env.APP_DOMAIN ?? 'my-saas.com'
     const saas = c.env.SAAS_DOMAIN ?? `app.${domain}`
-    let urls = `  <url><loc>https://${domain}</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>\n`
+    let urls = `  <url><loc>https://${domain}</loc><changefreq>daily</changefreq><priority>1.0</priority></url>\n`
     try {
-      const { results } = await c.env.DB.prepare("SELECT slug, updated_at FROM pages WHERE status = 'published' ORDER BY updated_at DESC").all<{ slug: string; updated_at: string }>()
-      for (const p of results) {
+      const { results: pages } = await c.env.DB
+        .prepare("SELECT slug, updated_at FROM pages WHERE status = 'published' ORDER BY updated_at DESC")
+        .all<{ slug: string; updated_at: string }>()
+      for (const p of pages) {
         const lastmod = p.updated_at?.split(' ')[0] ?? ''
         urls += `  <url><loc>https://${saas}/${p.slug}</loc>${lastmod ? `<lastmod>${lastmod}</lastmod>` : ''}<changefreq>weekly</changefreq><priority>0.8</priority></url>\n`
       }
-    } catch { /* ignore */ }
+    } catch { /* pages 테이블 없음 */ }
+    try {
+      const { results: projects } = await c.env.DB
+        .prepare("SELECT id, updated_at FROM projects WHERE status IN ('recruiting', 'closing', 'in_progress') ORDER BY created_at DESC LIMIT 200")
+        .all<{ id: number; updated_at: string }>()
+      for (const p of projects) {
+        const lastmod = p.updated_at?.split(' ')[0] ?? ''
+        urls += `  <url><loc>https://${domain}/project/${p.id}</loc>${lastmod ? `<lastmod>${lastmod}</lastmod>` : ''}<changefreq>daily</changefreq><priority>0.7</priority></url>\n`
+      }
+    } catch { /* projects 테이블 없음 */ }
+    try {
+      const { results: agencies } = await c.env.DB
+        .prepare('SELECT slug, created_at FROM agencies WHERE verified = 1 ORDER BY created_at DESC LIMIT 100')
+        .all<{ slug: string; created_at: string }>()
+      for (const a of agencies) {
+        const lastmod = a.created_at?.split(' ')[0] ?? ''
+        urls += `  <url><loc>https://${domain}/agency/${a.slug}</loc>${lastmod ? `<lastmod>${lastmod}</lastmod>` : ''}<changefreq>weekly</changefreq><priority>0.6</priority></url>\n`
+      }
+    } catch { /* agencies 테이블 없음 */ }
     return c.body(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}</urlset>`, 200, { 'Content-Type': 'application/xml' })
   })
 
