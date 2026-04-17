@@ -170,7 +170,6 @@ function AdvertiserView({ name }: { name: string }) {
         <ReviewModal
           projectId={reviewTarget.id}
           projectTitle={reviewTarget.title}
-          agencies={[]}
           onClose={() => setReviewTarget(null)}
           onSuccess={() => toast.success('리뷰가 등록되었습니다. 파트너에게 전달됐어요.')}
         />

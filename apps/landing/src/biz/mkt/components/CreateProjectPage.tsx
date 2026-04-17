@@ -35,6 +35,30 @@ export function CreateProjectPage() {
     if (!loading && !user) window.location.href = '/login'
   }, [loading, user])
 
+  if (!loading && user && user.userType === 'agency') {
+    return (
+      <div className="onlyup-scope">
+        <LPHeader />
+        <main className="oc-auth-main">
+          <div className="oc-container oc-auth-wrap">
+            <div className="oc-auth-card">
+              <h1>프로젝트 등록은 광고주 전용입니다</h1>
+              <p className="oc-auth-sub">
+                마케팅 파트너 계정으로 로그인된 상태입니다. 프로젝트에 지원하시려면 <a href="/#market">비교중인 마케팅</a>에서
+                원하는 프로젝트를 선택해 "프로젝트 지원" 버튼을 눌러주세요.
+              </p>
+              <div className="oc-form-actions">
+                <a href="/dashboard" className="oc-btn oc-btn-outline">파트너 대시보드</a>
+                <a href="/#market" className="oc-btn oc-btn-primary">프로젝트 둘러보기</a>
+              </div>
+            </div>
+          </div>
+        </main>
+        <LPFooter />
+      </div>
+    )
+  }
+
   function toggleMarketing(m: string) {
     setForm((f) => ({
       ...f,
