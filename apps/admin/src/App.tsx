@@ -14,7 +14,9 @@ import {
   Network,
   Plug,
   LogOut,
+  Store,
 } from 'lucide-react'
+import { MarketPanel } from './biz/amk/MarketPanel'
 import { LoginScreen } from './biz/aut/components/LoginScreen'
 import { useAuth } from './biz/aut/hooks/useAuth'
 import { OverviewPanel } from './biz/dsh/components/OverviewPanel'
@@ -41,6 +43,7 @@ type NavItem = {
 const NAV_ITEMS: NavItem[] = [
   { id: 'dashboard',   label: 'Dashboard',   group: 'Overview',   Icon: LayoutDashboard },
   { id: 'system',      label: 'System',      group: 'Overview',   Icon: Activity },
+  { id: 'market',      label: 'Market',      group: 'Marketplace', Icon: Store },
   { id: 'users',       label: 'Users',       group: 'Management', Icon: Users },
   { id: 'leads',       label: 'Leads',       group: 'Management', Icon: Inbox },
   { id: 'media',       label: 'Media',       group: 'Management', Icon: ImageIcon },
@@ -74,6 +77,7 @@ function AuthenticatedAdmin({ email, logout }: { email: string; logout: () => Pr
     switch (activeTab) {
       case 'dashboard': return <OverviewPanel />
       case 'system': return <SystemPanel />
+      case 'market': return <MarketPanel />
       case 'users': return <UserPanel />
       case 'leads': return <LeadListPanel />
       case 'media': return <MediaPanel />

@@ -9,6 +9,7 @@ import { agentRoutes } from './biz/agt/routes'
 import { applySecurityHeaders, enforceAdminAccess } from './com/security'
 import { requireRole } from './com/rbac'
 import { aiRoutes } from './biz/aid/routes'
+import { adminMarketRoutes } from './biz/amk/routes'
 import { authRoutes } from './biz/aut/routes'
 import { marketAuthRoutes } from './biz/mau/routes'
 import { notificationRoutes } from './biz/not/routes'
@@ -114,6 +115,7 @@ export function createApp() {
   app.use('/api/admin/logs/*', requireRole('viewer'))
 
   // M-4: role 기반 권한 — editor (콘텐츠 수정)
+  app.use('/api/admin/market/*', requireRole('editor'))
   app.use('/api/admin/settings', requireRole('editor'))
   app.use('/api/admin/leads/*', requireRole('editor'))
   app.use('/api/admin/images/*', requireRole('editor'))
@@ -127,6 +129,7 @@ export function createApp() {
   // M-4: role 기반 권한 — admin (사용자 관리)
   app.use('/api/admin/users/*', requireRole('admin'))
 
+  app.route('/api/admin/market', adminMarketRoutes)
   app.route('/api/admin/dashboard', dashboardRoutes)
   app.route('/api/admin/settings', settingsRoutes)
   app.route('/api/admin/leads', leadsRoutes)
