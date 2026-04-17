@@ -1428,6 +1428,73 @@
   .oc-kpi-value { font-size: 18px; }
 }
 
+/* === Error Boundary === */
+.oc-errbound {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 40px 20px;
+  background:
+    radial-gradient(ellipse 600px 400px at 50% 0%, rgba(220, 38, 38, 0.08), transparent 60%),
+    var(--oc-cream, #FAFAFA);
+}
+.oc-errbound-card {
+  max-width: 480px;
+  width: 100%;
+  padding: 40px 32px;
+  background: white;
+  border: 1px solid var(--oc-gray-100, #E5E5E5);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(11, 30, 63, 0.08);
+  text-align: center;
+}
+.oc-errbound-icon {
+  width: 64px; height: 64px;
+  margin: 0 auto 16px;
+  display: grid; place-items: center;
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), rgba(220, 38, 38, 0.02));
+  border-radius: 50%;
+  color: #DC2626;
+}
+.oc-errbound-card h1 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0B1E3F;
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+}
+.oc-errbound-card > p {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #64748B;
+  margin: 0 0 20px;
+}
+.oc-errbound-details {
+  margin-bottom: 20px;
+  padding: 10px 14px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  text-align: left;
+  font-size: 12px;
+}
+.oc-errbound-details summary { cursor: pointer; color: #64748B; font-weight: 500; }
+.oc-errbound-details pre {
+  margin: 8px 0 0;
+  padding: 8px;
+  background: #F1F5F9;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #991B1B;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+.oc-errbound-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
 /* === FAQ Section === */
 .oc-section-faq {
   padding: 64px 0;

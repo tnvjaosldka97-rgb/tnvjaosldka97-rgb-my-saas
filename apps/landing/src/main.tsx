@@ -14,6 +14,7 @@ import { SubmitQuotePage } from './biz/mkt/components/SubmitQuotePage'
 import { NotFoundPage } from './biz/mkt/components/NotFoundPage'
 import { AgencyDetailPage } from './biz/mkt/components/AgencyDetailPage'
 import { ToastProvider } from './com/ui/Toast'
+import { ErrorBoundary } from './com/ui/ErrorBoundary'
 import { isSaas } from './com/url'
 import './styles.css'
 
@@ -83,7 +84,9 @@ function Router() {
 createRoot(document.getElementById('app')!).render(
   <StrictMode>
     <ToastProvider>
-      <Router />
+      <ErrorBoundary appName="OnlyUp Compare">
+        <Router />
+      </ErrorBoundary>
     </ToastProvider>
   </StrictMode>,
 )
