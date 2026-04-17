@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { apiFetch } from '../com/api/client'
+import { useToast } from '../com/ui/Toast'
 
 const INDUSTRIES = ['외식', '병원', '뷰티', '학원', '커머스', '서비스', '기타'] as const
 const MARKETING_TYPES = ['SNS마케팅', '플레이스마케팅', '블로그마케팅', '인플루언서', '리뷰관리', 'SA/DA', 'SEO'] as const
@@ -39,6 +40,7 @@ export function LPLeadStart() {
   const [form, setForm] = useState<FormState>(INITIAL)
   const [state, setState] = useState<'idle' | 'submitting' | 'done' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const toast = useToast()
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -51,9 +53,12 @@ export function LPLeadStart() {
         body: JSON.stringify(syntheticLeadPayload(form)),
       })
       setState('done')
+      toast.success('견적 요청이 접수되었습니다. 담당자가 24시간 내 연락드립니다.')
     } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : '전송에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      const msg = err instanceof Error ? err.message : '전송에 실패했습니다. 잠시 후 다시 시도해주세요.'
+      setErrorMessage(msg)
       setState('error')
+      toast.error(msg)
     }
   }
 

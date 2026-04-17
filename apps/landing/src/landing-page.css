@@ -1373,6 +1373,92 @@
   .oc-kpi-value { font-size: 18px; }
 }
 
+/* === Toast system (Sprint D) === */
+.oc-toast-stack {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 8px;
+  z-index: 9999;
+  max-width: calc(100vw - 40px);
+  width: 360px;
+}
+.oc-toast {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background: white;
+  border: 1px solid var(--oc-gray-100);
+  border-radius: var(--oc-radius);
+  box-shadow: 0 10px 30px rgba(11, 30, 63, 0.12), 0 2px 6px rgba(11, 30, 63, 0.06);
+  font-size: 13.5px;
+  color: var(--oc-gray-900);
+  overflow: hidden;
+  animation: oc-toast-in 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.oc-toast::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: 0;
+  height: 3px;
+  background: currentColor;
+  opacity: 0.35;
+  animation: oc-toast-bar linear forwards;
+  transform-origin: left;
+}
+.oc-toast-success { border-left: 3px solid #10B981; color: #047857; }
+.oc-toast-error   { border-left: 3px solid #DC2626; color: #991B1B; }
+.oc-toast-info    { border-left: 3px solid var(--oc-royal); color: var(--oc-royal); }
+.oc-toast-warn    { border-left: 3px solid var(--oc-amber); color: #B45309; }
+.oc-toast-icon { flex-shrink: 0; margin-top: 1px; }
+.oc-toast-msg { flex: 1; color: var(--oc-gray-900); line-height: 1.5; }
+.oc-toast-close {
+  flex-shrink: 0;
+  width: 22px; height: 22px;
+  display: grid; place-items: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--oc-gray-300);
+  border-radius: 4px;
+  transition: background 160ms, color 160ms;
+}
+.oc-toast-close:hover { background: rgba(11, 30, 63, 0.06); color: var(--oc-gray-700); }
+
+@keyframes oc-toast-in {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes oc-toast-bar {
+  from { width: 100%; }
+  to   { width: 0%; }
+}
+
+/* === Skeleton loader === */
+.oc-skel {
+  display: inline-block;
+  background: linear-gradient(
+    90deg,
+    rgba(11, 30, 63, 0.06) 0%,
+    rgba(11, 30, 63, 0.12) 50%,
+    rgba(11, 30, 63, 0.06) 100%
+  );
+  background-size: 200% 100%;
+  animation: oc-skel-shimmer 1.4s linear infinite;
+}
+.oc-skel-text { display: block; }
+.oc-skel-card { display: block; border-radius: var(--oc-radius-lg); }
+.oc-skel-circle { display: block; }
+
+@keyframes oc-skel-shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+
 .oc-mypage-main { padding: 32px 0 80px; background: var(--oc-cream); min-height: 70vh; }
 .oc-mypage-grid {
   display: grid;

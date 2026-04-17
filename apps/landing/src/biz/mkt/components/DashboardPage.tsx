@@ -17,6 +17,7 @@ import { useMyProjects } from '../hooks/useMyWork'
 import { useAgencyMypage, type ApplicationWithProject } from '../hooks/useAgencyMypage'
 import { useAdvertiserFunnel } from '../hooks/useAdvertiserFunnel'
 import { useNotifications } from '../hooks/useNotifications'
+import { useToast } from '../../../com/ui/Toast'
 import { ReviewModal } from './ReviewModal'
 import '../../../landing-page.css'
 
@@ -95,6 +96,7 @@ function AdvertiserView({ name }: { name: string }) {
   const { projects, loading } = useMyProjects(true)
   const { funnel } = useAdvertiserFunnel(true)
   const noti = useNotifications(true)
+  const toast = useToast()
   const [step, setStep] = useState<ProjectStage>('recruiting')
   const [query, setQuery] = useState('')
   const [reviewTarget, setReviewTarget] = useState<MarketProject | null>(null)
@@ -168,7 +170,7 @@ function AdvertiserView({ name }: { name: string }) {
           projectTitle={reviewTarget.title}
           agencies={[]}
           onClose={() => setReviewTarget(null)}
-          onSuccess={() => { /* 차후 Toast 연결 */ }}
+          onSuccess={() => toast.success('리뷰가 등록되었습니다. 파트너에게 전달됐어요.')}
         />
       )}
     </>

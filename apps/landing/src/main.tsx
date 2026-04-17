@@ -11,6 +11,7 @@ import { RegisterPage } from './biz/mkt/components/RegisterPage'
 import { DashboardPage } from './biz/mkt/components/DashboardPage'
 import { CreateProjectPage } from './biz/mkt/components/CreateProjectPage'
 import { SubmitQuotePage } from './biz/mkt/components/SubmitQuotePage'
+import { ToastProvider } from './com/ui/Toast'
 import { isSaas } from './com/url'
 import './styles.css'
 
@@ -70,6 +71,8 @@ function Router() {
 
 createRoot(document.getElementById('app')!).render(
   <StrictMode>
-    <Router />
+    <ToastProvider>
+      <Router />
+    </ToastProvider>
   </StrictMode>,
 )
