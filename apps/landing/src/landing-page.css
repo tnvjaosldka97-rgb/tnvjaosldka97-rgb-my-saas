@@ -333,19 +333,20 @@
 .oc-select-ghost:hover { border-color: var(--oc-gray-300); }
 .oc-select:focus { outline: 2px solid var(--oc-royal-soft); outline-offset: 1px; }
 
-/* === Industry art (v2 — Lucide + pattern) === */
+/* === Industry art v3 — 업종별 씬 (대문 이미지 느낌) === */
 .oc-art {
   position: relative;
   width: 100%;
   aspect-ratio: 4 / 3;
   overflow: hidden;
   isolation: isolate;
+  background: #FFFFFF;
 }
-.oc-art-v2 {
+.oc-art-v3 {
   display: grid;
   place-items: center;
 }
-.oc-art-pattern {
+.oc-art-scene {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -353,31 +354,36 @@
   z-index: 1;
   pointer-events: none;
 }
+.oc-art-sub {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  opacity: 0.9;
+}
+.oc-art-sub-a { top: 14px; left: 14px; }
+.oc-art-sub-b { bottom: 14px; right: 14px; }
 .oc-art-icon-wrap {
   position: relative;
-  z-index: 2;
-  width: 72px;
-  height: 72px;
-  border-radius: 18px;
+  z-index: 3;
+  width: 86px;
+  height: 86px;
+  border-radius: 22px;
   background: #FFFFFF;
   display: grid;
   place-items: center;
   box-shadow:
-    0 2px 6px rgba(15, 23, 42, 0.06),
-    0 10px 26px rgba(15, 23, 42, 0.10);
-  transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1);
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 4px 12px rgba(15, 23, 42, 0.08),
+    0 14px 32px rgba(15, 23, 42, 0.12);
+  transition: transform 260ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 200ms;
 }
 .oc-project-card:hover .oc-art-icon-wrap {
-  transform: translateY(-2px) scale(1.04);
-}
-.oc-art-stripe {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 3px;
-  z-index: 3;
-  opacity: 0.9;
+  transform: translateY(-3px) scale(1.04);
+  box-shadow:
+    0 2px 4px rgba(15, 23, 42, 0.06),
+    0 8px 20px rgba(15, 23, 42, 0.12),
+    0 20px 44px rgba(15, 23, 42, 0.16);
 }
 
 /* === Card grid (4-col) === */
