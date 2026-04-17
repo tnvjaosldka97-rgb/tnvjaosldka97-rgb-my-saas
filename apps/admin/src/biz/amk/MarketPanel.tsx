@@ -214,15 +214,52 @@ function DraftsTab() {
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('pending')
   const [busy, setBusy] = useState<number | null>(null)
+  const [selected, setSelected] = useState<Set<number>>(new Set())
+  const [bulkBusy, setBulkBusy] = useState(false)
 
   function load() {
     setLoading(true)
+    setSelected(new Set())
     void apiFetch<{ items: Draft[] }>(`/api/admin/market/drafts?status=${filter}`)
       .then((r) => setItems(r.items))
       .finally(() => setLoading(false))
   }
 
   useEffect(load, [filter])
+
+  const pendingItems = items.filter((d) => d.status === 'pending')
+  const allSelected = pendingItems.length > 0 && pendingItems.every((d) => selected.has(d.id))
+
+  function toggleOne(id: number) {
+    setSelected((prev) => {
+      const n = new Set(prev)
+      if (n.has(id)) n.delete(id)
+      else n.add(id)
+      return n
+    })
+  }
+
+  function toggleAll() {
+    if (allSelected) setSelected(new Set())
+    else setSelected(new Set(pendingItems.map((d) => d.id)))
+  }
+
+  async function bulkApprove() {
+    if (selected.size === 0) return
+    if (!confirm(`선택한 ${selected.size}건을 일괄 승인합니다. 계속하시겠습니까?`)) return
+    setBulkBusy(true)
+    let ok = 0, fail = 0
+    for (const id of selected) {
+      try {
+        await apiFetch(`/api/admin/market/drafts/${id}/approve`, { method: 'POST' })
+        ok++
+      } catch { fail++ }
+    }
+    setBulkBusy(false)
+    if (ok > 0) toast.success(`${ok}건 일괄 승인 완료${fail > 0 ? ` (${fail}건 실패)` : ''}`)
+    else if (fail > 0) toast.error(`${fail}건 실패`)
+    load()
+  }
 
   async function approve(id: number) {
     setBusy(id)
@@ -268,7 +305,20 @@ function DraftsTab() {
           <option value="all">전체</option>
         </select>
         <span className="market-count"><strong>{items.length}</strong>건</span>
-        <button type="button" className="market-btn" onClick={load}><RefreshCw size={12} strokeWidth={2} /> 새로고침</button>
+        {filter === 'pending' && pendingItems.length > 0 && (
+          <>
+            <label className="market-bulk-check">
+              <input type="checkbox" checked={allSelected} onChange={toggleAll} />
+              <span>전체 선택 ({selected.size}/{pendingItems.length})</span>
+            </label>
+            {selected.size > 0 && (
+              <button type="button" className="market-btn-sm market-btn-approve" onClick={bulkApprove} disabled={bulkBusy}>
+                <CheckCircle2 size={11} /> {selected.size}건 일괄 승인
+              </button>
+            )}
+          </>
+        )}
+        <button type="button" className="market-btn" onClick={load} style={{ marginLeft: 'auto' }}><RefreshCw size={12} strokeWidth={2} /> 새로고침</button>
       </div>
 
       {loading ? (
@@ -280,9 +330,18 @@ function DraftsTab() {
       ) : (
         <ul className="market-draft-list">
           {items.map((d) => (
-            <li key={d.id} className={`market-draft-card status-${d.status}`}>
+            <li key={d.id} className={`market-draft-card status-${d.status}${selected.has(d.id) ? ' is-selected' : ''}`}>
               <header className="market-draft-head">
                 <div>
+                  {d.status === 'pending' && (
+                    <input
+                      type="checkbox"
+                      className="market-draft-check"
+                      checked={selected.has(d.id)}
+                      onChange={() => toggleOne(d.id)}
+                      aria-label={`${d.id} 선택`}
+                    />
+                  )}
                   <span className="market-draft-id">#{d.id}</span>
                   <strong>{d.requesterName}</strong>
                   <span className="market-draft-contact">{d.requesterContact}</span>

@@ -1211,3 +1211,23 @@ button, input, textarea { font: inherit; }
   border-color: #059669;
   color: white;
 }
+.market-bulk-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.market-bulk-check input { width: 14px; height: 14px; accent-color: var(--oc-royal); }
+.market-draft-check {
+  width: 14px; height: 14px;
+  accent-color: var(--oc-royal);
+  margin-right: 4px;
+  cursor: pointer;
+}
+.market-draft-card.is-selected {
+  background: #EFF6FF;
+  border-color: var(--oc-royal);
+  box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.12);
+}
