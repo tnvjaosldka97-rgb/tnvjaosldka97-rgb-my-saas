@@ -1,12 +1,28 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 const STORAGE_KEY = 'onlyup_ann_dismissed_until'
 const DAY_MS = 24 * 60 * 60 * 1000
+const FOCUSABLE_SELECTOR = [
+  'a[href]',
+  'button:not([disabled])',
+  'input:not([disabled])',
+  'textarea:not([disabled])',
+  'select:not([disabled])',
+  '[tabindex]:not([tabindex="-1"])',
+].join(',')
 
 export function LPAnnouncementModal() {
   const [open, setOpen] = useState(false)
   const [skip, setSkip] = useState(false)
   const closeBtnRef = useRef<HTMLButtonElement>(null)
+  const modalRef = useRef<HTMLDivElement>(null)
+
+  const close = useCallback(() => {
+    if (skip) {
+      try { localStorage.setItem(STORAGE_KEY, String(Date.now() + DAY_MS)) } catch { /* noop */ }
+    }
+    setOpen(false)
+  }, [skip])
 
   useEffect(() => {
     try {
@@ -24,20 +40,32 @@ export function LPAnnouncementModal() {
     const prev = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     closeBtnRef.current?.focus()
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close() }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        close()
+        return
+      }
+      if (e.key !== 'Tab' || !modalRef.current) return
+      const focusable = modalRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)
+      if (focusable.length === 0) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      const active = document.activeElement as HTMLElement | null
+      if (e.shiftKey && active === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
     window.addEventListener('keydown', onKey)
     return () => {
       document.body.style.overflow = prev
       window.removeEventListener('keydown', onKey)
     }
-  }, [open])
-
-  function close() {
-    if (skip) {
-      try { localStorage.setItem(STORAGE_KEY, String(Date.now() + DAY_MS)) } catch {}
-    }
-    setOpen(false)
-  }
+  }, [open, close])
 
   if (!open) return null
 
@@ -49,7 +77,7 @@ export function LPAnnouncementModal() {
       aria-labelledby="oc-modal-title"
       onClick={(e) => { if (e.target === e.currentTarget) close() }}
     >
-      <div className="oc-modal">
+      <div className="oc-modal" ref={modalRef}>
         <button type="button" ref={closeBtnRef} className="oc-modal-close" onClick={close} aria-label="닫기">×</button>
         <div className="oc-modal-emoji" aria-hidden>🛡</div>
         <h3 id="oc-modal-title">이번 달 신규 보증 가입 50% 마감</h3>
@@ -62,7 +90,7 @@ export function LPAnnouncementModal() {
             <input type="checkbox" checked={skip} onChange={(e) => setSkip(e.target.checked)} />
             24시간 동안 보지 않기
           </label>
-          <a href="#pricing" className="oc-btn oc-btn-primary" onClick={close}>혜택 확인하기</a>
+          <a href="#lead-start" className="oc-btn oc-btn-primary" onClick={close}>혜택 확인하기</a>
         </div>
       </div>
     </div>

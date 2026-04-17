@@ -48,14 +48,13 @@ export function DashboardPage() {
                   {user.userType === 'agency' ? '마케팅 파트너' : '광고주'}
                 </span>
               </div>
-              <button type="button" className="oc-profile-edit" aria-label="프로필 편집">✎</button>
             </div>
 
             <nav className="oc-mypage-menu" aria-label="마이페이지 메뉴">
-              <a className="is-active" href="/dashboard">📁 프로젝트</a>
-              <a href="#conversations">💬 대화 내용</a>
-              <a href="#settlements">💰 정산 안내</a>
-              <button type="button" onClick={() => { void logout().then(() => { window.location.href = '/' }) }}>⇦ 로그아웃</button>
+              <a className="is-active" href="/dashboard">프로젝트</a>
+              <a href="/pages/contact">문의·신고</a>
+              <a href="/pages/business-info">사업자 정보</a>
+              <button type="button" onClick={() => { void logout().then(() => { window.location.href = '/' }) }}>로그아웃</button>
             </nav>
           </aside>
 

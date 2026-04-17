@@ -22,7 +22,7 @@ export function LPPartner() {
               이미 68개 검증 대행사가 합류했습니다. 매주 평균 22건의 신규 프로젝트가 등록됩니다.
             </p>
           </div>
-          <a href="#partner-apply" className="oc-btn oc-btn-amber oc-btn-lg">파트너 지원하기</a>
+          <a href="/register?as=agency" className="oc-btn oc-btn-amber oc-btn-lg">파트너 지원하기</a>
         </div>
 
         <div className="oc-partner-grid">

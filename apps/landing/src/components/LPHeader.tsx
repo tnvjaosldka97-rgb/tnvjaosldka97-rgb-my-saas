@@ -105,7 +105,7 @@ export function LPHeader() {
                 )}
               </div>
               <a href="/dashboard" className="oc-btn-text">{user.name}님</a>
-              <button type="button" className="oc-btn oc-btn-primary oc-btn-sm" onClick={() => { void logout().then(() => { window.location.href = '/' }) }}>
+              <button type="button" className="oc-btn oc-btn-outline oc-btn-sm" onClick={() => { void logout().then(() => { window.location.href = '/' }) }}>
                 로그아웃
               </button>
             </>

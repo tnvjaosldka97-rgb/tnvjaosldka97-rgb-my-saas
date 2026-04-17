@@ -95,24 +95,3 @@ publicRoutes.post('/consultations', zValidator('json', consultationSchema), asyn
   return c.json({ ok: true }, 201)
 })
 
-publicRoutes.get('/releases', async (c) => {
-  const res = await fetch('https://api.github.com/repos/johunsang/octo-terminal-releases/releases', {
-    headers: { 'User-Agent': 'OctoTerminal', Accept: 'application/vnd.github+json' },
-  })
-  if (!res.ok) return c.json({ error: 'Failed to fetch releases' }, 502)
-  const releases = (await res.json()) as Array<{
-    tag_name: string
-    name: string
-    published_at: string
-    body: string
-    assets: Array<{ name: string; browser_download_url: string; size: number }>
-  }>
-  const mapped = releases.slice(0, 5).map((r) => ({
-    tag: r.tag_name,
-    name: r.name,
-    publishedAt: r.published_at,
-    body: r.body,
-    assets: r.assets.map((a) => ({ name: a.name, url: a.browser_download_url, size: a.size })),
-  }))
-  return c.json(mapped)
-})

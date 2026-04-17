@@ -1,4 +1,20 @@
 import { useState } from 'react'
+import type { LucideIcon } from 'lucide-react'
+import {
+  LayoutDashboard,
+  Activity,
+  Users,
+  Inbox,
+  Image as ImageIcon,
+  FileText,
+  Mail,
+  Settings as SettingsIcon,
+  Search,
+  LogIn,
+  Network,
+  Plug,
+  LogOut,
+} from 'lucide-react'
 import { LoginScreen } from './biz/aut/components/LoginScreen'
 import { useAuth } from './biz/aut/hooks/useAuth'
 import { OverviewPanel } from './biz/dsh/components/OverviewPanel'
@@ -19,22 +35,22 @@ type NavItem = {
   id: string
   label: string
   group: string
-  icon: string
+  Icon: LucideIcon
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { id: 'dashboard', label: 'Dashboard', group: 'Overview', icon: '/' },
-  { id: 'system', label: 'System', group: 'Overview', icon: '#' },
-  { id: 'users', label: 'Users', group: 'Management', icon: '@' },
-  { id: 'leads', label: 'Leads', group: 'Management', icon: '>' },
-  { id: 'media', label: 'Media', group: 'Management', icon: '*' },
-  { id: 'pages', label: 'Pages', group: 'Management', icon: '~' },
-  { id: 'email', label: 'Email', group: 'Management', icon: '+' },
-  { id: 'settings', label: 'Settings', group: 'Config', icon: '%' },
-  { id: 'search', label: 'Search', group: 'Tools', icon: '?' },
-  { id: 'access-logs', label: 'Access Logs', group: 'Logs', icon: '!' },
-  { id: 'api-logs', label: 'API Logs', group: 'Logs', icon: '&' },
-  { id: 'extensions', label: 'Extensions', group: 'Tools', icon: '^' },
+  { id: 'dashboard',   label: 'Dashboard',   group: 'Overview',   Icon: LayoutDashboard },
+  { id: 'system',      label: 'System',      group: 'Overview',   Icon: Activity },
+  { id: 'users',       label: 'Users',       group: 'Management', Icon: Users },
+  { id: 'leads',       label: 'Leads',       group: 'Management', Icon: Inbox },
+  { id: 'media',       label: 'Media',       group: 'Management', Icon: ImageIcon },
+  { id: 'pages',       label: 'Pages',       group: 'Management', Icon: FileText },
+  { id: 'email',       label: 'Email',       group: 'Management', Icon: Mail },
+  { id: 'settings',    label: 'Settings',    group: 'Config',     Icon: SettingsIcon },
+  { id: 'search',      label: 'Search',      group: 'Tools',      Icon: Search },
+  { id: 'access-logs', label: 'Access Logs', group: 'Logs',       Icon: LogIn },
+  { id: 'api-logs',    label: 'API Logs',    group: 'Logs',       Icon: Network },
+  { id: 'extensions',  label: 'Extensions',  group: 'Tools',      Icon: Plug },
 ]
 
 function groupItems(items: NavItem[]): Map<string, NavItem[]> {
@@ -86,24 +102,30 @@ function AuthenticatedAdmin({ email, logout }: { email: string; logout: () => Pr
 
       <aside className={`admin-sidebar${sidebarOpen ? ' open' : ''}`}>
         <div className="sidebar-brand">
-          <span className="brand-badge">Cloudflare Admin</span>
-          <h1>Octoworkers</h1>
+          <span className="brand-badge">Super Admin</span>
+          <h1>
+            <span className="brand-mark" aria-hidden>OC</span>
+            OnlyUp Compare
+          </h1>
         </div>
 
         <nav className="sidebar-nav">
           {[...groups.entries()].map(([group, items]) => (
             <div key={group} className="nav-group">
               <span className="nav-group-label">{group}</span>
-              {items.map((item) => (
-                <button
-                  key={item.id}
-                  className={`nav-item${activeTab === item.id ? ' active' : ''}`}
-                  onClick={() => { setActiveTab(item.id); setSidebarOpen(false) }}
-                >
-                  <span className="nav-icon">{item.icon}</span>
-                  {item.label}
-                </button>
-              ))}
+              {items.map((item) => {
+                const Icon = item.Icon
+                return (
+                  <button
+                    key={item.id}
+                    className={`nav-item${activeTab === item.id ? ' active' : ''}`}
+                    onClick={() => { setActiveTab(item.id); setSidebarOpen(false) }}
+                  >
+                    <Icon size={16} strokeWidth={2} className="nav-icon-svg" aria-hidden />
+                    {item.label}
+                  </button>
+                )
+              })}
             </div>
           ))}
         </nav>
@@ -113,7 +135,9 @@ function AuthenticatedAdmin({ email, logout }: { email: string; logout: () => Pr
             <div className="user-avatar">{email[0].toUpperCase()}</div>
             <span className="user-email">{email}</span>
           </div>
-          <button className="logout-btn" onClick={logout}>Log out</button>
+          <button className="logout-btn" onClick={logout}>
+            <LogOut size={14} strokeWidth={2} aria-hidden /> Log out
+          </button>
         </div>
       </aside>
 

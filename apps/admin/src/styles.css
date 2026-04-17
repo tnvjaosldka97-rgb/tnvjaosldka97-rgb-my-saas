@@ -1,26 +1,32 @@
-/* === Design Tokens (Linear Minimal) === */
+/* === Design Tokens (OnlyUp Compare — shared palette with landing .onlyup-scope) === */
 :root {
-  --admin-bg: #fafafa;
-  --sidebar-bg: linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%);
+  --oc-navy: #0B1E3F;
+  --oc-royal: #1D4ED8;
+  --oc-royal-soft: #3B82F6;
+  --oc-amber: #F59E0B;
+
+  --admin-bg: #F8FAFC;
+  --sidebar-bg: linear-gradient(180deg, #ffffff 0%, #F8FAFC 100%);
   --sidebar-width: 260px;
-  --content-bg: #fafafa;
-  --surface: rgba(0, 0, 0, 0.03);
-  --surface-hover: rgba(0, 0, 0, 0.06);
-  --border: rgba(0, 0, 0, 0.08);
-  --border-light: rgba(0, 0, 0, 0.12);
-  --text-primary: #171717;
-  --text-secondary: rgba(23, 23, 23, 0.65);
-  --text-muted: rgba(23, 23, 23, 0.45);
-  --accent: #5e6ad2;
-  --accent-end: #8b5cf6;
-  --accent-cool: #5e6ad2;
-  --gradient-warm: linear-gradient(135deg, #5e6ad2, #8b5cf6);
+  --content-bg: #F8FAFC;
+  --surface: rgba(11, 30, 63, 0.03);
+  --surface-hover: rgba(11, 30, 63, 0.06);
+  --border: rgba(11, 30, 63, 0.08);
+  --border-light: rgba(11, 30, 63, 0.12);
+  --text-primary: #0B1E3F;
+  --text-secondary: rgba(11, 30, 63, 0.65);
+  --text-muted: rgba(11, 30, 63, 0.45);
+  --accent: #1D4ED8;
+  --accent-end: #0B1E3F;
+  --accent-cool: #1D4ED8;
+  --gradient-warm: linear-gradient(135deg, #0B1E3F, #1D4ED8);
   --radius-lg: 16px;
   --radius-md: 12px;
   --radius-sm: 8px;
-  --shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.04);
+  --shadow: 0 1px 3px rgba(11, 30, 63, 0.08), 0 8px 24px rgba(11, 30, 63, 0.04);
 
-  font-family: "Inter", "Noto Sans KR", sans-serif;
+  font-family: "Pretendard Variable", "Pretendard", "Inter", "Noto Sans KR", system-ui, sans-serif;
+  letter-spacing: -0.011em;
   color: var(--text-primary);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -71,8 +77,38 @@ button, input, textarea { font: inherit; }
 
 .sidebar-brand h1 {
   margin: 12px 0 0;
-  font-size: 1.4rem;
-  letter-spacing: -0.02em;
+  font-size: 1.15rem;
+  letter-spacing: -0.025em;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  color: var(--oc-navy);
+}
+.brand-mark {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: linear-gradient(135deg, var(--oc-navy), var(--oc-royal));
+  display: inline-grid;
+  place-items: center;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+.nav-icon-svg {
+  opacity: 0.75;
+  flex-shrink: 0;
+}
+.nav-item.active .nav-icon-svg {
+  opacity: 1;
+  color: var(--accent);
+}
+.logout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 /* === Nav === */
