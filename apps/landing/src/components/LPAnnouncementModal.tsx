@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { Gift } from 'lucide-react'
 
 const STORAGE_KEY = 'onlyup_ann_dismissed_until'
 const DAY_MS = 24 * 60 * 60 * 1000
@@ -99,7 +100,9 @@ export function LPAnnouncementModal() {
     >
       <div className="oc-modal" ref={modalRef}>
         <button type="button" ref={closeBtnRef} className="oc-modal-close" onClick={close} aria-label="닫기">×</button>
-        <div className="oc-modal-emoji" aria-hidden>🎁</div>
+        <div className="oc-modal-emoji" aria-hidden>
+          <Gift size={26} strokeWidth={2} />
+        </div>
         <h3 id="oc-modal-title">이번 주 신규 광고주 혜택</h3>
         <p>
           첫 프로젝트 등록 시, 운영팀이 <b>무료 매칭 컨설팅</b>을 도와드립니다.

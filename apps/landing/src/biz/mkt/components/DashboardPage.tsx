@@ -145,7 +145,7 @@ function AdvertiserView({ name }: { name: string }) {
 
       {showReviewBanner && (
         <button type="button" className="oc-review-banner" onClick={() => setStep('completed')}>
-          <span className="oc-review-banner-icon" aria-hidden>✨</span>
+          <span className="oc-review-banner-icon" aria-hidden><Star size={18} strokeWidth={2} fill="currentColor" /></span>
           <span>완료된 프로젝트 <strong>{completedCount}건</strong>이 있습니다. 파트너에게 리뷰를 남겨주세요.</span>
           <span className="oc-review-banner-arrow" aria-hidden>→</span>
         </button>

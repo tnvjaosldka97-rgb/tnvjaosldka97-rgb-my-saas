@@ -3,12 +3,14 @@ import { LPHeader } from '../../../components/LPHeader'
 import { LPFooter } from '../../../components/LPFooter'
 import { useAuth } from '../hooks/useAuth'
 import { apiFetch } from '../../../com/api/client'
+import { useToast } from '../../../com/ui/Toast'
 import '../../../landing-page.css'
 
 type OAuthStatus = { kakao: boolean; naver: boolean }
 
 export function LoginPage() {
   const { login } = useAuth()
+  const toast = useToast()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -44,7 +46,13 @@ export function LoginPage() {
 
   function social(provider: 'kakao' | 'naver') {
     if (!oauth[provider]) {
-      alert(`${provider === 'kakao' ? '카카오' : '네이버'} 로그인은 현재 준비 중입니다.\n관리자에게 ${provider.toUpperCase()}_CLIENT_ID / SECRET 설정을 요청해주세요.`)
+      const label = provider === 'kakao' ? '카카오' : '네이버'
+      toast.info(`${label} 로그인은 준비 중입니다. 이메일로 가입해주세요.`)
+      // 이메일 입력 포커스
+      setTimeout(() => {
+        const emailEl = document.querySelector<HTMLInputElement>('input[type="email"]')
+        emailEl?.focus()
+      }, 60)
       return
     }
     window.location.href = `/api/mau/oauth/${provider}`

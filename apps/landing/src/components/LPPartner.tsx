@@ -1,7 +1,10 @@
-const PERKS = [
-  { icon: '🎯', title: '조건 맞는 프로젝트만', desc: '업종·예산·지역 필터로 내 전문 영역의 프로젝트만 받아봅니다.' },
-  { icon: '📈', title: '실적이 곧 자산', desc: '완료한 프로젝트와 리뷰가 쌓여 상위 노출과 전환율로 이어집니다.' },
-  { icon: '💼', title: '수수료 없는 직거래', desc: '광고주와 직접 계약하고 마케팅천재야는 검증·중개만 담당합니다.' },
+import type { LucideIcon } from 'lucide-react'
+import { Target, TrendingUp, Handshake } from 'lucide-react'
+
+const PERKS: Array<{ Icon: LucideIcon; title: string; desc: string }> = [
+  { Icon: Target, title: '조건 맞는 프로젝트만', desc: '업종·예산·지역 필터로 내 전문 영역의 프로젝트만 받아봅니다.' },
+  { Icon: TrendingUp, title: '실적이 곧 자산', desc: '완료한 프로젝트와 리뷰가 쌓여 상위 노출과 전환율로 이어집니다.' },
+  { Icon: Handshake, title: '수수료 없는 직거래', desc: '광고주와 직접 계약하고 마케팅천재야는 검증·중개만 담당합니다.' },
 ]
 
 const REQUIREMENTS = [
@@ -26,11 +29,13 @@ export function LPPartner() {
         </div>
 
         <div className="oc-partner-grid">
-          {PERKS.map((p) => (
-            <div key={p.title} className="oc-perk">
-              <span className="oc-perk-icon" aria-hidden>{p.icon}</span>
-              <h3>{p.title}</h3>
-              <p>{p.desc}</p>
+          {PERKS.map(({ Icon, title, desc }) => (
+            <div key={title} className="oc-perk">
+              <span className="oc-perk-icon" aria-hidden>
+                <Icon size={22} strokeWidth={2} />
+              </span>
+              <h3>{title}</h3>
+              <p>{desc}</p>
             </div>
           ))}
         </div>
