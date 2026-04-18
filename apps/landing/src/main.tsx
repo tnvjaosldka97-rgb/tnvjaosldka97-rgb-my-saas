@@ -37,6 +37,12 @@ function Router() {
     return <SubmitQuotePage id={Number.parseInt(submitMatch[1], 10)} />
   }
 
+  // /project/:id/edit 프로젝트 편집
+  const projectEditMatch = path.match(/^\/project\/(\d+)\/edit$/)
+  if (projectEditMatch) {
+    return <CreateProjectPage editId={Number.parseInt(projectEditMatch[1], 10)} />
+  }
+
   // /project/:id 프로젝트 상세
   const projectMatch = path.match(/^\/project\/(\d+)$/)
   if (projectMatch) {

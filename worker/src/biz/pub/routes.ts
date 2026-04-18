@@ -241,6 +241,34 @@ publicRoutes.get('/recent-activity', async (c) => {
   return c.json({ items: combined })
 })
 
+// H-1: 전체 공개 대행사 리스트 (verified 우선 정렬)
+publicRoutes.get('/agencies', async (c) => {
+  type Row = {
+    id: number; slug: string; name: string; verified: number; rating: number
+    completed_projects: number; total_reviews: number; specialties: string
+  }
+  const res = await c.env.DB
+    .prepare(
+      `SELECT id, slug, name, verified, rating, completed_projects, total_reviews, specialties
+         FROM agencies
+         WHERE verified = 1
+         ORDER BY rating DESC, completed_projects DESC
+         LIMIT 200`,
+    )
+    .all<Row>()
+  const agencies = (res.results ?? []).map((r) => ({
+    id: r.id,
+    slug: r.slug,
+    name: r.name,
+    verified: r.verified === 1,
+    rating: r.rating,
+    completedProjects: r.completed_projects,
+    totalReviews: r.total_reviews,
+    specialties: parseJson(r.specialties),
+  }))
+  return c.json({ agencies })
+})
+
 publicRoutes.get('/agencies/:slug', async (c) => {
   const slug = c.req.param('slug')
   const agencyRow = await c.env.DB

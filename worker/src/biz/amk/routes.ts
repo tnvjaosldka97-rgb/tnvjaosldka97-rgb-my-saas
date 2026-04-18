@@ -16,6 +16,8 @@ import {
   adminSetConsultationStatus,
   adminSetProjectStage,
   adminDeleteReview,
+  adminListMembers,
+  adminSetMemberStatus,
 } from './repository'
 
 export const adminMarketRoutes = new Hono<{ Bindings: AppBindings }>()
@@ -83,6 +85,23 @@ adminMarketRoutes.delete('/reviews/:id', async (c) => {
   const id = Number.parseInt(c.req.param('id'), 10)
   if (!Number.isFinite(id) || id <= 0) return c.json({ error: 'Invalid id' }, 400)
   await adminDeleteReview(c.env.DB, id)
+  return c.json({ ok: true })
+})
+
+// 회원 관리 (market_users) — C-3
+adminMarketRoutes.get('/members', async (c) => {
+  const status = c.req.query('status')
+  const type = c.req.query('type')
+  const items = await adminListMembers(c.env.DB, status, type)
+  return c.json({ items })
+})
+
+const memberStatusSchema = z.object({ status: z.enum(['active', 'suspended']) })
+adminMarketRoutes.patch('/members/:id/status', zValidator('json', memberStatusSchema), async (c) => {
+  const id = Number.parseInt(c.req.param('id'), 10)
+  if (!Number.isFinite(id) || id <= 0) return c.json({ error: 'Invalid id' }, 400)
+  const { status } = c.req.valid('json')
+  await adminSetMemberStatus(c.env.DB, id, status)
   return c.json({ ok: true })
 })
 

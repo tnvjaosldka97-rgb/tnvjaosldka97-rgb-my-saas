@@ -577,6 +577,7 @@ export async function setProjectStage(
     if (stage === 'recruiting') return 'recruiting'
     if (stage === 'contracting') return 'recruiting'
     if (stage === 'executing') return 'in_progress'
+    if (stage === 'cancelled') return 'completed' // 레거시 status는 cancelled 미지원, completed로 매핑
     return 'completed'
   })()
   await db

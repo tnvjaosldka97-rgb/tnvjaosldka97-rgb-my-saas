@@ -58,6 +58,74 @@ export type AdminConsultationRow = {
   createdAt: string
 }
 
+export type AdminMemberRow = {
+  id: number
+  email: string
+  name: string
+  userType: string
+  phone: string | null
+  status: string
+  createdAt: string
+  agencySlug: string | null
+  agencyVerified: boolean | null
+}
+
+export async function adminListMembers(
+  db: D1DatabaseLike,
+  statusFilter?: string,
+  typeFilter?: string,
+): Promise<AdminMemberRow[]> {
+  type Row = {
+    id: number; email: string; name: string; user_type: string
+    phone: string | null; status: string; created_at: string
+    agency_slug: string | null; agency_verified: number | null
+  }
+  const whereParts: string[] = []
+  const binds: (string | number)[] = []
+  if (statusFilter && statusFilter !== 'all') {
+    whereParts.push(`mu.status = ?${binds.length + 1}`)
+    binds.push(statusFilter)
+  }
+  if (typeFilter && typeFilter !== 'all') {
+    whereParts.push(`mu.user_type = ?${binds.length + 1}`)
+    binds.push(typeFilter)
+  }
+  const where = whereParts.length > 0 ? `WHERE ${whereParts.join(' AND ')}` : ''
+  const stmt = db.prepare(
+    `SELECT mu.id, mu.email, mu.name, mu.user_type, mu.phone, mu.status, mu.created_at,
+            a.slug AS agency_slug, a.verified AS agency_verified
+       FROM market_users mu
+       LEFT JOIN agencies a ON a.user_id = mu.id
+       ${where}
+       ORDER BY mu.created_at DESC
+       LIMIT 300`,
+  )
+  const bound = binds.length > 0 ? stmt.bind(...binds) : stmt
+  const rows = await allRows<Row>(bound)
+  return rows.map((r) => ({
+    id: r.id,
+    email: r.email,
+    name: r.name,
+    userType: r.user_type,
+    phone: r.phone,
+    status: r.status,
+    createdAt: r.created_at,
+    agencySlug: r.agency_slug,
+    agencyVerified: r.agency_verified === null ? null : r.agency_verified === 1,
+  }))
+}
+
+export async function adminSetMemberStatus(
+  db: D1DatabaseLike,
+  id: number,
+  status: 'active' | 'suspended',
+): Promise<void> {
+  await db
+    .prepare('UPDATE market_users SET status = ?1, updated_at = ?2 WHERE id = ?3')
+    .bind(status, isoNow(), id)
+    .run()
+}
+
 export type AdminDraftRow = {
   id: number
   requesterName: string

@@ -29,12 +29,12 @@ export function SearchPage({ initialQuery }: { initialQuery?: string }) {
     setLoading(true)
     Promise.all([
       apiFetch<{ projects: MarketProject[] }>('/api/public/projects'),
-      apiFetch<{ metrics: { market: { recentAgencies: Agency[] } | null } }>('/api/public/bootstrap'),
+      apiFetch<{ agencies: Agency[] }>('/api/public/agencies'),
     ])
-      .then(([pRes, bRes]) => {
+      .then(([pRes, aRes]) => {
         if (!mounted) return
         setProjects(pRes.projects)
-        setAgencies(bRes.metrics.market?.recentAgencies ?? [])
+        setAgencies(aRes.agencies)
       })
       .finally(() => { if (mounted) setLoading(false) })
     return () => { mounted = false }

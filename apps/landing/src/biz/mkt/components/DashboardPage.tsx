@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { MarketProject, ProjectStage, ApplicationFunnel, AdvertiserFunnel } from '@my-saas/com'
+import { apiFetch } from '../../../com/api/client'
 import {
   Briefcase,
   Inbox,
@@ -102,6 +103,25 @@ function AdvertiserView({ name }: { name: string }) {
   const [query, setQuery] = useState('')
   const [reviewTarget, setReviewTarget] = useState<MarketProject | null>(null)
 
+  async function cancelProject(id: number, title: string) {
+    if (!confirm(`'${title}' 프로젝트를 취소하시겠습니까?\n지원자에게 취소 알림이 전송되고 모집이 즉시 중단됩니다.`)) return
+    try {
+      await apiFetch(`/api/market/projects/${id}/cancel`, {
+        method: 'POST',
+        credentials: 'include',
+        body: JSON.stringify({}),
+      })
+      toast.success('프로젝트를 취소했습니다.')
+      window.location.reload()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : '취소 실패')
+    }
+  }
+
+  // H-2: 완료 프로젝트 리뷰 리마인더 배너 — step이 completed가 아닌 탭에서만 노출
+  const completedCount = projects.filter((p) => mapStatusToStage(p.status) === 'completed').length
+  const showReviewBanner = completedCount > 0 && step !== 'completed'
+
   const kpis = useMemo(() => computeAdvertiserKpis(projects, funnel), [projects, funnel])
 
   const filtered = useMemo(() => {
@@ -118,6 +138,14 @@ function AdvertiserView({ name }: { name: string }) {
         <h1>안녕하세요 <strong>{name}</strong>님</h1>
         <p>오늘 도착한 견적 <strong>{kpis.todayQuotes}건</strong>, 진행 중 프로젝트 <strong>{kpis.active}건</strong>입니다.</p>
       </header>
+
+      {showReviewBanner && (
+        <button type="button" className="oc-review-banner" onClick={() => setStep('completed')}>
+          <span className="oc-review-banner-icon" aria-hidden>✨</span>
+          <span>완료된 프로젝트 <strong>{completedCount}건</strong>이 있습니다. 파트너에게 리뷰를 남겨주세요.</span>
+          <span className="oc-review-banner-arrow" aria-hidden>→</span>
+        </button>
+      )}
 
       <section className="oc-kpi-grid" aria-label="요약 지표">
         <KpiCard icon={Briefcase} label="진행중 프로젝트" value={kpis.active} sub={`총 등록 ${projects.length}건`} accent="navy" />
@@ -154,7 +182,8 @@ function AdvertiserView({ name }: { name: string }) {
           <div className="oc-mypage-list">
             {filtered.map((p) => (
               <AdvertiserProjectRow key={p.id} project={p} step={step}
-                onReview={() => setReviewTarget(p)} />
+                onReview={() => setReviewTarget(p)}
+                onCancel={cancelProject} />
             ))}
           </div>
         </div>
@@ -197,10 +226,11 @@ function computeAdvertiserKpis(projects: MarketProject[], funnel: AdvertiserFunn
   return { active, totalQuotes, avgQuotesPerProject, todayQuotes, pendingReview, savingsEstimateM }
 }
 
-function AdvertiserProjectRow({ project, step, onReview }: {
+function AdvertiserProjectRow({ project, step, onReview, onCancel }: {
   project: MarketProject
   step: ProjectStage
   onReview: () => void
+  onCancel: (id: number, title: string) => void
 }) {
   const stagePill = (() => {
     if (step === 'recruiting') return { label: '모집중', cls: 'oc-pill-mint' }
@@ -208,6 +238,7 @@ function AdvertiserProjectRow({ project, step, onReview }: {
     if (step === 'executing') return { label: '집행중', cls: 'oc-pill-amber' }
     return { label: '완료', cls: 'oc-pill-gray' }
   })()
+  const editable = step === 'recruiting' || step === 'contracting'
 
   return (
     <article className="oc-mypage-card oc-mypage-card-v2">
@@ -226,6 +257,19 @@ function AdvertiserProjectRow({ project, step, onReview }: {
       <div className="oc-mypage-card-actions">
         <a href={`/project/${project.id}`} className="oc-btn oc-btn-outline oc-btn-sm">프로젝트 보기</a>
         <a href={`/project/${project.id}/applicants`} className="oc-btn oc-btn-outline oc-btn-sm">지원자 관리</a>
+        {editable && (
+          <>
+            <a href={`/project/${project.id}/edit`} className="oc-btn oc-btn-outline oc-btn-sm">편집</a>
+            <button
+              type="button"
+              className="oc-btn oc-btn-text oc-btn-sm"
+              onClick={() => onCancel(project.id, project.title)}
+              style={{ color: '#DC2626' }}
+            >
+              취소
+            </button>
+          </>
+        )}
         {step === 'completed' && (
           <button type="button" className="oc-btn oc-btn-primary oc-btn-sm" onClick={onReview}>리뷰 작성</button>
         )}
@@ -241,9 +285,24 @@ function AdvertiserProjectRow({ project, step, onReview }: {
 function AgencyView({ name }: { name: string }) {
   const { applications, funnel, loading, error } = useAgencyMypage(true)
   const noti = useNotifications(true)
+  const toast = useToast()
   const [activeStep, setActiveStep] = useState<FunnelStep['key']>('applying')
   const [query, setQuery] = useState('')
   const [onlyOngoing, setOnlyOngoing] = useState(true)
+
+  async function cancelApplication(applicationId: number, projectTitle: string) {
+    if (!confirm(`'${projectTitle}' 프로젝트 지원을 취소하시겠습니까?`)) return
+    try {
+      await apiFetch(`/api/market/applications/${applicationId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      })
+      toast.success('지원을 취소했습니다.')
+      window.location.reload()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : '지원 취소 실패')
+    }
+  }
 
   const kpis = useMemo(() => computeAgencyKpis(applications, funnel), [applications, funnel])
 
@@ -303,7 +362,7 @@ function AgencyView({ name }: { name: string }) {
           )}
 
           <div className="oc-mypage-list">
-            {filtered.map((a) => <AgencyProjectRow key={a.id} application={a} step={activeStep} />)}
+            {filtered.map((a) => <AgencyProjectRow key={a.id} application={a} step={activeStep} onCancel={cancelApplication} />)}
           </div>
         </div>
 
@@ -341,7 +400,11 @@ function computeAgencyKpis(apps: ApplicationWithProject[], funnel: ApplicationFu
   return { total, selected, completed, executing, selectionRate, thisWeekApplications, avgRating, monthlyEstimateM }
 }
 
-function AgencyProjectRow({ application, step }: { application: ApplicationWithProject; step: FunnelStep['key'] }) {
+function AgencyProjectRow({ application, step, onCancel }: {
+  application: ApplicationWithProject
+  step: FunnelStep['key']
+  onCancel: (id: number, title: string) => void
+}) {
   const p = application.project
   const budget = formatBudget(p)
 
@@ -370,6 +433,16 @@ function AgencyProjectRow({ application, step }: { application: ApplicationWithP
         <a href={`/project/${p.id}`} className="oc-btn oc-btn-outline oc-btn-sm">프로젝트 보기</a>
         <button type="button" className="oc-btn oc-btn-outline oc-btn-sm" disabled={step !== 'contracting'}>견적 제안하기</button>
         <button type="button" className="oc-btn oc-btn-outline oc-btn-sm" disabled={step !== 'executing'}>정산 요청</button>
+        {application.status === 'pending' && step === 'applying' && (
+          <button
+            type="button"
+            className="oc-btn oc-btn-text oc-btn-sm"
+            onClick={() => onCancel(application.id, p.title)}
+            style={{ color: '#DC2626' }}
+          >
+            지원 취소
+          </button>
+        )}
         {application.status === 'rejected' && <span className="oc-reject-mark">미선정</span>}
       </div>
     </article>

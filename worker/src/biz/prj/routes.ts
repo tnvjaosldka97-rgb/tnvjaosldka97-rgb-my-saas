@@ -228,6 +228,100 @@ marketProjectRoutes.get('/me/funnel', async (c) => {
   return c.json({ funnel })
 })
 
+// H-4: 프로젝트 편집 (owner · recruiting/contracting 상태만)
+const updateProjectSchema = z.object({
+  title: z.string().min(5).max(120).optional(),
+  description: z.string().min(20).max(2000).optional(),
+  marketingTypes: z.array(z.string().min(1)).min(1).max(8).optional(),
+  hashtags: z.array(z.string().min(1)).max(10).optional(),
+  budgetMin: z.number().int().positive().optional(),
+  budgetMax: z.number().int().positive().nullable().optional(),
+  budgetType: z.enum(['monthly', 'range', 'fixed']).optional(),
+  timeline: z.string().max(40).optional(),
+  daysLeft: z.number().int().min(0).max(365).optional(),
+})
+
+marketProjectRoutes.patch('/projects/:id', zValidator('json', updateProjectSchema), async (c) => {
+  const user = c.get('marketUser')
+  const projectId = Number.parseInt(c.req.param('id'), 10)
+  if (!Number.isFinite(projectId) || projectId <= 0) return c.json({ error: 'Invalid project id' }, 400)
+  const owner = await getProjectOwner(c.env.DB, projectId)
+  if (owner !== user.userId) return c.json({ error: '프로젝트 소유자만 수정할 수 있습니다.' }, 403)
+  const stage = await getProjectStage(c.env.DB, projectId)
+  if (stage !== 'recruiting' && stage !== 'contracting') {
+    return c.json({ error: '모집중·계약진행중 단계에서만 수정할 수 있습니다.' }, 400)
+  }
+  const input = c.req.valid('json')
+  const fields: string[] = []
+  const binds: (string | number | null)[] = []
+  const push = (col: string, val: string | number | null) => {
+    fields.push(`${col} = ?${fields.length + 1}`)
+    binds.push(val)
+  }
+  if (input.title !== undefined) push('title', input.title)
+  if (input.description !== undefined) push('description', input.description)
+  if (input.marketingTypes !== undefined) push('marketing_types', JSON.stringify(input.marketingTypes))
+  if (input.hashtags !== undefined) push('hashtags', JSON.stringify(input.hashtags))
+  if (input.budgetMin !== undefined) push('budget_min', input.budgetMin)
+  if (input.budgetMax !== undefined) push('budget_max', input.budgetMax)
+  if (input.budgetType !== undefined) push('budget_type', input.budgetType)
+  if (input.timeline !== undefined) push('timeline', input.timeline)
+  if (input.daysLeft !== undefined) push('days_left', input.daysLeft)
+  if (fields.length === 0) return c.json({ error: '변경할 항목이 없습니다.' }, 400)
+  fields.push(`updated_at = ?${fields.length + 1}`)
+  binds.push(new Date().toISOString())
+  binds.push(projectId)
+  await c.env.DB.prepare(`UPDATE projects SET ${fields.join(', ')} WHERE id = ?${binds.length}`)
+    .bind(...binds)
+    .run()
+  return c.json({ ok: true })
+})
+
+// H-5: 프로젝트 취소
+marketProjectRoutes.post('/projects/:id/cancel', async (c) => {
+  const user = c.get('marketUser')
+  const projectId = Number.parseInt(c.req.param('id'), 10)
+  if (!Number.isFinite(projectId) || projectId <= 0) return c.json({ error: 'Invalid project id' }, 400)
+  const owner = await getProjectOwner(c.env.DB, projectId)
+  if (owner !== user.userId) return c.json({ error: '프로젝트 소유자만 취소할 수 있습니다.' }, 403)
+  const stage = await getProjectStage(c.env.DB, projectId)
+  if (stage === 'completed' || stage === 'cancelled') {
+    return c.json({ error: '이미 완료·취소된 프로젝트입니다.' }, 400)
+  }
+  const now = new Date().toISOString()
+  await c.env.DB
+    .prepare("UPDATE projects SET stage = 'cancelled', status = 'completed', updated_at = ?1 WHERE id = ?2")
+    .bind(now, projectId)
+    .run()
+  return c.json({ ok: true })
+})
+
+// H-6: 대행사 지원 취소 (본인 · status='pending'만)
+marketProjectRoutes.delete('/applications/:id', async (c) => {
+  const user = c.get('marketUser')
+  const id = Number.parseInt(c.req.param('id'), 10)
+  if (!Number.isFinite(id) || id <= 0) return c.json({ error: 'Invalid application id' }, 400)
+  const application = await getApplicationById(c.env.DB, id)
+  if (!application) return c.json({ error: 'Application not found' }, 404)
+  if (application.agencyUserId !== user.userId) {
+    return c.json({ error: '본인 지원만 취소할 수 있습니다.' }, 403)
+  }
+  if (application.status !== 'pending') {
+    return c.json({ error: '검토 대기 중인 지원만 취소할 수 있습니다.' }, 400)
+  }
+  const now = new Date().toISOString()
+  await c.env.DB
+    .prepare('DELETE FROM project_applications WHERE id = ?1')
+    .bind(id)
+    .run()
+  // 지원자 수 감소
+  await c.env.DB
+    .prepare('UPDATE projects SET applicant_count = MAX(0, applicant_count - 1), updated_at = ?1 WHERE id = ?2')
+    .bind(now, application.projectId)
+    .run()
+  return c.json({ ok: true })
+})
+
 const advanceSchema = z.object({ next: z.enum(['executing', 'completed']) })
 
 marketProjectRoutes.patch('/projects/:id/stage', zValidator('json', advanceSchema), async (c) => {

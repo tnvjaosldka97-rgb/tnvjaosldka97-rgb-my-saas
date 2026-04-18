@@ -47,6 +47,26 @@ marketAuthRoutes.post('/register', zValidator('json', registerSchema), async (c)
       userType: input.userType,
       phone: input.phone ?? null,
     })
+
+    // C-1: 대행사 가입 시 agencies 기본 프로필 자동 생성 → SubmitQuote에서 본인 선택 가능
+    if (input.userType === 'agency') {
+      try {
+        const slug = `agency-${user.id}-${Math.random().toString(36).slice(2, 8)}`
+        const now = new Date().toISOString()
+        await c.env.DB
+          .prepare(
+            `INSERT INTO agencies
+               (slug, name, description, specialties, verified, rating,
+                completed_projects, total_reviews, user_id, created_at)
+             VALUES (?1, ?2, '', '[]', 0, 0, 0, 0, ?3, ?4)`,
+          )
+          .bind(slug, user.name, user.id, now)
+          .run()
+      } catch (err) {
+        console.warn('[mau/register] agency auto-create failed', err)
+      }
+    }
+
     await issueMarketSession(c, user.id, user.email)
     return c.json({ user }, 201)
   } catch (e) {

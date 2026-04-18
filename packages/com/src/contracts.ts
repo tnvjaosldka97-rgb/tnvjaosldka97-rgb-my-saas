@@ -455,7 +455,7 @@ export type DashboardSummary = {
   quotes: MarketQuote[]
 }
 
-export type ProjectStage = 'recruiting' | 'contracting' | 'executing' | 'completed'
+export type ProjectStage = 'recruiting' | 'contracting' | 'executing' | 'completed' | 'cancelled'
 export type ApplicationStatus = 'pending' | 'selected' | 'rejected'
 
 export type ProjectApplication = {
@@ -538,4 +538,5 @@ export type AdvertiserFunnel = {
   contracting: number
   executing: number
   completed: number
+  cancelled?: number
 }

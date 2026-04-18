@@ -13,33 +13,42 @@ import {
   ClipboardList,
   CheckCircle2,
   XCircle,
+  UserCog,
+  Ban,
+  RotateCcw,
 } from 'lucide-react'
 import { apiFetch } from '../../com/api/client'
 import { useToast } from '../../com/ui/Toast'
 
-type Tab = 'overview' | 'drafts' | 'projects' | 'agencies' | 'applications' | 'consultations' | 'reviews'
+type Tab = 'overview' | 'drafts' | 'projects' | 'agencies' | 'members' | 'applications' | 'consultations' | 'reviews'
 
-type TabDef = { key: Tab; label: string; Icon: typeof LayoutDashboard; badge?: 'pending' }
+type BadgeKind = 'pending-drafts' | 'pending-cons'
+
+type TabDef = { key: Tab; label: string; Icon: typeof LayoutDashboard; badge?: BadgeKind }
 
 const TABS: TabDef[] = [
   { key: 'overview',      label: 'Overview',      Icon: LayoutDashboard },
-  { key: 'drafts',        label: '승인 대기',     Icon: ClipboardList, badge: 'pending' },
+  { key: 'drafts',        label: '승인 대기',     Icon: ClipboardList, badge: 'pending-drafts' },
   { key: 'projects',      label: 'Projects',      Icon: Briefcase },
   { key: 'agencies',      label: 'Agencies',      Icon: BadgeCheck },
+  { key: 'members',       label: 'Members',       Icon: UserCog },
   { key: 'applications',  label: 'Applications',  Icon: Send },
-  { key: 'consultations', label: 'Consultations', Icon: MessageSquare },
+  { key: 'consultations', label: 'Consultations', Icon: MessageSquare, badge: 'pending-cons' },
   { key: 'reviews',       label: 'Reviews',       Icon: Star },
 ]
 
 export function MarketPanel() {
   const [tab, setTab] = useState<Tab>('overview')
-  const [pendingCount, setPendingCount] = useState(0)
+  const [badges, setBadges] = useState<Record<BadgeKind, number>>({ 'pending-drafts': 0, 'pending-cons': 0 })
 
   useEffect(() => {
     void apiFetch<Overview>('/api/admin/market/overview')
-      .then((d) => setPendingCount(d.pendingDrafts ?? 0))
+      .then((d) => setBadges({
+        'pending-drafts': d.pendingDrafts ?? 0,
+        'pending-cons': d.pendingConsultations ?? 0,
+      }))
       .catch(() => { /* ignore */ })
-  }, [tab]) // 탭 바뀔 때마다 카운트 갱신
+  }, [tab])
 
   return (
     <section className="market-panel">
@@ -47,7 +56,8 @@ export function MarketPanel() {
         {TABS.map((t) => {
           const Icon = t.Icon
           const active = tab === t.key
-          const showBadge = t.badge === 'pending' && pendingCount > 0
+          const count = t.badge ? badges[t.badge] : 0
+          const showBadge = Boolean(t.badge) && count > 0
           return (
             <button
               key={t.key}
@@ -59,7 +69,7 @@ export function MarketPanel() {
             >
               <Icon size={14} strokeWidth={2} aria-hidden />
               {t.label}
-              {showBadge && <span className="market-tab-badge">{pendingCount}</span>}
+              {showBadge && <span className="market-tab-badge">{count}</span>}
             </button>
           )
         })}
@@ -70,6 +80,7 @@ export function MarketPanel() {
         {tab === 'drafts' && <DraftsTab />}
         {tab === 'projects' && <ProjectsTab />}
         {tab === 'agencies' && <AgenciesTab />}
+        {tab === 'members' && <MembersTab />}
         {tab === 'applications' && <ApplicationsTab />}
         {tab === 'consultations' && <ConsultationsTab />}
         {tab === 'reviews' && <ReviewsTab />}
@@ -225,6 +236,134 @@ function fmtRel(iso: string): string {
   if (diff < 60 * 60 * 1000) return `${Math.round(diff / 60000)}분 전`
   if (diff < 24 * 60 * 60 * 1000) return `${Math.round(diff / (60 * 60000))}시간 전`
   return `${Math.round(diff / (24 * 60 * 60 * 1000))}일 전`
+}
+
+/* =============================================================
+   Members (market_users 관리)
+============================================================= */
+
+type Member = {
+  id: number
+  email: string
+  name: string
+  userType: string
+  phone: string | null
+  status: string
+  createdAt: string
+  agencySlug: string | null
+  agencyVerified: boolean | null
+}
+
+function MembersTab() {
+  const toast = useToast()
+  const [items, setItems] = useState<Member[]>([])
+  const [loading, setLoading] = useState(true)
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'suspended'>('all')
+  const [typeFilter, setTypeFilter] = useState<'all' | 'advertiser' | 'agency'>('all')
+  const [busy, setBusy] = useState<number | null>(null)
+
+  function load() {
+    setLoading(true)
+    void apiFetch<{ items: Member[] }>(`/api/admin/market/members?status=${statusFilter}&type=${typeFilter}`)
+      .then((r) => setItems(r.items))
+      .finally(() => setLoading(false))
+  }
+  useEffect(load, [statusFilter, typeFilter])
+
+  async function toggleStatus(m: Member) {
+    const next = m.status === 'suspended' ? 'active' : 'suspended'
+    if (next === 'suspended' && !confirm(`${m.name}(${m.email}) 계정을 정지하시겠습니까?`)) return
+    setBusy(m.id)
+    try {
+      await apiFetch(`/api/admin/market/members/${m.id}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status: next }),
+      })
+      toast.success(next === 'suspended' ? `${m.name} 정지 완료` : `${m.name} 활성 복구`)
+      load()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : '상태 변경 실패')
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  return (
+    <div className="market-tab-content">
+      <div className="market-toolbar">
+        <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value as typeof typeFilter)} className="market-select">
+          <option value="all">전체 유형</option>
+          <option value="advertiser">광고주</option>
+          <option value="agency">대행사</option>
+        </select>
+        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)} className="market-select">
+          <option value="all">전체 상태</option>
+          <option value="active">활성</option>
+          <option value="suspended">정지</option>
+        </select>
+        <span className="market-count"><strong>{items.length}</strong>명</span>
+        <button type="button" className="market-btn" onClick={load}><RefreshCw size={12} strokeWidth={2} /> 새로고침</button>
+      </div>
+
+      {loading ? (
+        <div className="market-skeleton">불러오는 중…</div>
+      ) : items.length === 0 ? (
+        <div className="market-empty">조건에 맞는 회원이 없습니다.</div>
+      ) : (
+        <div className="market-table-wrap">
+          <table className="market-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>이름</th>
+                <th>이메일</th>
+                <th>유형</th>
+                <th>대행사</th>
+                <th>가입일</th>
+                <th>상태</th>
+                <th>액션</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((m) => (
+                <tr key={m.id}>
+                  <td className="mono">#{m.id}</td>
+                  <td className="market-cell-title">{m.name}</td>
+                  <td className="mono">{m.email}</td>
+                  <td><span className="market-badge">{m.userType === 'agency' ? '대행사' : '광고주'}</span></td>
+                  <td>
+                    {m.agencySlug ? (
+                      <a href={`/agency/${m.agencySlug}`} target="_blank" rel="noopener" style={{ color: 'var(--oc-royal)' }}>
+                        {m.agencyVerified ? '✓ 인증' : '미인증'}
+                      </a>
+                    ) : '—'}
+                  </td>
+                  <td>{fmtRel(m.createdAt)}</td>
+                  <td>
+                    {m.status === 'suspended' ? (
+                      <span className="market-pill badge-gray">정지</span>
+                    ) : (
+                      <span className="market-pill badge-mint">활성</span>
+                    )}
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      className={`market-btn-sm ${m.status === 'suspended' ? 'market-btn-approve' : 'market-btn-danger'}`}
+                      disabled={busy === m.id}
+                      onClick={() => toggleStatus(m)}
+                    >
+                      {m.status === 'suspended' ? <><RotateCcw size={11} /> 복구</> : <><Ban size={11} /> 정지</>}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  )
 }
 
 /* =============================================================

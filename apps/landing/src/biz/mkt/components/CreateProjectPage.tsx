@@ -14,8 +14,9 @@ const BUDGET_TYPES: { v: BudgetType; label: string }[] = [
   { v: 'fixed', label: '고정' },
 ]
 
-export function CreateProjectPage() {
+export function CreateProjectPage({ editId }: { editId?: number } = {}) {
   const { user, loading } = useAuth()
+  const isEdit = typeof editId === 'number' && editId > 0
   const [form, setForm] = useState({
     industry: '',
     title: '',
@@ -30,10 +31,37 @@ export function CreateProjectPage() {
   })
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [, setLoadingEdit] = useState(isEdit)
 
   useEffect(() => {
     if (!loading && !user) window.location.href = '/login'
   }, [loading, user])
+
+  // H-4: 편집 모드 — 기존 프로젝트 값 pre-populate
+  useEffect(() => {
+    if (!isEdit || !user) return
+    setLoadingEdit(true)
+    apiFetch<{ project: { id: number; industry: string; title: string; description: string; marketingTypes: string[]; hashtags: string[]; budgetMin: number; budgetMax: number | null; budgetType: BudgetType; timeline: string | null; daysLeft: number } }>(
+      `/api/public/projects/${editId}`,
+    )
+      .then((r) => {
+        const p = r.project
+        setForm({
+          industry: p.industry,
+          title: p.title,
+          description: p.description,
+          marketingTypes: p.marketingTypes,
+          hashtags: p.hashtags.join(' '),
+          budgetMin: String(p.budgetMin),
+          budgetMax: p.budgetMax !== null ? String(p.budgetMax) : '',
+          budgetType: p.budgetType,
+          timeline: p.timeline ?? '',
+          daysLeft: String(p.daysLeft ?? 14),
+        })
+      })
+      .catch((e) => setError(e instanceof Error ? e.message : '프로젝트를 불러오지 못했습니다.'))
+      .finally(() => setLoadingEdit(false))
+  }, [isEdit, editId, user])
 
   if (!loading && user && user.userType === 'agency') {
     return (
@@ -94,18 +122,30 @@ export function CreateProjectPage() {
         daysLeft: form.daysLeft ? Number.parseInt(form.daysLeft, 10) : undefined,
         advertiserName: user?.name,
       }
-      const res = await apiFetch<{ project: { id: number } }>('/api/market/projects', {
-        method: 'POST',
-        credentials: 'include',
-        body: JSON.stringify(input),
-      })
-      window.location.href = `/project/${res.project.id}`
+      if (isEdit) {
+        await apiFetch(`/api/market/projects/${editId}`, {
+          method: 'PATCH',
+          credentials: 'include',
+          body: JSON.stringify(input),
+        })
+        window.location.href = `/project/${editId}`
+      } else {
+        const res = await apiFetch<{ project: { id: number } }>('/api/market/projects', {
+          method: 'POST',
+          credentials: 'include',
+          body: JSON.stringify(input),
+        })
+        window.location.href = `/project/${res.project.id}`
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : '등록에 실패했습니다.')
+      setError(err instanceof Error ? err.message : '저장에 실패했습니다.')
     } finally {
       setSubmitting(false)
     }
   }
+
+  const pageTitle = isEdit ? '프로젝트 수정' : '새 프로젝트 등록'
+  const submitLabel = isEdit ? '저장' : '프로젝트 등록'
 
   if (loading || !user) {
     return (
@@ -124,7 +164,7 @@ export function CreateProjectPage() {
         <div className="oc-container oc-auth-wrap">
           <div className="oc-auth-card oc-auth-card-wide">
             <a href="/dashboard" className="oc-back-link">← 대시보드로</a>
-            <h1>새 프로젝트 등록</h1>
+            <h1>{pageTitle}</h1>
             <p className="oc-auth-sub">검증 대행사에게 견적을 받을 프로젝트를 등록합니다.</p>
 
             <form onSubmit={onSubmit} className="oc-auth-form">
@@ -209,7 +249,7 @@ export function CreateProjectPage() {
               <div className="oc-form-actions">
                 <a href="/dashboard" className="oc-btn oc-btn-text">취소</a>
                 <button type="submit" className="oc-btn oc-btn-primary oc-btn-lg" disabled={submitting}>
-                  {submitting ? '등록 중…' : '프로젝트 등록'}
+                  {submitting ? (isEdit ? '저장 중…' : '등록 중…') : submitLabel}
                 </button>
               </div>
             </form>
