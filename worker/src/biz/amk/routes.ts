@@ -9,6 +9,7 @@ import {
   adminListConsultations,
   adminListReviews,
   adminListDrafts,
+  adminGetDraft,
   adminApproveDraft,
   adminRejectDraft,
   adminMarketOverview,
@@ -19,6 +20,7 @@ import {
   adminListMembers,
   adminSetMemberStatus,
 } from './repository'
+import { sendEmailSafe, renderDraftApprovedEmail, renderDraftRejectedEmail } from '../eml/mailer'
 
 export const adminMarketRoutes = new Hono<{ Bindings: AppBindings }>()
 
@@ -116,7 +118,15 @@ adminMarketRoutes.post('/drafts/:id/approve', async (c) => {
   const id = Number.parseInt(c.req.param('id'), 10)
   if (!Number.isFinite(id) || id <= 0) return c.json({ error: 'Invalid id' }, 400)
   try {
+    // 승인 전 draft 정보 보존 (이메일 발송용)
+    const draft = await adminGetDraft(c.env.DB, id)
     const projectId = await adminApproveDraft(c.env.DB, id, 'admin')
+    // C-2: 요청자에게 승인 메일 (Resend 미설정 시 safe skip)
+    if (draft?.requesterContact) {
+      const title = `${draft.industry} · ${draft.marketingType}`
+      const email = renderDraftApprovedEmail(draft.requesterName, projectId, title)
+      await sendEmailSafe(c.env, draft.requesterContact, email.subject, email.html, email.text)
+    }
     return c.json({ ok: true, projectId })
   } catch (err) {
     return c.json({ error: err instanceof Error ? err.message : '승인 실패' }, 400)
@@ -128,6 +138,12 @@ adminMarketRoutes.post('/drafts/:id/reject', zValidator('json', rejectSchema), a
   const id = Number.parseInt(c.req.param('id'), 10)
   if (!Number.isFinite(id) || id <= 0) return c.json({ error: 'Invalid id' }, 400)
   const { reason } = c.req.valid('json')
+  const draft = await adminGetDraft(c.env.DB, id)
   await adminRejectDraft(c.env.DB, id, 'admin', reason)
+  // C-2: 요청자에게 반려 메일
+  if (draft?.requesterContact) {
+    const email = renderDraftRejectedEmail(draft.requesterName, reason)
+    await sendEmailSafe(c.env, draft.requesterContact, email.subject, email.html, email.text)
+  }
   return c.json({ ok: true })
 })
