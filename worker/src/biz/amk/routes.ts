@@ -19,6 +19,8 @@ import {
   adminDeleteReview,
   adminListMembers,
   adminSetMemberStatus,
+  adminMarkDraftPaid,
+  adminRefundDraftPayment,
 } from './repository'
 import { sendEmailSafe, renderDraftApprovedEmail, renderDraftRejectedEmail } from '../eml/mailer'
 
@@ -118,8 +120,16 @@ adminMarketRoutes.post('/drafts/:id/approve', async (c) => {
   const id = Number.parseInt(c.req.param('id'), 10)
   if (!Number.isFinite(id) || id <= 0) return c.json({ error: 'Invalid id' }, 400)
   try {
-    // 승인 전 draft 정보 보존 (이메일 발송용)
     const draft = await adminGetDraft(c.env.DB, id)
+    if (!draft) return c.json({ error: '초안을 찾을 수 없습니다.' }, 404)
+    // C-4: 결제 게이트 — 등록비 미수령 시 승인 차단 (강제 옵션 제공)
+    const force = c.req.query('force') === '1'
+    if (!force && draft.paymentStatus !== 'paid') {
+      return c.json({
+        error: '등록비(₩10,000) 수령 전입니다. 결제 완료 처리 후 승인해주세요.',
+        paymentStatus: draft.paymentStatus,
+      }, 402)
+    }
     const projectId = await adminApproveDraft(c.env.DB, id, 'admin')
     // C-2: 요청자에게 승인 메일 (Resend 미설정 시 safe skip)
     if (draft?.requesterContact) {
@@ -131,6 +141,26 @@ adminMarketRoutes.post('/drafts/:id/approve', async (c) => {
   } catch (err) {
     return c.json({ error: err instanceof Error ? err.message : '승인 실패' }, 400)
   }
+})
+
+// C-4: 결제 완료 처리 / 환불 처리
+const paymentSchema = z.object({
+  method: z.enum(['bank_transfer', 'card', 'manual']).default('manual'),
+  reference: z.string().max(200).optional(),
+})
+adminMarketRoutes.post('/drafts/:id/payment', zValidator('json', paymentSchema), async (c) => {
+  const id = Number.parseInt(c.req.param('id'), 10)
+  if (!Number.isFinite(id) || id <= 0) return c.json({ error: 'Invalid id' }, 400)
+  const { method, reference } = c.req.valid('json')
+  await adminMarkDraftPaid(c.env.DB, id, method, reference ?? null)
+  return c.json({ ok: true })
+})
+
+adminMarketRoutes.post('/drafts/:id/refund', async (c) => {
+  const id = Number.parseInt(c.req.param('id'), 10)
+  if (!Number.isFinite(id) || id <= 0) return c.json({ error: 'Invalid id' }, 400)
+  await adminRefundDraftPayment(c.env.DB, id)
+  return c.json({ ok: true })
 })
 
 const rejectSchema = z.object({ reason: z.string().max(500).default('반려') })

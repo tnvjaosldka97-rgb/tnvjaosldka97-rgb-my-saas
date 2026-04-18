@@ -64,12 +64,22 @@ export async function listNotifications(
   db: D1DatabaseLike,
   userId: number,
   limit = 20,
+  before?: string,
 ): Promise<MarketNotification[]> {
-  const rows = await allRows<NotificationRow>(
-    db
-      .prepare('SELECT * FROM notifications WHERE user_id = ?1 ORDER BY created_at DESC LIMIT ?2')
-      .bind(userId, limit),
-  )
+  const safeLimit = Math.min(Math.max(limit, 1), 100)
+  const rows = before
+    ? await allRows<NotificationRow>(
+        db
+          .prepare(
+            'SELECT * FROM notifications WHERE user_id = ?1 AND created_at < ?2 ORDER BY created_at DESC LIMIT ?3',
+          )
+          .bind(userId, before, safeLimit),
+      )
+    : await allRows<NotificationRow>(
+        db
+          .prepare('SELECT * FROM notifications WHERE user_id = ?1 ORDER BY created_at DESC LIMIT ?2')
+          .bind(userId, safeLimit),
+      )
   return rows.map(mapNotification)
 }
 

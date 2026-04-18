@@ -140,6 +140,9 @@ export type AdminDraftRow = {
   reviewedBy: string | null
   approvedProjectId: number | null
   rejectReason: string | null
+  paymentStatus: string
+  paymentAmount: number
+  paymentReceivedAt: string | null
 }
 
 export type AdminReviewRow = {
@@ -399,12 +402,15 @@ export async function adminListDrafts(
     message: string; status: string; submitted_at: string
     reviewed_at: string | null; reviewed_by: string | null
     approved_project_id: number | null; reject_reason: string | null
+    payment_status: string | null; payment_amount: number | null
+    payment_received_at: string | null
   }
   const where = statusFilter && statusFilter !== 'all' ? 'WHERE status = ?1' : ''
   const stmt = db.prepare(
     `SELECT id, requester_name, requester_contact, industry, marketing_type,
             budget_range, message, status, submitted_at,
-            reviewed_at, reviewed_by, approved_project_id, reject_reason
+            reviewed_at, reviewed_by, approved_project_id, reject_reason,
+            payment_status, payment_amount, payment_received_at
        FROM project_drafts
        ${where}
        ORDER BY submitted_at DESC
@@ -426,7 +432,43 @@ export async function adminListDrafts(
     reviewedBy: r.reviewed_by,
     approvedProjectId: r.approved_project_id,
     rejectReason: r.reject_reason,
+    paymentStatus: r.payment_status ?? 'unpaid',
+    paymentAmount: r.payment_amount ?? 10000,
+    paymentReceivedAt: r.payment_received_at,
   }))
+}
+
+export async function adminMarkDraftPaid(
+  db: D1DatabaseLike,
+  id: number,
+  method: string,
+  reference: string | null,
+): Promise<void> {
+  const now = isoNow()
+  await db
+    .prepare(
+      `UPDATE project_drafts
+          SET payment_status = 'paid', payment_method = ?1,
+              payment_received_at = ?2, payment_reference = ?3
+        WHERE id = ?4`,
+    )
+    .bind(method, now, reference, id)
+    .run()
+}
+
+export async function adminRefundDraftPayment(
+  db: D1DatabaseLike,
+  id: number,
+): Promise<void> {
+  const now = isoNow()
+  await db
+    .prepare(
+      `UPDATE project_drafts
+          SET payment_status = 'refunded', payment_refunded_at = ?1
+        WHERE id = ?2`,
+    )
+    .bind(now, id)
+    .run()
 }
 
 export async function adminGetDraft(db: D1DatabaseLike, id: number): Promise<AdminDraftRow | null> {

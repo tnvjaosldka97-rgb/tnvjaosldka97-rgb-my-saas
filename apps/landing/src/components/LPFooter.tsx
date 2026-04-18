@@ -49,8 +49,8 @@ export function LPFooter() {
           </div>
           <div>
             <span>주소 · 서울특별시 강남구 (운영 시점에 정확한 주소 공지)</span>
-            <span>고객센터 · <a href="mailto:help@mcy.co.kr">help@mcy.co.kr</a> (평일 10:00–19:00)</span>
-            <span>제휴문의 · <a href="mailto:biz@mcy.co.kr">biz@mcy.co.kr</a></span>
+            <span>고객센터 · <a href={`mailto:help@mcy.co.kr?subject=${encodeURIComponent('[마케팅천재야] 고객센터 문의')}`}>help@mcy.co.kr</a> (평일 10:00–19:00)</span>
+            <span>제휴문의 · <a href={`mailto:biz@mcy.co.kr?subject=${encodeURIComponent('[마케팅천재야] 제휴 문의')}`}>biz@mcy.co.kr</a></span>
           </div>
         </div>
 

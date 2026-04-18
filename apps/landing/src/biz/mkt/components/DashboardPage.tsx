@@ -317,12 +317,15 @@ function AgencyView({ name }: { name: string }) {
 
   return (
     <>
-      <header className="oc-dash-greet">
-        <h1>안녕하세요 <strong>{name}</strong> 파트너님</h1>
-        <p>
-          이번 주 새로 지원한 프로젝트 <strong>{kpis.thisWeekApplications}건</strong>,
-          집행 중 캠페인 <strong>{kpis.executing}건</strong>입니다.
-        </p>
+      <header className="oc-dash-greet" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
+        <div>
+          <h1>안녕하세요 <strong>{name}</strong> 파트너님</h1>
+          <p>
+            이번 주 새로 지원한 프로젝트 <strong>{kpis.thisWeekApplications}건</strong>,
+            집행 중 캠페인 <strong>{kpis.executing}건</strong>입니다.
+          </p>
+        </div>
+        <a href="/agency/me/edit" className="oc-btn oc-btn-outline oc-btn-sm">프로필 편집</a>
       </header>
 
       <section className="oc-kpi-grid" aria-label="파트너 실적 지표">

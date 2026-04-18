@@ -383,6 +383,9 @@ type Draft = {
   reviewedAt: string | null
   approvedProjectId: number | null
   rejectReason: string | null
+  paymentStatus: string
+  paymentAmount: number
+  paymentReceivedAt: string | null
 }
 
 function DraftsTab() {
@@ -452,6 +455,34 @@ function DraftsTab() {
     } finally {
       setBusy(null)
     }
+  }
+
+  async function markPaid(id: number) {
+    const ref = prompt('결제 참조(이체 증빙번호 등)를 입력하세요 (선택):', '')
+    if (ref === null) return
+    setBusy(id)
+    try {
+      await apiFetch(`/api/admin/market/drafts/${id}/payment`, {
+        method: 'POST',
+        body: JSON.stringify({ method: 'bank_transfer', reference: ref || undefined }),
+      })
+      toast.success(`초안 #${id} 결제 완료 처리`)
+      load()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : '결제 처리 실패')
+    } finally { setBusy(null) }
+  }
+
+  async function refund(id: number) {
+    if (!confirm(`초안 #${id}의 등록비를 환불 처리합니다. 계속하시겠습니까?`)) return
+    setBusy(id)
+    try {
+      await apiFetch(`/api/admin/market/drafts/${id}/refund`, { method: 'POST' })
+      toast.info(`초안 #${id} 환불 처리`)
+      load()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : '환불 처리 실패')
+    } finally { setBusy(null) }
   }
 
   async function reject(id: number) {
@@ -530,6 +561,16 @@ function DraftsTab() {
                 <span className="market-draft-chip">{d.industry}</span>
                 <span className="market-draft-chip">{d.marketingType}</span>
                 <span className="market-draft-chip">{d.budgetRange}</span>
+                <span
+                  className="market-draft-chip"
+                  style={{
+                    background: d.paymentStatus === 'paid' ? '#DCFCE7' : d.paymentStatus === 'refunded' ? '#E0E7FF' : '#FEF3C7',
+                    color: d.paymentStatus === 'paid' ? '#14532D' : d.paymentStatus === 'refunded' ? '#3730A3' : '#854D0E',
+                    fontWeight: 700,
+                  }}
+                >
+                  {d.paymentStatus === 'paid' ? '✓ 결제완료' : d.paymentStatus === 'refunded' ? '↺ 환불됨' : '• 미결제'} ₩{(d.paymentAmount ?? 10000).toLocaleString()}
+                </span>
               </div>
 
               {d.message && <p className="market-draft-msg">{d.message}</p>}
@@ -547,11 +588,34 @@ function DraftsTab() {
                 <time>{fmtRel(d.submittedAt)}</time>
                 {d.status === 'pending' && (
                   <div className="market-draft-actions">
+                    {d.paymentStatus !== 'paid' && (
+                      <button
+                        type="button"
+                        className="market-btn-sm"
+                        onClick={() => markPaid(d.id)}
+                        disabled={busy === d.id}
+                        style={{ background: '#F59E0B', color: 'white' }}
+                      >
+                        결제 완료 처리
+                      </button>
+                    )}
+                    {d.paymentStatus === 'paid' && d.status === 'pending' && (
+                      <button
+                        type="button"
+                        className="market-btn-sm"
+                        onClick={() => refund(d.id)}
+                        disabled={busy === d.id}
+                        style={{ background: '#E5E7EB', color: '#374151' }}
+                      >
+                        환불
+                      </button>
+                    )}
                     <button
                       type="button"
                       className="market-btn-sm market-btn-approve"
                       onClick={() => approve(d.id)}
-                      disabled={busy === d.id}
+                      disabled={busy === d.id || d.paymentStatus !== 'paid'}
+                      title={d.paymentStatus !== 'paid' ? '결제 완료 후 승인 가능' : undefined}
                     >
                       <CheckCircle2 size={11} /> 승인 · 공개
                     </button>

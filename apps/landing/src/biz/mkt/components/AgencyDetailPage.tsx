@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
-import { BadgeCheck, Star, Briefcase, MessageSquare, ArrowLeft, MapPin, Users, Clock, Calendar, Award } from 'lucide-react'
+import { BadgeCheck, Star, Briefcase, MessageSquare, ArrowLeft, MapPin, Users, Clock, Calendar, Award, Bookmark, Share2 } from 'lucide-react'
 import type { PublicAgencyDetail, PublicAgencyReview } from '@my-saas/com'
 import { LPHeader } from '../../../components/LPHeader'
 import { LPFooter } from '../../../components/LPFooter'
 import { NotFoundPage } from './NotFoundPage'
 import { apiFetch } from '../../../com/api/client'
 import { Skeleton, SkeletonStack } from '../../../com/ui/Skeleton'
+import { useToast } from '../../../com/ui/Toast'
+import { isBookmarked, toggleBookmark, shareOrCopy } from '../../../com/bookmarks'
 import '../../../landing-page.css'
 
 export function AgencyDetailPage({ slug }: { slug: string }) {
@@ -45,9 +47,25 @@ export function AgencyDetailPage({ slug }: { slug: string }) {
 
 function AgencyContent({ agency, reviews }: { agency: PublicAgencyDetail; reviews: PublicAgencyReview[] }) {
   const initial = agency.name.charAt(0)
+  const toast = useToast()
   const avgRatingFromReviews = reviews.length
     ? Math.round((reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length) * 10) / 10
     : agency.rating
+  const [bookmarked, setBookmarked] = useState(() => isBookmarked('agency', agency.slug))
+
+  async function onShare() {
+    const url = `${window.location.origin}/agency/${agency.slug}`
+    const res = await shareOrCopy({ title: agency.name, text: agency.description, url })
+    if (res === 'shared') toast.success('공유했습니다.')
+    else if (res === 'copied') toast.success('링크를 복사했습니다.')
+    else toast.error('공유에 실패했습니다.')
+  }
+
+  function onBookmark() {
+    const on = toggleBookmark('agency', agency.slug)
+    setBookmarked(on)
+    toast.info(on ? '북마크에 저장했습니다.' : '북마크에서 제거했습니다.')
+  }
 
   return (
     <>
@@ -61,6 +79,13 @@ function AgencyContent({ agency, reviews }: { agency: PublicAgencyDetail; review
                 <BadgeCheck size={14} strokeWidth={2.4} aria-hidden /> 인증 파트너
               </span>
             )}
+            <button type="button" className="oc-btn oc-btn-outline oc-btn-sm" onClick={onBookmark} aria-pressed={bookmarked}>
+              <Bookmark size={14} strokeWidth={2} fill={bookmarked ? 'currentColor' : 'none'} aria-hidden />
+              {bookmarked ? '저장됨' : '저장'}
+            </button>
+            <button type="button" className="oc-btn oc-btn-outline oc-btn-sm" onClick={onShare}>
+              <Share2 size={14} strokeWidth={2} aria-hidden /> 공유
+            </button>
           </div>
           <p className="oc-agency-desc">{agency.description}</p>
 

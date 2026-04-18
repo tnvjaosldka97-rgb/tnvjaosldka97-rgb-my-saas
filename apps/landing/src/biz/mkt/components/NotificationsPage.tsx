@@ -78,20 +78,34 @@ export function NotificationsPage() {
               action={<a href="/dashboard" className="oc-btn oc-btn-primary">대시보드로</a>}
             />
           ) : (
-            <ul className="oc-notis-list">
-              {noti.items.map((n) => (
-                <li key={n.id} className={`oc-notis-card${!n.readAt ? ' is-unread' : ''}`}>
-                  <a href={n.link ?? '#'}>
-                    <div className="oc-notis-body">
-                      <strong>{n.title}</strong>
-                      {n.body && <p>{n.body}</p>}
-                      <time>{new Date(n.createdAt).toLocaleString('ko-KR')}</time>
-                    </div>
-                    {!n.readAt && <span className="oc-notis-dot" aria-label="안읽음" />}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <>
+              <ul className="oc-notis-list">
+                {noti.items.map((n) => (
+                  <li key={n.id} className={`oc-notis-card${!n.readAt ? ' is-unread' : ''}`}>
+                    <a href={n.link ?? '#'}>
+                      <div className="oc-notis-body">
+                        <strong>{n.title}</strong>
+                        {n.body && <p>{n.body}</p>}
+                        <time>{new Date(n.createdAt).toLocaleString('ko-KR')}</time>
+                      </div>
+                      {!n.readAt && <span className="oc-notis-dot" aria-label="안읽음" />}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              {noti.hasMore && (
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: 18 }}>
+                  <button
+                    type="button"
+                    className="oc-btn oc-btn-outline"
+                    onClick={() => { void noti.loadMore() }}
+                    disabled={noti.loadingMore}
+                  >
+                    {noti.loadingMore ? '불러오는 중…' : '더 보기'}
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </main>

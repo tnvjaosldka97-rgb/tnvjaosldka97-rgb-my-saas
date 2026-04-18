@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { MessageCircle, ArrowLeft } from 'lucide-react'
+import { MessageCircle, ArrowLeft, Share2, Bookmark } from 'lucide-react'
 import type { MarketProject, MarketProjectDetail, ProjectApplication, BudgetType } from '@my-saas/com'
 import { useProjects } from '../hooks/useProjects'
 import { LPHeader } from '../../../components/LPHeader'
@@ -11,6 +11,7 @@ import { useToast } from '../../../com/ui/Toast'
 import { Skeleton, SkeletonStack } from '../../../com/ui/Skeleton'
 import { IndustryArt } from './IndustryArt'
 import { ConsultationModal } from './ConsultationModal'
+import { isBookmarked, toggleBookmark, shareOrCopy } from '../../../com/bookmarks'
 import '../../../landing-page.css'
 
 const STATUS_META: Record<MarketProject['status'], { label: string; cls: string }> = {
@@ -142,6 +143,26 @@ function ProjectDetailLayout({ project }: { project: MarketProjectDetail }) {
   const isOwner = user && project.advertiserName && user.name === project.advertiserName
   const canApply = user?.userType === 'agency' && !isOwner && project.status === 'recruiting'
 
+  const [bookmarked, setBookmarked] = useState(() => isBookmarked('project', project.id))
+
+  async function onShare() {
+    const url = `${window.location.origin}/project/${project.id}`
+    const res = await shareOrCopy({
+      title: project.title,
+      text: `${project.industry} · ${project.marketingTypes.join(', ')} 프로젝트`,
+      url,
+    })
+    if (res === 'shared') toast.success('공유했습니다.')
+    else if (res === 'copied') toast.success('링크를 복사했습니다.')
+    else toast.error('공유에 실패했습니다.')
+  }
+
+  function onBookmark() {
+    const on = toggleBookmark('project', project.id)
+    setBookmarked(on)
+    toast.info(on ? '북마크에 저장했습니다.' : '북마크에서 제거했습니다.')
+  }
+
   return (
     <div className="oc-detail-grid">
       <div className="oc-detail-col-main">
@@ -154,6 +175,24 @@ function ProjectDetailLayout({ project }: { project: MarketProjectDetail }) {
                 <span className="oc-dday">D-{project.daysLeft}</span>
               )}
               <span className="oc-applicants-chip">지원자 {project.applicantCount}</span>
+              <button
+                type="button"
+                className="oc-btn oc-btn-outline oc-btn-sm"
+                onClick={onBookmark}
+                aria-pressed={bookmarked}
+                aria-label={bookmarked ? '북마크 제거' : '북마크 저장'}
+              >
+                <Bookmark size={14} strokeWidth={2} fill={bookmarked ? 'currentColor' : 'none'} aria-hidden />
+                {bookmarked ? '저장됨' : '저장'}
+              </button>
+              <button
+                type="button"
+                className="oc-btn oc-btn-outline oc-btn-sm"
+                onClick={onShare}
+                aria-label="프로젝트 공유"
+              >
+                <Share2 size={14} strokeWidth={2} aria-hidden /> 공유
+              </button>
             </div>
           </header>
 
@@ -316,6 +355,13 @@ function ProjectDetailLayout({ project }: { project: MarketProjectDetail }) {
             <MessageCircle size={14} strokeWidth={2} aria-hidden /> 비회원 빠른 상담
           </button>
           <p className="oc-cta-sub-note">가입 없이 연락처만 남기면 담당자가 연결해드립니다.</p>
+
+          <a
+            className="oc-cta-support-link"
+            href={`mailto:help@mcy.co.kr?subject=${encodeURIComponent(`[마케팅천재야] 문의 - 프로젝트 #${project.id}`)}`}
+          >
+            고객센터에 이 프로젝트 관련 문의하기 →
+          </a>
         </div>
       </aside>
 

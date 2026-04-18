@@ -17,6 +17,9 @@ import {
   toMarketUser,
 } from './repository'
 import { handleOAuthCallback, handleOAuthStart, isConfigured, kakaoConfig, naverConfig } from './oauth'
+import { requireMarketUser, type MarketAuthVariables } from './middleware'
+import { createDirectUpload } from '../med/images'
+import { imagesConfigured } from '../../com/env'
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -112,3 +115,143 @@ marketAuthRoutes.get('/oauth/kakao', (c) => handleOAuthStart(c, kakaoConfig(c.en
 marketAuthRoutes.get('/oauth/kakao/callback', (c) => handleOAuthCallback(c, kakaoConfig(c.env)))
 marketAuthRoutes.get('/oauth/naver', (c) => handleOAuthStart(c, naverConfig(c.env)))
 marketAuthRoutes.get('/oauth/naver/callback', (c) => handleOAuthCallback(c, naverConfig(c.env)))
+
+// --- M-3: 대행사 자체 프로필 편집 ---
+const agencyRoutes = new Hono<{ Bindings: AppBindings; Variables: MarketAuthVariables }>()
+agencyRoutes.use('*', requireMarketUser)
+
+type AgencyRow = {
+  id: number; slug: string; name: string; description: string
+  specialties: string; verified: number; rating: number
+  completed_projects: number; total_reviews: number
+  founded_year: number | null; region: string | null; team_size: string | null
+  avg_response_hour: number | null; portfolio_note: string | null; case_studies: string
+}
+
+function parseJsonArr(raw: string | null): unknown[] {
+  try { const v = JSON.parse(raw ?? '[]'); return Array.isArray(v) ? v : [] } catch { return [] }
+}
+
+agencyRoutes.get('/me', async (c) => {
+  const user = c.get('marketUser')
+  const row = await c.env.DB
+    .prepare(
+      `SELECT id, slug, name, description, specialties, verified, rating,
+              completed_projects, total_reviews,
+              founded_year, region, team_size, avg_response_hour,
+              portfolio_note, case_studies
+       FROM agencies WHERE user_id = ?1 LIMIT 1`,
+    )
+    .bind(user.userId)
+    .first<AgencyRow>()
+  if (!row) return c.json({ error: '대행사 프로필이 없습니다.' }, 404)
+  return c.json({
+    agency: {
+      id: row.id,
+      slug: row.slug,
+      name: row.name,
+      description: row.description,
+      specialties: parseJsonArr(row.specialties),
+      verified: row.verified === 1,
+      rating: row.rating,
+      completedProjects: row.completed_projects,
+      totalReviews: row.total_reviews,
+      foundedYear: row.founded_year,
+      region: row.region,
+      teamSize: row.team_size,
+      avgResponseHour: row.avg_response_hour,
+      portfolioNote: row.portfolio_note,
+      caseStudies: parseJsonArr(row.case_studies),
+    },
+  })
+})
+
+const agencyEditSchema = z.object({
+  name: z.string().min(1).max(80).optional(),
+  description: z.string().max(2000).optional(),
+  specialties: z.array(z.string().max(40)).max(20).optional(),
+  region: z.string().max(40).nullable().optional(),
+  teamSize: z.string().max(40).nullable().optional(),
+  foundedYear: z.number().int().min(1900).max(2100).nullable().optional(),
+  portfolioNote: z.string().max(2000).nullable().optional(),
+  caseStudies: z
+    .array(
+      z.object({
+        title: z.string().max(200),
+        industry: z.string().max(60),
+        result: z.string().max(500),
+      }),
+    )
+    .max(12)
+    .optional(),
+})
+
+agencyRoutes.patch('/me', zValidator('json', agencyEditSchema), async (c) => {
+  const user = c.get('marketUser')
+  const input = c.req.valid('json')
+  const existing = await c.env.DB
+    .prepare('SELECT id FROM agencies WHERE user_id = ?1 LIMIT 1')
+    .bind(user.userId)
+    .first<{ id: number }>()
+  if (!existing) return c.json({ error: '대행사 프로필이 없습니다.' }, 404)
+
+  const sets: string[] = []
+  const binds: (string | number | null)[] = []
+  let i = 1
+  if (input.name !== undefined) { sets.push(`name = ?${i++}`); binds.push(input.name) }
+  if (input.description !== undefined) { sets.push(`description = ?${i++}`); binds.push(input.description) }
+  if (input.specialties !== undefined) { sets.push(`specialties = ?${i++}`); binds.push(JSON.stringify(input.specialties)) }
+  if (input.region !== undefined) { sets.push(`region = ?${i++}`); binds.push(input.region) }
+  if (input.teamSize !== undefined) { sets.push(`team_size = ?${i++}`); binds.push(input.teamSize) }
+  if (input.foundedYear !== undefined) { sets.push(`founded_year = ?${i++}`); binds.push(input.foundedYear) }
+  if (input.portfolioNote !== undefined) { sets.push(`portfolio_note = ?${i++}`); binds.push(input.portfolioNote) }
+  if (input.caseStudies !== undefined) { sets.push(`case_studies = ?${i++}`); binds.push(JSON.stringify(input.caseStudies)) }
+
+  if (sets.length === 0) return c.json({ ok: true, updated: 0 })
+  const sql = `UPDATE agencies SET ${sets.join(', ')} WHERE id = ?${i}`
+  binds.push(existing.id)
+  await c.env.DB.prepare(sql).bind(...binds).run()
+  return c.json({ ok: true, updated: sets.length })
+})
+
+marketAuthRoutes.route('/agency', agencyRoutes)
+
+// --- M-4: 아바타 업로드 (Cloudflare Images direct upload) ---
+const avatarRoutes = new Hono<{ Bindings: AppBindings; Variables: MarketAuthVariables }>()
+avatarRoutes.use('*', requireMarketUser)
+
+avatarRoutes.post('/upload-url', async (c) => {
+  if (!imagesConfigured(c.env)) return c.json({ error: '이미지 업로드가 설정되어 있지 않습니다.' }, 503)
+  const user = c.get('marketUser')
+  try {
+    const payload = await createDirectUpload(c.env, { title: `avatar-${user.userId}`, alt: 'user avatar' })
+    return c.json(payload, 201)
+  } catch (err) {
+    return c.json({ error: err instanceof Error ? err.message : '업로드 URL 생성 실패' }, 500)
+  }
+})
+
+const confirmAvatarSchema = z.object({ imageId: z.string().min(1).max(120) })
+avatarRoutes.post('/confirm', zValidator('json', confirmAvatarSchema), async (c) => {
+  const user = c.get('marketUser')
+  const { imageId } = c.req.valid('json')
+  const hash = c.env.CLOUDFLARE_IMAGES_DELIVERY_HASH
+  if (!hash) return c.json({ error: 'CLOUDFLARE_IMAGES_DELIVERY_HASH 미설정' }, 500)
+  const url = `https://imagedelivery.net/${hash}/${imageId}/public`
+  await c.env.DB
+    .prepare('UPDATE market_users SET avatar_url = ?1, updated_at = ?2 WHERE id = ?3')
+    .bind(url, new Date().toISOString(), user.userId)
+    .run()
+  return c.json({ ok: true, avatarUrl: url })
+})
+
+avatarRoutes.delete('/', async (c) => {
+  const user = c.get('marketUser')
+  await c.env.DB
+    .prepare('UPDATE market_users SET avatar_url = NULL, updated_at = ?1 WHERE id = ?2')
+    .bind(new Date().toISOString(), user.userId)
+    .run()
+  return c.json({ ok: true })
+})
+
+marketAuthRoutes.route('/me/avatar', avatarRoutes)

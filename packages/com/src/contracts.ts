@@ -406,6 +406,7 @@ export type MarketUser = {
   name: string
   userType: MarketUserType
   phone: string | null
+  avatarUrl: string | null
   createdAt: string
 }
 

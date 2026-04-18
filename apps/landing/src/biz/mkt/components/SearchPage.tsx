@@ -24,6 +24,21 @@ export function SearchPage({ initialQuery }: { initialQuery?: string }) {
   const [agencies, setAgencies] = useState<Agency[]>([])
   const [loading, setLoading] = useState(true)
 
+  // L-1: ?q= URL 동기화 (debounced, replaceState로 히스토리 오염 방지)
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const url = new URL(window.location.href)
+      const trimmed = query.trim()
+      if (trimmed) url.searchParams.set('q', trimmed)
+      else url.searchParams.delete('q')
+      const next = `${url.pathname}${url.search}`
+      if (next !== `${window.location.pathname}${window.location.search}`) {
+        window.history.replaceState(null, '', next)
+      }
+    }, 200)
+    return () => clearTimeout(t)
+  }, [query])
+
   useEffect(() => {
     let mounted = true
     setLoading(true)

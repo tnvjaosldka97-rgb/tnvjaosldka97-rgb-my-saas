@@ -9,6 +9,7 @@ type MarketUserRow = {
   name: string
   user_type: string
   phone: string | null
+  avatar_url: string | null
   created_at: string
   updated_at: string
 }
@@ -20,6 +21,7 @@ function mapUser(row: MarketUserRow): MarketUser {
     name: row.name,
     userType: row.user_type as MarketUserType,
     phone: row.phone,
+    avatarUrl: row.avatar_url ?? null,
     createdAt: row.created_at,
   }
 }

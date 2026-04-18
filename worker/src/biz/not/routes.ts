@@ -12,11 +12,15 @@ notificationRoutes.use('*', requireMarketUser)
 
 notificationRoutes.get('/', async (c) => {
   const user = c.get('marketUser')
+  const limitRaw = Number.parseInt(c.req.query('limit') ?? '20', 10)
+  const limit = Number.isFinite(limitRaw) && limitRaw > 0 ? Math.min(limitRaw, 100) : 20
+  const before = c.req.query('before') || undefined
   const [items, unread] = await Promise.all([
-    listNotifications(c.env.DB, user.userId),
+    listNotifications(c.env.DB, user.userId, limit, before),
     unreadCount(c.env.DB, user.userId),
   ])
-  return c.json({ notifications: items, unreadCount: unread })
+  const nextCursor = items.length === limit ? items[items.length - 1].createdAt : null
+  return c.json({ notifications: items, unreadCount: unread, nextCursor })
 })
 
 notificationRoutes.post('/read-all', async (c) => {
