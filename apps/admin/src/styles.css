@@ -727,6 +727,39 @@ button, input, textarea { font: inherit; }
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
 }
+
+.market-action-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: white;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: transform 160ms, box-shadow 160ms, border-color 160ms;
+  font-size: 13px;
+  font-weight: 600;
+}
+.market-action-chip:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+.market-action-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 28px; height: 28px; padding: 0 9px;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 13px;
+}
+.market-action-red { border-color: #FECACA; background: #FEF2F2; }
+.market-action-red .market-action-count { background: #DC2626; color: white; }
+.market-action-red:hover { border-color: #DC2626; }
+.market-action-amber { border-color: #FDE68A; background: #FFFBEB; }
+.market-action-amber .market-action-count { background: #F59E0B; color: white; }
+.market-action-amber:hover { border-color: #F59E0B; }
+.market-action-navy { border-color: #C7D2FE; background: #EEF2FF; }
+.market-action-navy .market-action-count { background: #1D4ED8; color: white; }
+.market-action-navy:hover { border-color: #1D4ED8; }
+.market-action-label { color: var(--text-primary); }
 .market-card h3 {
   margin: 0 0 14px;
   font-size: 13.5px;

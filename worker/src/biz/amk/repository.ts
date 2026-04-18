@@ -171,9 +171,16 @@ export type MarketOverviewMetrics = {
   avgRating: number
   totalDrafts: number
   pendingDrafts: number
-  weeklyProjects: number[] // 7 buckets, index 0 = 6주전, index 6 = 이번주
+  weeklyProjects: number[]
   industryDistribution: Array<{ industry: string; count: number }>
   recentActivity: Array<{ kind: string; label: string; at: string }>
+  // 매출/운영 지표
+  monthRegistrationFeeKrw: number       // 이번달 등록비 수령액
+  monthCompletedProjects: number        // 이번달 완료 건수
+  monthSignups: number                  // 이번달 신규 가입자
+  pendingVerifications: number          // 대행사 검증 대기 건수
+  pendingPayments: number               // draft paid 전 승인대기 건수
+  totalMembers: number
 }
 
 function parseJsonArray(raw: string): string[] {
@@ -593,6 +600,42 @@ export async function adminMarketOverview(db: D1DatabaseLike): Promise<MarketOve
 
   const reviews = await db.prepare(`SELECT COUNT(*) AS total FROM reviews`).first<{ total: number }>()
 
+  // 운영 지표
+  const monthFee = await db.prepare(
+    `SELECT COALESCE(SUM(payment_amount), 0) AS sum
+       FROM project_drafts
+      WHERE payment_status = 'paid'
+        AND payment_received_at >= strftime('%Y-%m-01', 'now')`,
+  ).first<{ sum: number | null }>().catch(() => null)
+
+  const monthCompleted = await db.prepare(
+    `SELECT COUNT(*) AS n
+       FROM projects
+      WHERE stage = 'completed'
+        AND updated_at >= strftime('%Y-%m-01', 'now')`,
+  ).first<{ n: number }>().catch(() => null)
+
+  const monthSignups = await db.prepare(
+    `SELECT COUNT(*) AS n
+       FROM market_users
+      WHERE created_at >= strftime('%Y-%m-01', 'now')`,
+  ).first<{ n: number }>().catch(() => null)
+
+  const pendingVerif = await db.prepare(
+    `SELECT COUNT(*) AS n FROM agencies WHERE verification_status = 'submitted'`,
+  ).first<{ n: number }>().catch(() => null)
+
+  const pendingPay = await db.prepare(
+    `SELECT COUNT(*) AS n
+       FROM project_drafts
+      WHERE status = 'pending'
+        AND COALESCE(payment_status, 'unpaid') != 'paid'`,
+  ).first<{ n: number }>().catch(() => null)
+
+  const totalMembers = await db.prepare(
+    `SELECT COUNT(*) AS n FROM market_users`,
+  ).first<{ n: number }>().catch(() => null)
+
   // 지난 7주 프로젝트 등록 bucket
   const weeklyRes = await allRows<{ age: number }>(
     db.prepare(
@@ -650,5 +693,11 @@ export async function adminMarketOverview(db: D1DatabaseLike): Promise<MarketOve
     weeklyProjects,
     industryDistribution: distRows.map((d) => ({ industry: d.industry, count: d.cnt })),
     recentActivity: activity,
+    monthRegistrationFeeKrw: monthFee?.sum ?? 0,
+    monthCompletedProjects: monthCompleted?.n ?? 0,
+    monthSignups: monthSignups?.n ?? 0,
+    pendingVerifications: pendingVerif?.n ?? 0,
+    pendingPayments: pendingPay?.n ?? 0,
+    totalMembers: totalMembers?.n ?? 0,
   }
 }

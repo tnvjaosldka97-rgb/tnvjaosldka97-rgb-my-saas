@@ -81,7 +81,7 @@ export function MarketPanel() {
       </nav>
 
       <div className="market-tab-panel">
-        {tab === 'overview' && <OverviewTab />}
+        {tab === 'overview' && <OverviewTab onNavigate={setTab} />}
         {tab === 'drafts' && <DraftsTab />}
         {tab === 'verifications' && <VerificationsTab />}
         {tab === 'projects' && <ProjectsTab />}
@@ -117,9 +117,15 @@ type Overview = {
   weeklyProjects?: number[]
   industryDistribution: Array<{ industry: string; count: number }>
   recentActivity: Array<{ kind: string; label: string; at: string }>
+  monthRegistrationFeeKrw?: number
+  monthCompletedProjects?: number
+  monthSignups?: number
+  pendingVerifications?: number
+  pendingPayments?: number
+  totalMembers?: number
 }
 
-function OverviewTab() {
+function OverviewTab({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
   const [data, setData] = useState<Overview | null>(null)
   const [err, setErr] = useState<string | null>(null)
 
@@ -133,15 +139,43 @@ function OverviewTab() {
   if (!data) return <div className="market-skeleton">마켓 데이터 집계 중…</div>
 
   const totalDist = data.industryDistribution.reduce((acc, d) => acc + d.count, 0) || 1
+  const successFeeEstimate = Math.round((data.monthCompletedProjects ?? 0) * 300_000 * 0.1)
+  const actions: Array<{ label: string; count: number; tab: Tab; tone: 'red' | 'amber' | 'navy' }> = ([
+    { label: '검증 대기 대행사', count: data.pendingVerifications ?? 0, tab: 'verifications' as Tab, tone: 'red' as const },
+    { label: '결제 대기 접수', count: data.pendingPayments ?? 0, tab: 'drafts' as Tab, tone: 'amber' as const },
+    { label: '상담 미응대', count: data.pendingConsultations, tab: 'consultations' as Tab, tone: 'amber' as const },
+    { label: '지원서 검토', count: data.pendingApplications, tab: 'applications' as Tab, tone: 'navy' as const },
+  ]).filter((a) => a.count > 0)
 
   return (
     <div className="market-overview">
+      {/* 이번달 핵심 지표 */}
       <div className="market-kpis">
-        <KpiBox title="프로젝트" primary={data.totalProjects} sub={`모집 ${data.recruitingProjects} · 집행 ${data.executingProjects} · 완료 ${data.completedProjects}`} tone="navy" />
-        <KpiBox title="인증 대행사" primary={`${data.verifiedAgencies}/${data.totalAgencies}`} sub={`평균 평점 ${data.avgRating.toFixed(1)}`} tone="royal" />
-        <KpiBox title="지원서" primary={data.totalApplications} sub={`검토 대기 ${data.pendingApplications}`} tone="amber" />
-        <KpiBox title="상담 요청" primary={data.totalConsultations} sub={`미응대 ${data.pendingConsultations}`} tone="mint" />
+        <KpiBox title="이번달 등록비 수령" primary={`₩${(data.monthRegistrationFeeKrw ?? 0).toLocaleString('ko-KR')}`} sub={`완료 ${data.monthCompletedProjects ?? 0}건 · 수수료 추정 ₩${successFeeEstimate.toLocaleString('ko-KR')}`} tone="navy" />
+        <KpiBox title="이번달 신규 가입" primary={`+${data.monthSignups ?? 0}`} sub={`총 회원 ${(data.totalMembers ?? 0).toLocaleString('ko-KR')}명`} tone="royal" />
+        <KpiBox title="인증 대행사" primary={`${data.verifiedAgencies}/${data.totalAgencies}`} sub={`평균 평점 ${data.avgRating.toFixed(1)}`} tone="amber" />
+        <KpiBox title="진행중 프로젝트" primary={data.totalProjects} sub={`모집 ${data.recruitingProjects} · 집행 ${data.executingProjects} · 완료 ${data.completedProjects}`} tone="mint" />
       </div>
+
+      {/* 즉시 처리 액션 큐 */}
+      {actions.length > 0 && (
+        <section className="market-card" style={{ borderLeft: '4px solid #DC2626' }}>
+          <h3>즉시 처리 필요</h3>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 8 }}>
+            {actions.map((a) => (
+              <button
+                key={a.tab}
+                type="button"
+                onClick={() => onNavigate(a.tab)}
+                className={`market-action-chip market-action-${a.tone}`}
+              >
+                <span className="market-action-count">{a.count}</span>
+                <span className="market-action-label">{a.label} →</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
 
       {data.weeklyProjects && data.weeklyProjects.length === 7 && (
         <section className="market-card">

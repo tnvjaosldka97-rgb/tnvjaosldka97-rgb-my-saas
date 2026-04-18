@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   Star,
   Bell,
+  ShieldCheck,
 } from 'lucide-react'
 import { LPHeader } from '../../../components/LPHeader'
 import { LPFooter } from '../../../components/LPFooter'
@@ -134,9 +135,12 @@ function AdvertiserView({ name }: { name: string }) {
 
   return (
     <>
-      <header className="oc-dash-greet">
-        <h1>안녕하세요 <strong>{name}</strong>님</h1>
-        <p>오늘 도착한 견적 <strong>{kpis.todayQuotes}건</strong>, 진행 중 프로젝트 <strong>{kpis.active}건</strong>입니다.</p>
+      <header className="oc-dash-greet" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
+        <div>
+          <h1>안녕하세요 <strong>{name}</strong>님</h1>
+          <p>오늘 도착한 견적 <strong>{kpis.todayQuotes}건</strong>, 진행 중 프로젝트 <strong>{kpis.active}건</strong>입니다.</p>
+        </div>
+        <a href="/project/create" className="oc-btn oc-btn-primary oc-btn-sm">+ 새 프로젝트 등록</a>
       </header>
 
       {showReviewBanner && (
@@ -289,6 +293,15 @@ function AgencyView({ name }: { name: string }) {
   const [activeStep, setActiveStep] = useState<FunnelStep['key']>('applying')
   const [query, setQuery] = useState('')
   const [onlyOngoing, setOnlyOngoing] = useState(true)
+  const [verifyStatus, setVerifyStatus] = useState<{ status: string; rejectReason: string | null } | null>(null)
+
+  useEffect(() => {
+    void apiFetch<{ status: string; rejectReason: string | null }>('/api/mau/agency/verification', {
+      credentials: 'include',
+    })
+      .then((r) => setVerifyStatus({ status: r.status, rejectReason: r.rejectReason }))
+      .catch(() => setVerifyStatus({ status: 'none', rejectReason: null }))
+  }, [])
 
   async function cancelApplication(applicationId: number, projectTitle: string) {
     if (!confirm(`'${projectTitle}' 프로젝트 지원을 취소하시겠습니까?`)) return
@@ -330,6 +343,38 @@ function AgencyView({ name }: { name: string }) {
           <a href="/agency/me/edit" className="oc-btn oc-btn-outline oc-btn-sm">프로필 편집</a>
         </div>
       </header>
+
+      {verifyStatus && verifyStatus.status !== 'approved' && (
+        <div className={`oc-verify-banner oc-verify-banner--${verifyStatus.status === 'submitted' ? 'pending' : verifyStatus.status === 'rejected' ? 'rejected' : 'pending'}`} style={{ marginTop: 8 }}>
+          {verifyStatus.status === 'none' && (
+            <>
+              <ShieldCheck size={16} strokeWidth={2} aria-hidden />
+              <div>
+                <strong>아직 검증 대행사가 아닙니다</strong>
+                <p>사업자등록증을 제출하면 '인증 파트너' 배지가 노출되고 프로젝트에 최우선 추천됩니다. <a href="/agency/me/verify" style={{ textDecoration: 'underline' }}>검증 신청하기 →</a></p>
+              </div>
+            </>
+          )}
+          {verifyStatus.status === 'submitted' && (
+            <>
+              <ShieldCheck size={16} strokeWidth={2} aria-hidden />
+              <div>
+                <strong>검증 검토 대기중</strong>
+                <p>운영팀이 사업자등록증을 검토하고 있습니다. 평균 24시간 내 결과 안내.</p>
+              </div>
+            </>
+          )}
+          {verifyStatus.status === 'rejected' && (
+            <>
+              <ShieldCheck size={16} strokeWidth={2} aria-hidden />
+              <div>
+                <strong>검증이 반려되었습니다</strong>
+                <p>사유: {verifyStatus.rejectReason} · <a href="/agency/me/verify" style={{ textDecoration: 'underline' }}>보완 후 재제출</a></p>
+              </div>
+            </>
+          )}
+        </div>
+      )}
 
       <section className="oc-kpi-grid" aria-label="파트너 실적 지표">
         <KpiCard icon={TrendingUp} label="지원 선정률" value={`${kpis.selectionRate}%`} sub={`선정 ${kpis.selected} / 총 ${kpis.total}`} accent="navy" />
