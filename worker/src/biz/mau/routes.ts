@@ -221,14 +221,18 @@ const avatarRoutes = new Hono<{ Bindings: AppBindings; Variables: MarketAuthVari
 avatarRoutes.use('*', requireMarketUser)
 
 avatarRoutes.post('/upload-url', async (c) => {
-  if (!imagesConfigured(c.env)) return c.json({ error: '이미지 업로드가 설정되어 있지 않습니다.' }, 503)
   const user = c.get('marketUser')
-  try {
-    const payload = await createDirectUpload(c.env, { title: `avatar-${user.userId}`, alt: 'user avatar' })
-    return c.json(payload, 201)
-  } catch (err) {
-    return c.json({ error: err instanceof Error ? err.message : '업로드 URL 생성 실패' }, 500)
+  // CF Images 설정되어 있으면 direct upload URL 반환
+  if (imagesConfigured(c.env)) {
+    try {
+      const payload = await createDirectUpload(c.env, { title: `avatar-${user.userId}`, alt: 'user avatar' })
+      return c.json({ mode: 'cf-images', ...payload }, 201)
+    } catch (err) {
+      console.error('[mau/avatar/upload-url]', err)
+    }
   }
+  // Fallback: 클라이언트가 /data-url 로 base64 POST
+  return c.json({ mode: 'data-url' }, 200)
 })
 
 const confirmAvatarSchema = z.object({ imageId: z.string().min(1).max(120) })
@@ -243,6 +247,20 @@ avatarRoutes.post('/confirm', zValidator('json', confirmAvatarSchema), async (c)
     .bind(url, new Date().toISOString(), user.userId)
     .run()
   return c.json({ ok: true, avatarUrl: url })
+})
+
+// Fallback: base64 data URL 직접 저장 (최대 600KB)
+const dataUrlSchema = z.object({
+  dataUrl: z.string().regex(/^data:image\/(png|jpeg|jpg|webp|gif);base64,/, '이미지 data URL 형식이 아닙니다.').max(800_000),
+})
+avatarRoutes.post('/data-url', zValidator('json', dataUrlSchema), async (c) => {
+  const user = c.get('marketUser')
+  const { dataUrl } = c.req.valid('json')
+  await c.env.DB
+    .prepare('UPDATE market_users SET avatar_url = ?1, updated_at = ?2 WHERE id = ?3')
+    .bind(dataUrl, new Date().toISOString(), user.userId)
+    .run()
+  return c.json({ ok: true, avatarUrl: dataUrl })
 })
 
 avatarRoutes.delete('/', async (c) => {

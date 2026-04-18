@@ -87,20 +87,32 @@ export function AgencyProfileEditPage() {
     if (file.size > 5 * 1024 * 1024) { toast.error('5MB 이하 파일만 업로드 가능합니다.'); return }
     setAvatarUploading(true)
     try {
-      const upload = await apiFetch<{ imageId: string; uploadURL: string }>(
+      const upload = await apiFetch<{ mode: 'cf-images' | 'data-url'; imageId?: string; uploadURL?: string }>(
         '/api/mau/me/avatar/upload-url',
         { method: 'POST', credentials: 'include' },
       )
-      const form = new FormData()
-      form.append('file', file)
-      const up = await fetch(upload.uploadURL, { method: 'POST', body: form })
-      if (!up.ok) throw new Error('이미지 업로드에 실패했습니다.')
-      await apiFetch('/api/mau/me/avatar/confirm', {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageId: upload.imageId }),
-      })
+
+      if (upload.mode === 'cf-images' && upload.uploadURL && upload.imageId) {
+        const form = new FormData()
+        form.append('file', file)
+        const up = await fetch(upload.uploadURL, { method: 'POST', body: form })
+        if (!up.ok) throw new Error('이미지 업로드에 실패했습니다.')
+        await apiFetch('/api/mau/me/avatar/confirm', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ imageId: upload.imageId }),
+        })
+      } else {
+        // Fallback: 클라이언트에서 640px로 리사이즈 후 data URL POST
+        const dataUrl = await fileToResizedDataUrl(file, 640, 0.85)
+        await apiFetch('/api/mau/me/avatar/data-url', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ dataUrl }),
+        })
+      }
       await refreshAuth()
       toast.success('프로필 이미지를 변경했습니다.')
     } catch (err) {
@@ -109,6 +121,28 @@ export function AgencyProfileEditPage() {
       setAvatarUploading(false)
       if (fileRef.current) fileRef.current.value = ''
     }
+  }
+
+  function fileToResizedDataUrl(file: File, maxSize: number, quality: number): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const img = new Image()
+      const reader = new FileReader()
+      reader.onload = () => { img.src = reader.result as string }
+      reader.onerror = () => reject(new Error('파일을 읽을 수 없습니다.'))
+      img.onload = () => {
+        const scale = Math.min(1, maxSize / Math.max(img.width, img.height))
+        const w = Math.round(img.width * scale)
+        const h = Math.round(img.height * scale)
+        const canvas = document.createElement('canvas')
+        canvas.width = w; canvas.height = h
+        const ctx = canvas.getContext('2d')
+        if (!ctx) return reject(new Error('캔버스 생성 실패'))
+        ctx.drawImage(img, 0, 0, w, h)
+        resolve(canvas.toDataURL('image/jpeg', quality))
+      }
+      img.onerror = () => reject(new Error('이미지 로드 실패'))
+      reader.readAsDataURL(file)
+    })
   }
 
   async function onSave() {

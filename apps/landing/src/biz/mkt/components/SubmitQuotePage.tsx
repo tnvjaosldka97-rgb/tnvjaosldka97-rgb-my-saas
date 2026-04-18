@@ -37,29 +37,46 @@ export function SubmitQuotePage({ id }: { id: number }) {
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [done, setDone] = useState(false)
   const [publicAgencies, setPublicAgencies] = useState<PublicAgency[]>([])
+  const [myAgency, setMyAgency] = useState<{ id: number; name: string; rating: number; verified: boolean } | null>(null)
 
   useEffect(() => {
     if (!authLoading && !user) window.location.href = '/login'
   }, [authLoading, user])
 
   useEffect(() => {
-    apiFetch<{ metrics: { market: { recentAgencies: PublicAgency[] } | null } }>('/api/public/bootstrap')
-      .then((r) => setPublicAgencies(r.metrics?.market?.recentAgencies ?? []))
+    // 1) 공개 검증 대행사
+    apiFetch<{ agencies: PublicAgency[] }>('/api/public/agencies')
+      .then((r) => setPublicAgencies(r.agencies ?? []))
       .catch(() => { /* ignore */ })
-  }, [])
+    // 2) 본인 대행사 (unverified 포함 — 신규 가입자도 견적 제출 가능)
+    if (user?.userType === 'agency') {
+      apiFetch<{ agency: { id: number; name: string; rating: number; verified: boolean } }>(
+        '/api/mau/agency/me',
+        { credentials: 'include' },
+      )
+        .then((r) => setMyAgency(r.agency))
+        .catch(() => { /* 없으면 무시 */ })
+    }
+  }, [user?.userType])
 
   // 기존 제출 견적의 대행사 + 검증 대행사 전체를 합집합으로 노출
   const knownAgencies: MarketAgency[] = data?.quotes.map((q) => q.agency) ?? []
   const agenciesForSelect = useMemo(() => {
-    const byId = new Map<number, { id: number; name: string; rating: number; verified?: boolean }>()
+    const byId = new Map<number, { id: number; name: string; rating: number; verified?: boolean; mine?: boolean }>()
+    // 본인 대행사 우선 (맨 위에 고정)
+    if (myAgency) {
+      byId.set(myAgency.id, { id: myAgency.id, name: myAgency.name, rating: myAgency.rating, verified: myAgency.verified, mine: true })
+    }
     for (const a of publicAgencies) {
-      byId.set(a.id, { id: a.id, name: a.name, rating: a.rating, verified: a.verified })
+      if (!byId.has(a.id)) byId.set(a.id, { id: a.id, name: a.name, rating: a.rating, verified: a.verified })
     }
     for (const a of knownAgencies) {
-      byId.set(a.id, { id: a.id, name: a.name, rating: a.rating, verified: a.verified })
+      if (!byId.has(a.id)) byId.set(a.id, { id: a.id, name: a.name, rating: a.rating, verified: a.verified })
     }
-    return [...byId.values()].sort((a, b) => b.rating - a.rating)
-  }, [publicAgencies, knownAgencies])
+    const arr = [...byId.values()]
+    arr.sort((a, b) => (a.mine ? -1 : b.mine ? 1 : (b.rating ?? 0) - (a.rating ?? 0)))
+    return arr
+  }, [myAgency, publicAgencies, knownAgencies])
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -150,9 +167,13 @@ export function SubmitQuotePage({ id }: { id: number }) {
                   {agenciesForSelect.length > 0 ? (
                     <select required className="oc-select" value={form.agencyId}
                       onChange={(e) => setForm((f) => ({ ...f, agencyId: e.target.value }))}>
-                      <option value="">검증 대행사 중 본인을 선택하세요</option>
+                      <option value="">본인이 속한 대행사를 선택하세요</option>
                       {agenciesForSelect.map((a) => (
-                        <option key={a.id} value={a.id}>{a.name} · ★ {a.rating.toFixed(1)}</option>
+                        <option key={a.id} value={a.id}>
+                          {a.mine ? '★ 내 대행사 — ' : ''}{a.name}
+                          {a.rating > 0 ? ` · ★ ${a.rating.toFixed(1)}` : ''}
+                          {a.verified ? ' (인증)' : (a.mine ? ' (검증 대기)' : '')}
+                        </option>
                       ))}
                     </select>
                   ) : (
