@@ -1,32 +1,48 @@
-/* === 마케팅천재야 (MCY) Landing ===
-   구조: Header / Hero(미니) / Filter+Card Grid / Modal / Footer
-   팔레트: Navy #0B1E3F · Royal #1D4ED8 · Amber #F59E0B · Off-white #F8FAFC
+/* === 마케팅천재야 (MCY) Landing — Premium Dark Navy × Gold ===
+   팔레트: Ink #0A0E1A · Navy #0F1A33 · Gold #D4AF37 · Champagne #F5D26B · Cream #F8F4EA · Coral #EF4444
 */
 
 .onlyup-scope {
-  --oc-navy: #0B1E3F;
-  --oc-royal: #1D4ED8;
-  --oc-royal-soft: #3B82F6;
-  --oc-accent: #DC2626;
-  --oc-accent-hot: #B91C1C;
-  --oc-amber: #F59E0B;
-  --oc-amber-hot: #D97706;
+  /* Base surfaces */
+  --oc-ink: #0A0E1A;
+  --oc-navy: #0F1A33;
+  --oc-navy-soft: #162544;
+  --oc-navy-line: #1E2E52;
   --oc-offwhite: #FFFFFF;
-  --oc-cream: #FAFAFA;
-  --oc-gray-50: #F5F5F5;
-  --oc-gray-100: #E5E5E5;
-  --oc-gray-200: #D4D4D4;
-  --oc-gray-300: #A3A3A3;
-  --oc-gray-500: #525252;
-  --oc-gray-700: #262626;
-  --oc-gray-900: #0A0A0A;
-  --oc-success: #059669;
-  --oc-radius: 10px;
-  --oc-radius-sm: 6px;
-  --oc-radius-lg: 14px;
-  --oc-shadow: 0 1px 2px rgba(15, 23, 42, 0.05), 0 4px 12px rgba(15, 23, 42, 0.05);
-  --oc-shadow-hover: 0 4px 8px rgba(15, 23, 42, 0.08), 0 16px 40px rgba(15, 23, 42, 0.1);
-  --oc-shadow-soft: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --oc-cream: #F8F4EA;
+  --oc-cream-soft: #FDFBF4;
+
+  /* Gold (accent) */
+  --oc-gold: #D4AF37;
+  --oc-gold-bright: #F5D26B;
+  --oc-gold-deep: #A57C18;
+  --oc-gold-ink: #5E450D;
+
+  /* Legacy aliases — 기존 클래스가 계속 동작하도록 매핑 */
+  --oc-royal: var(--oc-gold);
+  --oc-royal-soft: var(--oc-gold-bright);
+  --oc-amber: var(--oc-gold);
+  --oc-amber-hot: var(--oc-gold-deep);
+  --oc-accent: #EF4444;
+  --oc-accent-hot: #DC2626;
+
+  /* Neutral grays (warm) */
+  --oc-gray-50: #F5F2EC;
+  --oc-gray-100: #E7E1D4;
+  --oc-gray-200: #CFC7B4;
+  --oc-gray-300: #9E9683;
+  --oc-gray-500: #5C5443;
+  --oc-gray-700: #2A2418;
+  --oc-gray-900: #0A0E1A;
+
+  --oc-success: #047857;
+  --oc-radius: 12px;
+  --oc-radius-sm: 8px;
+  --oc-radius-lg: 16px;
+  --oc-shadow: 0 1px 2px rgba(10, 14, 26, 0.06), 0 8px 24px rgba(10, 14, 26, 0.08);
+  --oc-shadow-hover: 0 6px 14px rgba(10, 14, 26, 0.1), 0 24px 48px rgba(10, 14, 26, 0.14);
+  --oc-shadow-soft: 0 1px 2px rgba(10, 14, 26, 0.05);
+  --oc-shadow-gold: 0 4px 18px rgba(212, 175, 55, 0.25);
 
   min-height: 100vh;
   background: var(--oc-offwhite);
@@ -47,11 +63,21 @@
 /* === Header === */
 .oc-header {
   position: sticky; top: 0; z-index: 50;
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: saturate(1.4) blur(12px);
-  -webkit-backdrop-filter: saturate(1.4) blur(12px);
-  border-bottom: 1px solid var(--oc-gray-100);
+  background: rgba(10, 14, 26, 0.85);
+  backdrop-filter: saturate(1.4) blur(16px);
+  -webkit-backdrop-filter: saturate(1.4) blur(16px);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.18);
 }
+.oc-header .oc-logo { color: #F5F1E6; }
+.oc-header .oc-nav a { color: rgba(245, 241, 230, 0.72); }
+.oc-header .oc-nav a:hover { color: #F5D26B; }
+.oc-header .oc-nav a.is-active { color: #F5D26B; }
+.oc-header .oc-btn-outline {
+  background: rgba(245, 241, 230, 0.05);
+  color: #F5F1E6;
+  border-color: rgba(245, 241, 230, 0.22);
+}
+.oc-header .oc-btn-outline:hover { border-color: #F5D26B; color: #F5D26B; background: rgba(212, 175, 55, 0.08); }
 .oc-header-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 32px; }
 .oc-logo {
   display: inline-flex; align-items: center; gap: 8px;
@@ -68,10 +94,11 @@
 .oc-logo-mark {
   min-width: 30px; height: 24px; border-radius: 6px;
   padding: 0 5px;
-  background: linear-gradient(135deg, var(--oc-navy), var(--oc-royal));
+  background: linear-gradient(135deg, #F5D26B 0%, #D4AF37 100%);
   display: grid; place-items: center;
-  color: white; font-weight: 900; font-size: 10.5px;
+  color: #0A0E1A; font-weight: 900; font-size: 10.5px;
   letter-spacing: -0.02em;
+  box-shadow: 0 1px 4px rgba(212, 175, 55, 0.4);
 }
 .oc-nav {
   display: flex; align-items: center; gap: 28px;
@@ -114,23 +141,36 @@
 }
 .oc-btn-sm { padding: 7px 14px; font-size: 13px; }
 .oc-btn-primary {
-  background: var(--oc-amber);
-  color: #1f1400;
-  box-shadow: 0 1px 0 rgba(180, 83, 9, 0.2), 0 2px 6px rgba(245, 158, 11, 0.2);
+  background: linear-gradient(135deg, #F5D26B 0%, #D4AF37 60%, #B08A1E 100%);
+  color: #1A120A;
+  box-shadow: 0 1px 0 rgba(245, 210, 107, 0.4) inset, 0 6px 20px rgba(212, 175, 55, 0.35);
+  border: 1px solid rgba(245, 210, 107, 0.5);
 }
-.oc-btn-primary:hover { background: var(--oc-amber-hot); transform: translateY(-1px); }
+.oc-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 1px 0 rgba(245, 210, 107, 0.5) inset, 0 10px 28px rgba(212, 175, 55, 0.45); }
 .oc-btn-primary-blue {
-  background: var(--oc-royal);
-  color: white;
-  box-shadow: 0 1px 0 rgba(30, 64, 175, 0.3), 0 2px 6px rgba(29, 78, 216, 0.18);
+  background: linear-gradient(135deg, #162544 0%, #0F1A33 100%);
+  color: #F5D26B;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  box-shadow: 0 4px 14px rgba(10, 14, 26, 0.3);
 }
-.oc-btn-primary-blue:hover { background: #1E40AF; transform: translateY(-1px); }
+.oc-btn-primary-blue:hover { transform: translateY(-1px); border-color: rgba(245, 210, 107, 0.7); }
 .oc-btn-outline {
-  background: white;
+  background: rgba(255, 255, 255, 0.04);
   color: var(--oc-gray-700);
   border: 1px solid var(--oc-gray-200);
 }
-.oc-btn-outline:hover { border-color: var(--oc-navy); color: var(--oc-navy); }
+.oc-btn-outline:hover { border-color: var(--oc-gold); color: var(--oc-gold-deep); background: rgba(212, 175, 55, 0.06); }
+.oc-hero .oc-btn-outline {
+  background: rgba(245, 241, 230, 0.06);
+  color: #F5F1E6;
+  border-color: rgba(245, 241, 230, 0.25);
+  backdrop-filter: blur(6px);
+}
+.oc-hero .oc-btn-outline:hover {
+  border-color: #F5D26B;
+  color: #F5D26B;
+  background: rgba(212, 175, 55, 0.08);
+}
 .oc-btn-text { color: var(--oc-gray-700); font-weight: 600; font-size: 14px; padding: 9px 6px; background: none; border: none; }
 .oc-btn-text:hover { color: var(--oc-navy); }
 .oc-btn-text[disabled] { opacity: 0.4; cursor: not-allowed; }
@@ -149,20 +189,30 @@
 .oc-hamburger:hover { background: var(--oc-gray-100); }
 .oc-hamburger span { display: block; width: 20px; height: 2px; background: var(--oc-gray-900); margin: 4px auto; border-radius: 2px; }
 
-/* === Hero (신뢰 + 깊이 + 센스: navy→royal 그라데이션 + mesh grid + glow blobs + noise) === */
+/* === Hero (Premium Dark Navy × Gold) === */
 .oc-hero {
   position: relative;
-  padding: 96px 0 72px;
+  padding: 104px 0 80px;
   background:
-    radial-gradient(ellipse 1400px 780px at 15% -5%, rgba(37, 99, 235, 0.32), transparent 58%),
-    radial-gradient(ellipse 1100px 700px at 100% 15%, rgba(59, 130, 246, 0.22), transparent 55%),
-    radial-gradient(ellipse 900px 600px at 50% 110%, rgba(251, 191, 36, 0.1), transparent 60%),
-    linear-gradient(180deg, #EEF4FC 0%, #E6EFFB 50%, #F3F7FC 100%);
+    radial-gradient(ellipse 1400px 780px at 18% -5%, rgba(212, 175, 55, 0.18), transparent 55%),
+    radial-gradient(ellipse 1100px 700px at 100% 20%, rgba(245, 210, 107, 0.10), transparent 55%),
+    radial-gradient(ellipse 900px 600px at 55% 115%, rgba(239, 68, 68, 0.07), transparent 60%),
+    linear-gradient(180deg, #0A0E1A 0%, #0F1A33 55%, #08111F 100%);
+  color: #F5F1E6;
   text-align: left;
   overflow: hidden;
-  border-bottom: 1px solid rgba(11, 30, 63, 0.05);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
   isolation: isolate;
 }
+.oc-hero .oc-hero-copy h1,
+.oc-hero .oc-hero-copy p,
+.oc-hero .oc-hero-copy strong {
+  color: #F5F1E6;
+}
+.oc-hero .oc-hero-meta strong { color: #FFF9E6; }
+.oc-hero .oc-hero-meta span { color: rgba(245, 241, 230, 0.62); }
+.oc-hero .oc-hero-meta { border-top-color: rgba(212, 175, 55, 0.18); }
+.oc-hero .oc-hero-meta li { border-right-color: rgba(212, 175, 55, 0.12); }
 .oc-hero-bg {
   position: absolute;
   inset: 0;
@@ -174,32 +224,32 @@
   position: absolute;
   inset: -2px;
   background-image:
-    linear-gradient(rgba(11, 30, 63, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(11, 30, 63, 0.05) 1px, transparent 1px);
+    linear-gradient(rgba(212, 175, 55, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212, 175, 55, 0.06) 1px, transparent 1px);
   background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse 80% 60% at 50% 35%, rgba(0,0,0,0.75), transparent 82%);
-  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 35%, rgba(0,0,0,0.75), transparent 82%);
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 35%, rgba(0,0,0,0.8), transparent 82%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 35%, rgba(0,0,0,0.8), transparent 82%);
 }
 .oc-hero-bg-glow {
   position: absolute;
-  width: 520px;
-  height: 520px;
+  width: 560px;
+  height: 560px;
   border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.55;
+  filter: blur(90px);
+  opacity: 0.62;
   animation: oc-hero-float 22s ease-in-out infinite alternate;
   will-change: transform;
 }
 .oc-hero-bg-glow--right {
-  top: -120px;
-  right: -140px;
-  background: radial-gradient(circle, rgba(37, 99, 235, 0.55) 0%, rgba(37, 99, 235, 0) 65%);
+  top: -140px;
+  right: -160px;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.55) 0%, rgba(212, 175, 55, 0) 65%);
 }
 .oc-hero-bg-glow--left {
-  bottom: -160px;
-  left: -120px;
-  width: 420px; height: 420px;
-  background: radial-gradient(circle, rgba(14, 165, 233, 0.45) 0%, rgba(14, 165, 233, 0) 65%);
+  bottom: -180px;
+  left: -140px;
+  width: 440px; height: 440px;
+  background: radial-gradient(circle, rgba(245, 210, 107, 0.38) 0%, rgba(245, 210, 107, 0) 65%);
   animation-delay: -8s;
   animation-duration: 28s;
 }
@@ -223,10 +273,10 @@
   .oc-hero-bg-glow { animation: none; }
 }
 
-/* Hot/Ticker도 Hero 그라데이션의 여운으로 자연스럽게 */
+/* Hot/Ticker도 Hero 그라데이션의 여운으로 자연스럽게 — 다크 → 크림 전환 */
 .oc-hot, .oc-section-ticker {
-  background:
-    linear-gradient(180deg, #F8FAFC 0%, #FFFFFF 100%);
+  background: linear-gradient(180deg, #08111F 0%, #F8F4EA 100%);
+  padding-top: 24px;
 }
 .oc-hero > .oc-container {
   position: relative;
@@ -255,20 +305,22 @@
   align-items: center;
   gap: 8px;
   padding: 7px 14px 7px 11px;
-  margin-bottom: 18px;
-  background: linear-gradient(135deg, #FDE68A, #FEF3C7);
-  color: #78350F;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.18), rgba(245, 210, 107, 0.08));
+  color: #F5D26B;
+  border: 1px solid rgba(212, 175, 55, 0.35);
   border-radius: 999px;
   font-size: 12.5px;
   font-weight: 700;
-  letter-spacing: -0.005em;
-  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.01em;
+  box-shadow: inset 0 1px 0 rgba(245, 210, 107, 0.2);
+  backdrop-filter: blur(8px);
 }
-.oc-hero-badge strong { font-weight: 800; color: #92400E; }
+.oc-hero-badge strong { font-weight: 800; color: #FFF0B3; }
 .oc-hero-accent {
-  color: #B45309;
+  color: #F5D26B;
   font-weight: 800;
-  background: linear-gradient(180deg, transparent 60%, rgba(245, 158, 11, 0.28) 60%);
+  background: linear-gradient(180deg, transparent 62%, rgba(212, 175, 55, 0.32) 62%);
   padding: 0 2px;
 }
 .oc-hero-meta li.is-live strong {
@@ -310,18 +362,23 @@
   .oc-hero-illus { max-width: 360px; }
 }
 .oc-hero h1 {
-  font-size: clamp(30px, 4.4vw, 46px);
+  font-size: clamp(32px, 4.6vw, 52px);
   font-weight: 800;
-  letter-spacing: -0.035em;
-  line-height: 1.25;
-  color: var(--oc-navy);
-  margin: 0 0 18px;
+  letter-spacing: -0.04em;
+  line-height: 1.22;
+  color: #F5F1E6;
+  margin: 0 0 20px;
   max-width: 820px;
 }
 .oc-hero h1 em {
   font-style: normal;
-  background: linear-gradient(180deg, transparent 62%, rgba(245, 158, 11, 0.4) 62%);
+  background: linear-gradient(180deg, #F5D26B 0%, #D4AF37 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 24px rgba(245, 210, 107, 0.25);
 }
+.oc-hero-sub { color: rgba(245, 241, 230, 0.82) !important; }
 .oc-hero-sub {
   font-size: clamp(15px, 1.6vw, 17px);
   color: var(--oc-gray-700);
@@ -715,7 +772,18 @@
 }
 
 /* === How It Works (guide) === */
-.oc-section-guide { padding: 84px 0; background: var(--oc-offwhite); }
+.oc-section-guide {
+  padding: 84px 0;
+  background: linear-gradient(180deg, var(--oc-cream) 0%, var(--oc-cream-soft) 100%);
+  position: relative;
+}
+.oc-section-guide::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.4), transparent);
+}
 .oc-steps {
   list-style: none;
   padding: 0;
@@ -740,15 +808,25 @@
   position: relative;
   z-index: 1;
   background: white;
-  border: 1px solid var(--oc-gray-100);
+  border: 1px solid rgba(212, 175, 55, 0.2);
   border-radius: var(--oc-radius);
   padding: 22px 20px;
   display: flex;
   flex-direction: column;
   gap: 14px;
-  transition: transform 160ms, box-shadow 160ms;
+  transition: transform 180ms, box-shadow 180ms, border-color 180ms;
+  overflow: hidden;
 }
-.oc-step:hover { transform: translateY(-2px); box-shadow: var(--oc-shadow); }
+.oc-step::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+  opacity: 0.5;
+}
+.oc-step:hover { transform: translateY(-3px); box-shadow: var(--oc-shadow-hover); border-color: rgba(212, 175, 55, 0.5); }
+.oc-step:hover::before { opacity: 1; }
 .oc-step-index {
   display: flex;
   align-items: center;
@@ -758,8 +836,9 @@
 .oc-step-num {
   font-size: 13px;
   font-weight: 900;
-  color: white;
-  background: var(--oc-navy);
+  color: #F5D26B;
+  background: linear-gradient(135deg, #0F1A33, #162544);
+  border: 1px solid rgba(212, 175, 55, 0.3);
   padding: 6px 12px;
   border-radius: 999px;
   letter-spacing: 0.05em;
@@ -785,10 +864,10 @@
   transition: transform 180ms, box-shadow 180ms;
 }
 .oc-step:hover .oc-step-icon { transform: translateY(-1px) scale(1.04); }
-.oc-step--navy  .oc-step-icon { background: linear-gradient(135deg, rgba(11, 30, 63, 0.12), rgba(11, 30, 63, 0.03)); color: #0B1E3F; }
-.oc-step--royal .oc-step-icon { background: linear-gradient(135deg, rgba(29, 78, 216, 0.15), rgba(59, 130, 246, 0.05)); color: #1D4ED8; }
-.oc-step--amber .oc-step-icon { background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(245, 158, 11, 0.05)); color: #B45309; }
-.oc-step--mint  .oc-step-icon { background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.04)); color: #047857; }
+.oc-step--navy  .oc-step-icon { background: linear-gradient(135deg, #0F1A33, #162544); color: #F5D26B; box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.3); }
+.oc-step--royal .oc-step-icon { background: linear-gradient(135deg, rgba(212, 175, 55, 0.22), rgba(245, 210, 107, 0.08)); color: #A57C18; box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.4); }
+.oc-step--amber .oc-step-icon { background: linear-gradient(135deg, #F5D26B, #D4AF37); color: #1A120A; box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3); }
+.oc-step--mint  .oc-step-icon { background: linear-gradient(135deg, #162544, #0F1A33); color: #F5D26B; box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.25); }
 .oc-step-eta svg { vertical-align: -2px; margin-right: 2px; }
 .oc-step-body h3 {
   margin: 0 0 6px;
@@ -2578,14 +2657,21 @@
   overflow: hidden;
   min-width: 0;
 }
+.oc-hot-rail--top3 {
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 10px;
+}
 .oc-hot-rail--top3 .oc-hot-item {
   flex: 1 1 0;
   min-width: 0;
-  max-width: calc(33.33% - 6px);
+  max-width: calc(33.33% - 8px);
 }
 @media (max-width: 768px) {
-  .oc-hot-rail--top3 { flex-direction: column; gap: 6px; }
-  .oc-hot-rail--top3 .oc-hot-item { max-width: none; width: 100%; }
+  .oc-hot-rail--top3 { gap: 6px; }
+  .oc-hot-rail--top3 .oc-hot-item { padding: 6px 10px; }
+  .oc-hot-rail--top3 .oc-hot-text strong { font-size: 11px; }
+  .oc-hot-rail--top3 .oc-hot-count { display: none; }
 }
 .oc-hot-item {
   flex-shrink: 0;
@@ -4747,11 +4833,16 @@
 
 /* === Footer === */
 .oc-footer {
-  background: var(--oc-gray-900);
-  color: rgba(255,255,255,0.72);
-  padding: 40px 0 28px;
-  margin-top: 40px;
+  background: linear-gradient(180deg, #08111F 0%, #0A0E1A 100%);
+  color: rgba(245, 241, 230, 0.72);
+  padding: 48px 0 28px;
+  margin-top: 48px;
+  border-top: 1px solid rgba(212, 175, 55, 0.2);
 }
+.oc-footer .oc-logo-mark { background: linear-gradient(135deg, #F5D26B 0%, #D4AF37 100%); color: #0A0E1A; }
+.oc-footer-logo .oc-logo-wordmark { color: #F5D26B; }
+.oc-footer-links a:hover { color: #F5D26B !important; }
+.oc-footer-legal a:hover { color: #F5D26B !important; }
 .oc-footer-top {
   display: flex; justify-content: space-between; align-items: center; gap: 24px;
   flex-wrap: wrap;
