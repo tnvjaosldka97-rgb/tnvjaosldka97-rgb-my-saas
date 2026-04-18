@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { BadgeCheck, Star, Briefcase, MessageSquare, ArrowLeft, MapPin, Users, Clock, Calendar, Award, Bookmark, Share2 } from 'lucide-react'
+import { BadgeCheck, Star, Briefcase, MessageSquare, ArrowLeft, MapPin, Users, Clock, Calendar, Award, Bookmark, Share2, FileText, Quote, Building2, Milestone } from 'lucide-react'
 import type { PublicAgencyDetail, PublicAgencyReview } from '@my-saas/com'
 import { LPHeader } from '../../../components/LPHeader'
 import { LPFooter } from '../../../components/LPFooter'
@@ -166,6 +166,92 @@ function AgencyContent({ agency, reviews }: { agency: PublicAgencyDetail; review
                 </div>
                 <h3>{cs.title}</h3>
                 <p>{cs.result}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {(agency.businessRegNo || agency.businessRegImgUrl) && (
+        <section className="oc-agency-section">
+          <h2><Building2 size={16} strokeWidth={2} aria-hidden /> 사업자 정보</h2>
+          <div className="oc-agency-biz">
+            {agency.businessRegNo && (
+              <div className="oc-agency-biz-row">
+                <dt>사업자등록번호</dt>
+                <dd>{agency.businessRegNo}</dd>
+              </div>
+            )}
+            {agency.ceoName && (
+              <div className="oc-agency-biz-row">
+                <dt>대표자</dt>
+                <dd>{agency.ceoName}</dd>
+              </div>
+            )}
+            {agency.businessRegImgUrl && (
+              <div className="oc-agency-biz-row">
+                <dt>사업자등록증</dt>
+                <dd>
+                  <a href={agency.businessRegImgUrl} target="_blank" rel="noopener">
+                    <FileText size={14} strokeWidth={2} aria-hidden /> 이미지 보기
+                  </a>
+                </dd>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {agency.ceoMessage && (
+        <section className="oc-agency-section oc-agency-ceo">
+          <h2><Quote size={16} strokeWidth={2} aria-hidden /> 대표 인사말</h2>
+          <blockquote className="oc-agency-ceo-msg">
+            <p>{agency.ceoMessage}</p>
+            {agency.ceoName && <cite>— {agency.ceoName} 대표</cite>}
+          </blockquote>
+        </section>
+      )}
+
+      {agency.foundedHistory.length > 0 && (
+        <section className="oc-agency-section">
+          <h2><Milestone size={16} strokeWidth={2} aria-hidden /> 연혁</h2>
+          <ol className="oc-agency-timeline">
+            {agency.foundedHistory.map((h, i) => (
+              <li key={i}>
+                <span className="oc-agency-timeline-year">{h.year}</span>
+                <span className="oc-agency-timeline-event">{h.event}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
+
+      {agency.featuredReferences.length > 0 && (
+        <section className="oc-agency-section">
+          <h2><Award size={16} strokeWidth={2} aria-hidden /> 대표 레퍼런스 <span className="oc-agency-reviews-count">· {agency.featuredReferences.length}건</span></h2>
+          <ul className="oc-agency-refs">
+            {agency.featuredReferences.map((r, i) => (
+              <li key={i} className="oc-agency-ref-card">
+                <div className="oc-agency-ref-head">
+                  <strong>{r.client}</strong>
+                  <time>{r.period}</time>
+                </div>
+                <h3>{r.campaign}</h3>
+                <p className="oc-agency-ref-result">{r.result}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {agency.ceoCareer.length > 0 && (
+        <section className="oc-agency-section">
+          <h2><Briefcase size={16} strokeWidth={2} aria-hidden /> 대표 이력</h2>
+          <ul className="oc-agency-career">
+            {agency.ceoCareer.map((c, i) => (
+              <li key={i}>
+                <span className="oc-agency-career-year">{c.year}</span>
+                <span className="oc-agency-career-role">{c.role}</span>
               </li>
             ))}
           </ul>

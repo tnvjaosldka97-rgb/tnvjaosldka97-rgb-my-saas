@@ -108,6 +108,14 @@ function parseJson(raw: string): string[] {
   } catch { return [] }
 }
 
+function safeJsonArray<T>(raw: string | null): T[] {
+  if (!raw) return []
+  try {
+    const p = JSON.parse(raw)
+    return Array.isArray(p) ? (p as T[]) : []
+  } catch { return [] }
+}
+
 publicRoutes.post('/leads', zValidator('json', leadSchema), async (c) => {
   const payload = c.req.valid('json')
   await createLead(c.env.DB, payload)
@@ -159,23 +167,29 @@ const projectDraftSchema = z.object({
 publicRoutes.post('/project-drafts', zValidator('json', projectDraftSchema), async (c) => {
   const input = c.req.valid('json')
   const now = new Date().toISOString()
-  await c.env.DB
-    .prepare(
-      `INSERT INTO project_drafts
-         (requester_name, requester_contact, industry, marketing_type, budget_range, message, status, submitted_at)
-       VALUES (?1, ?2, ?3, ?4, ?5, ?6, 'pending', ?7)`,
-    )
-    .bind(
-      input.requesterName,
-      input.requesterContact,
-      input.industry,
-      input.marketingType,
-      input.budgetRange,
-      input.message ?? '',
-      now,
-    )
-    .run()
-  return c.json({ ok: true, submittedAt: now }, 201)
+  try {
+    await c.env.DB
+      .prepare(
+        `INSERT INTO project_drafts
+           (requester_name, requester_contact, industry, marketing_type, budget_range, message, status, submitted_at)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, 'pending', ?7)`,
+      )
+      .bind(
+        input.requesterName,
+        input.requesterContact,
+        input.industry,
+        input.marketingType,
+        input.budgetRange,
+        input.message ?? '',
+        now,
+      )
+      .run()
+    return c.json({ ok: true, submittedAt: now }, 201)
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error('[pub/project-drafts]', msg, err)
+    return c.json({ error: '접수 저장 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.', detail: msg }, 500)
+  }
 })
 
 publicRoutes.get('/recent-activity', async (c) => {
@@ -276,7 +290,9 @@ publicRoutes.get('/agencies/:slug', async (c) => {
       `SELECT id, slug, name, description, specialties, verified, rating,
               completed_projects, total_reviews, created_at,
               founded_year, region, team_size, avg_response_hour,
-              portfolio_note, case_studies
+              portfolio_note, case_studies,
+              business_reg_no, business_reg_img_url, ceo_name, ceo_message,
+              founded_history, featured_references, ceo_career
        FROM agencies WHERE slug = ?1 LIMIT 1`,
     )
     .bind(slug)
@@ -286,6 +302,9 @@ publicRoutes.get('/agencies/:slug', async (c) => {
       completed_projects: number; total_reviews: number; created_at: string
       founded_year: number | null; region: string | null; team_size: string | null
       avg_response_hour: number | null; portfolio_note: string | null; case_studies: string
+      business_reg_no: string | null; business_reg_img_url: string | null
+      ceo_name: string | null; ceo_message: string | null
+      founded_history: string | null; featured_references: string | null; ceo_career: string | null
     }>()
 
   if (!agencyRow) return c.json({ error: 'Agency not found' }, 404)
@@ -336,6 +355,13 @@ publicRoutes.get('/agencies/:slug', async (c) => {
       portfolioNote: agencyRow.portfolio_note,
       caseStudies,
       createdAt: agencyRow.created_at,
+      businessRegNo: agencyRow.business_reg_no,
+      businessRegImgUrl: agencyRow.business_reg_img_url,
+      ceoName: agencyRow.ceo_name,
+      ceoMessage: agencyRow.ceo_message,
+      foundedHistory: safeJsonArray(agencyRow.founded_history),
+      featuredReferences: safeJsonArray(agencyRow.featured_references),
+      ceoCareer: safeJsonArray(agencyRow.ceo_career),
     },
     reviews: (reviewsRes.results ?? []).map((r) => ({
       id: r.id,
@@ -359,16 +385,21 @@ const consultationSchema = z.object({
 
 publicRoutes.post('/consultations', zValidator('json', consultationSchema), async (c) => {
   const input = c.req.valid('json')
-  const project = await getProjectById(c.env.DB, input.projectId)
-  if (!project) return c.json({ error: 'Project not found' }, 404)
-  await createConsultation(c.env.DB, {
-    projectId: input.projectId,
-    agencyId: input.agencyId ?? null,
-    requesterName: input.requesterName,
-    requesterContact: input.requesterContact,
-    message: input.message,
-    preferredTime: input.preferredTime ?? 'any',
-  })
-  return c.json({ ok: true }, 201)
+  try {
+    const project = await getProjectById(c.env.DB, input.projectId)
+    if (!project) return c.json({ error: '해당 프로젝트를 찾을 수 없습니다.' }, 404)
+    await createConsultation(c.env.DB, {
+      projectId: input.projectId,
+      agencyId: input.agencyId ?? null,
+      requesterName: input.requesterName,
+      requesterContact: input.requesterContact,
+      message: input.message,
+      preferredTime: input.preferredTime ?? 'any',
+    })
+    return c.json({ ok: true }, 201)
+  } catch (err) {
+    console.error('[pub/consultations]', err)
+    return c.json({ error: '상담 요청 저장 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.' }, 500)
+  }
 })
 

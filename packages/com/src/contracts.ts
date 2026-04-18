@@ -34,6 +34,10 @@ export type AgencyCaseStudy = {
   result: string
 }
 
+export type AgencyHistoryItem = { year: number | string; event: string }
+export type AgencyReferenceItem = { client: string; campaign: string; result: string; period: string }
+export type AgencyCareerItem = { year: string; role: string }
+
 export type PublicAgencyDetail = {
   id: number
   slug: string
@@ -51,6 +55,13 @@ export type PublicAgencyDetail = {
   portfolioNote: string | null
   caseStudies: AgencyCaseStudy[]
   createdAt: string
+  businessRegNo: string | null
+  businessRegImgUrl: string | null
+  ceoName: string | null
+  ceoMessage: string | null
+  foundedHistory: AgencyHistoryItem[]
+  featuredReferences: AgencyReferenceItem[]
+  ceoCareer: AgencyCareerItem[]
 }
 
 export type ProjectDraftInput = {

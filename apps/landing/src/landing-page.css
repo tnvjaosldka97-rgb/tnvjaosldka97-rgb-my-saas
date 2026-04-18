@@ -149,52 +149,78 @@
 .oc-hamburger:hover { background: var(--oc-gray-100); }
 .oc-hamburger span { display: block; width: 20px; height: 2px; background: var(--oc-gray-900); margin: 4px auto; border-radius: 2px; }
 
-/* === Hero (차분한 신뢰 + 풍부한 그라데이션) === */
+/* === Hero (신뢰 + 깊이 + 센스: navy→royal 그라데이션 + mesh grid + glow blobs + noise) === */
 .oc-hero {
   position: relative;
   padding: 96px 0 72px;
   background:
-    radial-gradient(ellipse 1100px 600px at 15% 0%, rgba(29, 78, 216, 0.18), transparent 58%),
-    radial-gradient(ellipse 900px 600px at 100% 20%, rgba(59, 130, 246, 0.12), transparent 55%),
-    radial-gradient(ellipse 700px 500px at 50% 100%, rgba(245, 158, 11, 0.08), transparent 60%),
-    linear-gradient(180deg, #F5F8FC 0%, #EEF4FA 55%, #F8FAFC 100%);
+    radial-gradient(ellipse 1400px 780px at 15% -5%, rgba(37, 99, 235, 0.32), transparent 58%),
+    radial-gradient(ellipse 1100px 700px at 100% 15%, rgba(59, 130, 246, 0.22), transparent 55%),
+    radial-gradient(ellipse 900px 600px at 50% 110%, rgba(251, 191, 36, 0.1), transparent 60%),
+    linear-gradient(180deg, #EEF4FC 0%, #E6EFFB 50%, #F3F7FC 100%);
   text-align: left;
   overflow: hidden;
   border-bottom: 1px solid rgba(11, 30, 63, 0.05);
+  isolation: isolate;
 }
-.oc-hero::before {
-  content: '';
+.oc-hero-bg {
   position: absolute;
   inset: 0;
-  background-image:
-    radial-gradient(circle at 1px 1px, rgba(11, 30, 63, 0.06) 1px, transparent 0);
-  background-size: 28px 28px;
-  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(0,0,0,0.6), transparent 75%);
-  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(0,0,0,0.6), transparent 75%);
   pointer-events: none;
   z-index: 0;
+  overflow: hidden;
 }
-.oc-hero::after {
-  content: '';
+.oc-hero-bg-grid {
   position: absolute;
-  top: 10%;
-  right: -80px;
-  width: 280px;
-  height: 280px;
-  background:
-    radial-gradient(circle, rgba(29, 78, 216, 0.25) 0%, transparent 70%);
+  inset: -2px;
+  background-image:
+    linear-gradient(rgba(11, 30, 63, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(11, 30, 63, 0.05) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 35%, rgba(0,0,0,0.75), transparent 82%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 35%, rgba(0,0,0,0.75), transparent 82%);
+}
+.oc-hero-bg-glow {
+  position: absolute;
+  width: 520px;
+  height: 520px;
   border-radius: 50%;
-  filter: blur(40px);
-  pointer-events: none;
-  z-index: 0;
+  filter: blur(80px);
+  opacity: 0.55;
+  animation: oc-hero-float 22s ease-in-out infinite alternate;
+  will-change: transform;
+}
+.oc-hero-bg-glow--right {
+  top: -120px;
+  right: -140px;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.55) 0%, rgba(37, 99, 235, 0) 65%);
+}
+.oc-hero-bg-glow--left {
+  bottom: -160px;
+  left: -120px;
+  width: 420px; height: 420px;
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.45) 0%, rgba(14, 165, 233, 0) 65%);
+  animation-delay: -8s;
+  animation-duration: 28s;
+}
+.oc-hero-bg-noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@keyframes oc-hero-float {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(-28px, 18px) scale(1.06); }
+  100% { transform: translate(22px, -12px) scale(0.96); }
 }
 @media (max-width: 639px) {
-  .oc-hero::after {
-    right: -40%;
-    width: 220px;
-    height: 220px;
-    filter: blur(32px);
-  }
+  .oc-hero-bg-glow { display: none; }
+  .oc-hero-bg-noise { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .oc-hero-bg-glow { animation: none; }
 }
 
 /* Hot/Ticker도 Hero 그라데이션의 여운으로 자연스럽게 */
@@ -227,15 +253,37 @@
 .oc-hero-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px 6px 10px;
+  gap: 8px;
+  padding: 7px 14px 7px 11px;
   margin-bottom: 18px;
-  background: #FEF3C7;
-  color: #92400E;
+  background: linear-gradient(135deg, #FDE68A, #FEF3C7);
+  color: #78350F;
   border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 12.5px;
+  font-weight: 700;
   letter-spacing: -0.005em;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+.oc-hero-badge strong { font-weight: 800; color: #92400E; }
+.oc-hero-accent {
+  color: #B45309;
+  font-weight: 800;
+  background: linear-gradient(180deg, transparent 60%, rgba(245, 158, 11, 0.28) 60%);
+  padding: 0 2px;
+}
+.oc-hero-meta li.is-live strong {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.oc-hero-meta li.is-live strong::before {
+  content: '';
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+  animation: oc-pulse 1.6s ease-in-out infinite;
+  flex-shrink: 0;
 }
 .oc-hero-badge-dot {
   width: 7px; height: 7px; border-radius: 50%;
@@ -725,6 +773,23 @@
   display: grid;
   place-items: center;
 }
+.oc-step-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, rgba(11, 30, 63, 0.08), rgba(29, 78, 216, 0.04));
+  color: var(--oc-navy);
+  box-shadow: inset 0 0 0 1px rgba(11, 30, 63, 0.06);
+  transition: transform 180ms, box-shadow 180ms;
+}
+.oc-step:hover .oc-step-icon { transform: translateY(-1px) scale(1.04); }
+.oc-step--navy  .oc-step-icon { background: linear-gradient(135deg, rgba(11, 30, 63, 0.12), rgba(11, 30, 63, 0.03)); color: #0B1E3F; }
+.oc-step--royal .oc-step-icon { background: linear-gradient(135deg, rgba(29, 78, 216, 0.15), rgba(59, 130, 246, 0.05)); color: #1D4ED8; }
+.oc-step--amber .oc-step-icon { background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(245, 158, 11, 0.05)); color: #B45309; }
+.oc-step--mint  .oc-step-icon { background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.04)); color: #047857; }
+.oc-step-eta svg { vertical-align: -2px; margin-right: 2px; }
 .oc-step-body h3 {
   margin: 0 0 6px;
   font-size: 16px;
@@ -739,7 +804,9 @@
   line-height: 1.55;
 }
 .oc-step-eta {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-size: 12px;
   font-weight: 700;
   color: var(--oc-amber-hot);
@@ -2508,11 +2575,18 @@
   flex: 1;
   display: flex;
   gap: 8px;
-  overflow-x: auto;
-  scrollbar-width: thin;
+  overflow: hidden;
+  min-width: 0;
 }
-.oc-hot-rail::-webkit-scrollbar { height: 4px; }
-.oc-hot-rail::-webkit-scrollbar-thumb { background: rgba(11, 30, 63, 0.15); border-radius: 2px; }
+.oc-hot-rail--top3 .oc-hot-item {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: calc(33.33% - 6px);
+}
+@media (max-width: 768px) {
+  .oc-hot-rail--top3 { flex-direction: column; gap: 6px; }
+  .oc-hot-rail--top3 .oc-hot-item { max-width: none; width: 100%; }
+}
 .oc-hot-item {
   flex-shrink: 0;
   display: inline-flex;
@@ -3214,8 +3288,133 @@
   color: var(--oc-navy);
   margin: 0 0 12px;
   letter-spacing: -0.015em;
-  display: flex; align-items: baseline; gap: 10px;
+  display: flex; align-items: center; gap: 8px;
 }
+.oc-agency-section h2 svg { color: var(--oc-royal); }
+
+/* 사업자 정보 테이블 */
+.oc-agency-biz {
+  background: #F8FAFC;
+  border: 1px solid var(--oc-gray-100);
+  border-radius: 10px;
+  padding: 14px 18px;
+}
+.oc-agency-biz-row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(11,30,63,0.05);
+  font-size: 13.5px;
+}
+.oc-agency-biz-row:last-child { border-bottom: none; }
+.oc-agency-biz-row dt { color: var(--oc-gray-500); font-weight: 600; margin: 0; }
+.oc-agency-biz-row dd { margin: 0; color: var(--oc-navy); font-weight: 600; }
+.oc-agency-biz-row a { color: var(--oc-royal); display: inline-flex; align-items: center; gap: 4px; text-decoration: none; }
+.oc-agency-biz-row a:hover { text-decoration: underline; }
+
+/* 대표 인사말 */
+.oc-agency-ceo-msg {
+  margin: 0;
+  padding: 20px 22px;
+  background: linear-gradient(135deg, #EFF6FF 0%, #F8FAFC 100%);
+  border-left: 4px solid var(--oc-royal);
+  border-radius: 10px;
+}
+.oc-agency-ceo-msg p { margin: 0 0 10px; font-size: 14.5px; line-height: 1.7; color: var(--oc-navy); }
+.oc-agency-ceo-msg cite { font-size: 12.5px; color: var(--oc-gray-500); font-style: normal; font-weight: 700; }
+
+/* 연혁 타임라인 */
+.oc-agency-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 14px;
+  position: relative;
+}
+.oc-agency-timeline::before {
+  content: '';
+  position: absolute;
+  left: 4px; top: 8px; bottom: 8px;
+  width: 2px;
+  background: linear-gradient(180deg, var(--oc-royal), rgba(29, 78, 216, 0.15));
+  border-radius: 1px;
+}
+.oc-agency-timeline li {
+  position: relative;
+  padding: 8px 0 8px 18px;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+.oc-agency-timeline li::before {
+  content: '';
+  position: absolute;
+  left: -5px; top: 14px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: white;
+  border: 2px solid var(--oc-royal);
+}
+.oc-agency-timeline-year {
+  font-size: 13px; font-weight: 800; color: var(--oc-royal);
+  min-width: 54px;
+}
+.oc-agency-timeline-event { font-size: 13.5px; color: var(--oc-navy); }
+
+/* 레퍼런스 카드 */
+.oc-agency-refs {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+.oc-agency-ref-card {
+  background: white;
+  border: 1px solid var(--oc-gray-100);
+  border-radius: 12px;
+  padding: 16px 18px;
+  transition: transform 160ms, box-shadow 160ms;
+}
+.oc-agency-ref-card:hover { transform: translateY(-2px); box-shadow: var(--oc-shadow); }
+.oc-agency-ref-head {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+  margin-bottom: 6px;
+}
+.oc-agency-ref-head strong { font-size: 13.5px; color: var(--oc-navy); font-weight: 800; }
+.oc-agency-ref-head time { font-size: 11.5px; color: var(--oc-gray-500); }
+.oc-agency-ref-card h3 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--oc-gray-700);
+}
+.oc-agency-ref-result {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--oc-royal);
+  font-weight: 700;
+  background: rgba(29, 78, 216, 0.08);
+  padding: 6px 10px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+/* 대표 이력 */
+.oc-agency-career {
+  list-style: none;
+  margin: 0; padding: 0;
+  border-top: 1px solid var(--oc-gray-100);
+}
+.oc-agency-career li {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 14px;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--oc-gray-100);
+  font-size: 13.5px;
+}
+.oc-agency-career-year { color: var(--oc-gray-500); font-weight: 700; }
+.oc-agency-career-role { color: var(--oc-navy); }
 .oc-agency-reviews-count {
   font-size: 12.5px;
   color: var(--oc-gray-500);

@@ -1,9 +1,13 @@
+import type { LucideIcon } from 'lucide-react'
+import { ClipboardList, Target, BarChart3, ShieldCheck, Clock } from 'lucide-react'
+
 type Step = {
   num: string
   title: string
   desc: string
   eta: string
-  emoji: string
+  Icon: LucideIcon
+  tone: 'navy' | 'royal' | 'amber' | 'mint'
 }
 
 const STEPS: Step[] = [
@@ -12,28 +16,32 @@ const STEPS: Step[] = [
     title: '프로젝트 1분 등록',
     desc: '업종과 예산, 원하는 마케팅 유형만 입력하면 끝. 회원가입 없이도 시작할 수 있습니다.',
     eta: '약 1분',
-    emoji: '📝',
+    Icon: ClipboardList,
+    tone: 'navy',
   },
   {
     num: '02',
     title: '검증 대행사 자동 매칭',
     desc: '포트폴리오·리뷰·업종 경험을 기반으로 적합한 대행사에게만 프로젝트가 노출됩니다.',
     eta: '즉시',
-    emoji: '🎯',
+    Icon: Target,
+    tone: 'royal',
   },
   {
     num: '03',
     title: '견적 비교 · 협상',
     desc: '평균 28시간 안에 3~5개 견적이 도착합니다. 가격·일정·실적을 한 화면에서 비교하세요.',
     eta: '평균 28시간',
-    emoji: '📊',
+    Icon: BarChart3,
+    tone: 'amber',
   },
   {
     num: '04',
     title: '계약 · 진행 · 리뷰',
     desc: '선택한 대행사와 바로 계약하고, 완료 후 리뷰를 남기면 다음 광고주에게 도움이 됩니다.',
     eta: '프로젝트 기간',
-    emoji: '🤝',
+    Icon: ShieldCheck,
+    tone: 'mint',
   },
 ]
 
@@ -50,16 +58,20 @@ export function LPHowItWorks() {
         </div>
 
         <ol className="oc-steps" aria-label="이용 4단계">
-          {STEPS.map((s) => (
-            <li key={s.num} className="oc-step">
+          {STEPS.map(({ num, title, desc, eta, Icon, tone }) => (
+            <li key={num} className={`oc-step oc-step--${tone}`}>
               <div className="oc-step-index">
-                <span className="oc-step-num">{s.num}</span>
-                <span className="oc-step-emoji" aria-hidden>{s.emoji}</span>
+                <span className="oc-step-num">{num}</span>
+                <span className="oc-step-icon" aria-hidden>
+                  <Icon size={20} strokeWidth={2} />
+                </span>
               </div>
               <div className="oc-step-body">
-                <h3>{s.title}</h3>
-                <p>{s.desc}</p>
-                <span className="oc-step-eta">⏱ {s.eta}</span>
+                <h3>{title}</h3>
+                <p>{desc}</p>
+                <span className="oc-step-eta">
+                  <Clock size={12} strokeWidth={2.2} aria-hidden /> {eta}
+                </span>
               </div>
             </li>
           ))}

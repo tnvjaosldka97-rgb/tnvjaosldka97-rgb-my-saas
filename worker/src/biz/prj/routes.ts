@@ -111,9 +111,21 @@ const applySchema = z.object({
 marketProjectRoutes.post('/projects/:id/apply', zValidator('json', applySchema), async (c) => {
   const user = c.get('marketUser')
   const projectId = Number.parseInt(c.req.param('id'), 10)
-  if (!Number.isFinite(projectId) || projectId <= 0) return c.json({ error: 'Invalid project id' }, 400)
+  if (!Number.isFinite(projectId) || projectId <= 0) return c.json({ error: '잘못된 프로젝트 ID 입니다.' }, 400)
+  const userRow = await c.env.DB
+    .prepare('SELECT user_type, status FROM market_users WHERE id = ?1')
+    .bind(user.userId)
+    .first<{ user_type: string; status: string | null }>()
+  if (!userRow) return c.json({ error: '사용자 정보를 찾을 수 없습니다.' }, 404)
+  if (userRow.status === 'suspended') return c.json({ error: '정지된 계정은 지원할 수 없습니다.' }, 403)
+  if (userRow.user_type !== 'agency') {
+    return c.json({ error: '대행사 계정만 프로젝트에 지원할 수 있습니다. 대행사로 가입해주세요.' }, 403)
+  }
   const project = await getProjectById(c.env.DB, projectId)
-  if (!project) return c.json({ error: 'Project not found' }, 404)
+  if (!project) return c.json({ error: '프로젝트를 찾을 수 없습니다.' }, 404)
+  if (project.status !== 'recruiting') {
+    return c.json({ error: '모집중인 프로젝트만 지원할 수 있습니다.' }, 400)
+  }
   const owner = await getProjectOwner(c.env.DB, projectId)
   if (owner === user.userId) return c.json({ error: '자신의 프로젝트에는 지원할 수 없습니다.' }, 403)
   const existing = await findApplication(c.env.DB, projectId, user.userId)

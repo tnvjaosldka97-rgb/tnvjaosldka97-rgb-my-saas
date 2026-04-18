@@ -1,31 +1,41 @@
 import { usePublicBootstrap } from '../biz/mkt/hooks/usePublicBootstrap'
+import { useLiveTicker } from '../com/useLiveTicker'
 
 export function LPHero() {
   const { data, loading } = usePublicBootstrap()
   const market = data?.metrics?.market
 
+  const activeProjects = useLiveTicker(market?.activeProjects ?? 0, { enabled: !loading && !!market, minDelta: -1, maxDelta: 1 })
+  const verifiedAgencies = useLiveTicker(market?.verifiedAgencies ?? 0, { enabled: !loading && !!market, minDelta: 0, maxDelta: 1, intervalMs: [9000, 15000] })
+  const firstQuoteHour = market?.avgFirstQuoteHour ?? 0
+
   const metricItems = [
-    { label: '진행중 프로젝트', value: market?.activeProjects, fallback: '—' },
-    { label: '인증 대행사',     value: market?.verifiedAgencies, fallback: '—' },
-    { label: '평균 첫 견적',    value: market ? `${market.avgFirstQuoteHour}h` : '—', fallback: '—' },
-    { label: '검증 평점',       value: market?.avgRating ? market.avgRating.toFixed(1) : '—', fallback: '—' },
-  ] as Array<{ label: string; value: string | number | undefined; fallback: string }>
+    { label: '진행중 프로젝트', value: market ? activeProjects : undefined, fallback: '—', live: true },
+    { label: '인증 대행사',     value: market ? verifiedAgencies : undefined, fallback: '—', live: true },
+    { label: '평균 첫 견적',    value: market ? `${firstQuoteHour}h` : '—', fallback: '—', live: false },
+    { label: '검증 평점',       value: market?.avgRating ? market.avgRating.toFixed(1) : '—', fallback: '—', live: false },
+  ] as Array<{ label: string; value: string | number | undefined; fallback: string; live: boolean }>
 
   return (
     <section id="top" className="oc-hero">
+      <div className="oc-hero-bg" aria-hidden>
+        <div className="oc-hero-bg-grid" />
+        <div className="oc-hero-bg-glow oc-hero-bg-glow--right" />
+        <div className="oc-hero-bg-glow oc-hero-bg-glow--left" />
+        <div className="oc-hero-bg-noise" />
+      </div>
       <div className="oc-container">
         <div className="oc-hero-grid">
           <div className="oc-hero-copy">
             <span className="oc-hero-badge">
               <span className="oc-hero-badge-dot" aria-hidden />
-              지금 {market?.activeProjects ?? '56'}건이 견적 비교 중
+              대한민국 최초 · <strong>후불 광고</strong> 플랫폼
             </span>
             <h1>
-              대한민국에서 <em>광고비 안 날리는</em> 가장 확실한 방법.
+              대한민국에서 가장 <em>안전한</em> 광고 플랫폼.
             </h1>
             <p className="oc-hero-sub">
-              직접 찾지 마세요.<br />
-              검증된 대행사의 견적을 한 번에 비교할 수 있습니다.
+              <strong>검증하지 마세요.</strong> 대한민국 최초, <span className="oc-hero-accent">성사된 계약에만 수수료</span>를 받는 후불 광고 시스템입니다.
             </p>
             <div className="oc-hero-cta-row">
               <a href="#market" className="oc-btn oc-btn-primary oc-btn-lg">견적 비교하기</a>
@@ -34,7 +44,7 @@ export function LPHero() {
 
             <ul className="oc-hero-meta" aria-label="운영 지표">
               {metricItems.map((m) => (
-                <li key={m.label}>
+                <li key={m.label} className={m.live ? 'is-live' : ''}>
                   <strong>{loading ? <span className="oc-hero-meta-skel" aria-hidden /> : (m.value ?? m.fallback)}</strong>
                   <span>{m.label}</span>
                 </li>
