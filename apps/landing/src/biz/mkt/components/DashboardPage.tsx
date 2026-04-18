@@ -325,7 +325,10 @@ function AgencyView({ name }: { name: string }) {
             집행 중 캠페인 <strong>{kpis.executing}건</strong>입니다.
           </p>
         </div>
-        <a href="/agency/me/edit" className="oc-btn oc-btn-outline oc-btn-sm">프로필 편집</a>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <a href="/agency/me/verify" className="oc-btn oc-btn-primary oc-btn-sm">검증 신청 / 상태</a>
+          <a href="/agency/me/edit" className="oc-btn oc-btn-outline oc-btn-sm">프로필 편집</a>
+        </div>
       </header>
 
       <section className="oc-kpi-grid" aria-label="파트너 실적 지표">

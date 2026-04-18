@@ -52,6 +52,89 @@ adminMarketRoutes.get('/agencies', async (c) => {
   return c.json({ items })
 })
 
+// A: 대행사 검증 큐 (submitted 기본, status=all/submitted/approved/rejected)
+adminMarketRoutes.get('/agency-verifications', async (c) => {
+  const status = c.req.query('status') ?? 'submitted'
+  const where = status === 'all' ? '' : 'WHERE verification_status = ?1'
+  const stmt = c.env.DB.prepare(
+    `SELECT a.id, a.slug, a.name, a.verified, a.verification_status,
+            a.verification_submitted_at, a.verification_reviewed_at,
+            a.verification_reject_reason, a.business_reg_no, a.ceo_name,
+            a.business_reg_img_url, a.user_id,
+            mu.email AS user_email, mu.name AS user_name
+       FROM agencies a
+       LEFT JOIN market_users mu ON mu.id = a.user_id
+       ${where}
+       ORDER BY COALESCE(a.verification_submitted_at, '') DESC
+       LIMIT 200`,
+  )
+  const bound = status === 'all' ? stmt : stmt.bind(status)
+  const rows = await bound.all<{
+    id: number; slug: string; name: string; verified: number
+    verification_status: string; verification_submitted_at: string | null
+    verification_reviewed_at: string | null; verification_reject_reason: string | null
+    business_reg_no: string | null; ceo_name: string | null
+    business_reg_img_url: string | null; user_id: number | null
+    user_email: string | null; user_name: string | null
+  }>()
+  const items = (rows.results ?? []).map((r) => ({
+    id: r.id,
+    slug: r.slug,
+    name: r.name,
+    verified: r.verified === 1,
+    status: r.verification_status,
+    submittedAt: r.verification_submitted_at,
+    reviewedAt: r.verification_reviewed_at,
+    rejectReason: r.verification_reject_reason,
+    businessRegNo: r.business_reg_no,
+    ceoName: r.ceo_name,
+    businessRegImgUrl: r.business_reg_img_url,
+    userId: r.user_id,
+    userEmail: r.user_email,
+    userName: r.user_name,
+  }))
+  return c.json({ items })
+})
+
+adminMarketRoutes.post('/agencies/:id/verify-approve', async (c) => {
+  const id = Number.parseInt(c.req.param('id'), 10)
+  if (!Number.isFinite(id) || id <= 0) return c.json({ error: 'Invalid id' }, 400)
+  const now = new Date().toISOString()
+  await c.env.DB
+    .prepare(
+      `UPDATE agencies
+          SET verified = 1,
+              verification_status = 'approved',
+              verification_reviewed_at = ?1,
+              verification_reviewed_by = 'admin',
+              verification_reject_reason = NULL
+        WHERE id = ?2`,
+    )
+    .bind(now, id)
+    .run()
+  return c.json({ ok: true })
+})
+
+const verifyRejectSchema = z.object({ reason: z.string().max(500).default('검증 기준 미충족') })
+adminMarketRoutes.post('/agencies/:id/verify-reject', zValidator('json', verifyRejectSchema), async (c) => {
+  const id = Number.parseInt(c.req.param('id'), 10)
+  if (!Number.isFinite(id) || id <= 0) return c.json({ error: 'Invalid id' }, 400)
+  const { reason } = c.req.valid('json')
+  const now = new Date().toISOString()
+  await c.env.DB
+    .prepare(
+      `UPDATE agencies
+          SET verification_status = 'rejected',
+              verification_reviewed_at = ?1,
+              verification_reviewed_by = 'admin',
+              verification_reject_reason = ?2
+        WHERE id = ?3`,
+    )
+    .bind(now, reason, id)
+    .run()
+  return c.json({ ok: true })
+})
+
 const verifiedSchema = z.object({ verified: z.boolean() })
 adminMarketRoutes.patch('/agencies/:id/verified', zValidator('json', verifiedSchema), async (c) => {
   const id = Number.parseInt(c.req.param('id'), 10)

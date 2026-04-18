@@ -214,6 +214,69 @@ agencyRoutes.patch('/me', zValidator('json', agencyEditSchema), async (c) => {
   return c.json({ ok: true, updated: sets.length })
 })
 
+// --- A: 대행사 검증 제출 ---
+const verificationSchema = z.object({
+  businessRegNo: z.string().min(10).max(15), // 123-45-67890
+  ceoName: z.string().min(2).max(40),
+  businessRegImg: z.string().regex(/^data:image\/(png|jpeg|jpg|webp);base64,/, '사업자등록증 이미지 data URL이 필요합니다.').max(1_200_000),
+})
+
+agencyRoutes.post('/verification', zValidator('json', verificationSchema), async (c) => {
+  const user = c.get('marketUser')
+  const input = c.req.valid('json')
+  const existing = await c.env.DB
+    .prepare('SELECT id, verification_status FROM agencies WHERE user_id = ?1 LIMIT 1')
+    .bind(user.userId)
+    .first<{ id: number; verification_status: string }>()
+  if (!existing) return c.json({ error: '대행사 프로필이 없습니다. 먼저 프로필을 작성해주세요.' }, 404)
+  if (existing.verification_status === 'submitted') {
+    return c.json({ error: '이미 검토 대기중입니다.' }, 409)
+  }
+  if (existing.verification_status === 'approved') {
+    return c.json({ error: '이미 검증이 완료된 대행사입니다.' }, 409)
+  }
+  const now = new Date().toISOString()
+  await c.env.DB
+    .prepare(
+      `UPDATE agencies
+          SET business_reg_no = ?1,
+              ceo_name = ?2,
+              business_reg_img_url = ?3,
+              verification_status = 'submitted',
+              verification_submitted_at = ?4,
+              verification_reject_reason = NULL
+        WHERE id = ?5`,
+    )
+    .bind(input.businessRegNo, input.ceoName, input.businessRegImg, now, existing.id)
+    .run()
+  return c.json({ ok: true, status: 'submitted' }, 201)
+})
+
+agencyRoutes.get('/verification', async (c) => {
+  const user = c.get('marketUser')
+  const row = await c.env.DB
+    .prepare(
+      `SELECT verification_status, verification_submitted_at, verification_reviewed_at,
+              verification_reject_reason, business_reg_no, ceo_name
+         FROM agencies WHERE user_id = ?1 LIMIT 1`,
+    )
+    .bind(user.userId)
+    .first<{
+      verification_status: string; verification_submitted_at: string | null
+      verification_reviewed_at: string | null; verification_reject_reason: string | null
+      business_reg_no: string | null; ceo_name: string | null
+    }>()
+  if (!row) return c.json({ error: '대행사 프로필이 없습니다.' }, 404)
+  return c.json({
+    status: row.verification_status,
+    submittedAt: row.verification_submitted_at,
+    reviewedAt: row.verification_reviewed_at,
+    rejectReason: row.verification_reject_reason,
+    businessRegNo: row.business_reg_no,
+    ceoName: row.ceo_name,
+  })
+})
+
 marketAuthRoutes.route('/agency', agencyRoutes)
 
 // --- M-4: 아바타 업로드 (Cloudflare Images direct upload) ---

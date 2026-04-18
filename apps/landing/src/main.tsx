@@ -16,6 +16,7 @@ import { AgencyDetailPage } from './biz/mkt/components/AgencyDetailPage'
 import { NotificationsPage } from './biz/mkt/components/NotificationsPage'
 import { SearchPage } from './biz/mkt/components/SearchPage'
 import { AgencyProfileEditPage } from './biz/mkt/components/AgencyProfileEditPage'
+import { AgencyVerifyPage } from './biz/mkt/components/AgencyVerifyPage'
 import { ToastProvider } from './com/ui/Toast'
 import { ErrorBoundary } from './com/ui/ErrorBoundary'
 import { isSaas } from './com/url'
@@ -62,6 +63,7 @@ function Router() {
   if (path === '/dashboard') return <DashboardPage />
   if (path === '/notifications') return <NotificationsPage />
   if (path === '/agency/me/edit') return <AgencyProfileEditPage />
+  if (path === '/agency/me/verify') return <AgencyVerifyPage />
   if (path === '/search') {
     const q = new URLSearchParams(window.location.search).get('q') ?? ''
     return <SearchPage initialQuery={q} />

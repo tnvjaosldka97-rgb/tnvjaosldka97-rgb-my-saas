@@ -20,15 +20,16 @@ import {
 import { apiFetch } from '../../com/api/client'
 import { useToast } from '../../com/ui/Toast'
 
-type Tab = 'overview' | 'drafts' | 'projects' | 'agencies' | 'members' | 'applications' | 'consultations' | 'reviews'
+type Tab = 'overview' | 'drafts' | 'verifications' | 'projects' | 'agencies' | 'members' | 'applications' | 'consultations' | 'reviews'
 
-type BadgeKind = 'pending-drafts' | 'pending-cons'
+type BadgeKind = 'pending-drafts' | 'pending-cons' | 'pending-verify'
 
 type TabDef = { key: Tab; label: string; Icon: typeof LayoutDashboard; badge?: BadgeKind }
 
 const TABS: TabDef[] = [
   { key: 'overview',      label: 'Overview',      Icon: LayoutDashboard },
-  { key: 'drafts',        label: '승인 대기',     Icon: ClipboardList, badge: 'pending-drafts' },
+  { key: 'drafts',        label: '접수 승인',     Icon: ClipboardList, badge: 'pending-drafts' },
+  { key: 'verifications', label: '대행사 검증',   Icon: BadgeCheck, badge: 'pending-verify' },
   { key: 'projects',      label: 'Projects',      Icon: Briefcase },
   { key: 'agencies',      label: 'Agencies',      Icon: BadgeCheck },
   { key: 'members',       label: 'Members',       Icon: UserCog },
@@ -39,15 +40,19 @@ const TABS: TabDef[] = [
 
 export function MarketPanel() {
   const [tab, setTab] = useState<Tab>('overview')
-  const [badges, setBadges] = useState<Record<BadgeKind, number>>({ 'pending-drafts': 0, 'pending-cons': 0 })
+  const [badges, setBadges] = useState<Record<BadgeKind, number>>({ 'pending-drafts': 0, 'pending-cons': 0, 'pending-verify': 0 })
 
   useEffect(() => {
-    void apiFetch<Overview>('/api/admin/market/overview')
-      .then((d) => setBadges({
-        'pending-drafts': d.pendingDrafts ?? 0,
-        'pending-cons': d.pendingConsultations ?? 0,
-      }))
-      .catch(() => { /* ignore */ })
+    void Promise.all([
+      apiFetch<Overview>('/api/admin/market/overview').catch(() => null),
+      apiFetch<{ items: unknown[] }>('/api/admin/market/agency-verifications?status=submitted').catch(() => ({ items: [] })),
+    ]).then(([ov, verif]) => {
+      setBadges({
+        'pending-drafts': ov?.pendingDrafts ?? 0,
+        'pending-cons': ov?.pendingConsultations ?? 0,
+        'pending-verify': verif?.items.length ?? 0,
+      })
+    })
   }, [tab])
 
   return (
@@ -78,6 +83,7 @@ export function MarketPanel() {
       <div className="market-tab-panel">
         {tab === 'overview' && <OverviewTab />}
         {tab === 'drafts' && <DraftsTab />}
+        {tab === 'verifications' && <VerificationsTab />}
         {tab === 'projects' && <ProjectsTab />}
         {tab === 'agencies' && <AgenciesTab />}
         {tab === 'members' && <MembersTab />}
@@ -1023,6 +1029,162 @@ function ReviewsTab() {
           </li>
         ))}
       </ul>
+    </div>
+  )
+}
+
+/* =============================================================
+   Verifications — 대행사 사업자등록증 검증 큐
+============================================================= */
+
+type Verification = {
+  id: number
+  slug: string
+  name: string
+  verified: boolean
+  status: 'none' | 'submitted' | 'approved' | 'rejected'
+  submittedAt: string | null
+  reviewedAt: string | null
+  rejectReason: string | null
+  businessRegNo: string | null
+  ceoName: string | null
+  businessRegImgUrl: string | null
+  userId: number | null
+  userEmail: string | null
+  userName: string | null
+}
+
+function VerificationsTab() {
+  const toast = useToast()
+  const [items, setItems] = useState<Verification[]>([])
+  const [loading, setLoading] = useState(true)
+  const [filter, setFilter] = useState<'submitted' | 'approved' | 'rejected' | 'all'>('submitted')
+  const [busy, setBusy] = useState<number | null>(null)
+  const [zoom, setZoom] = useState<string | null>(null)
+
+  function load() {
+    setLoading(true)
+    void apiFetch<{ items: Verification[] }>(`/api/admin/market/agency-verifications?status=${filter}`)
+      .then((r) => setItems(r.items))
+      .finally(() => setLoading(false))
+  }
+  useEffect(load, [filter])
+
+  async function approve(id: number) {
+    if (!confirm(`대행사 #${id}를 검증 승인합니다. 계속하시겠습니까?`)) return
+    setBusy(id)
+    try {
+      await apiFetch(`/api/admin/market/agencies/${id}/verify-approve`, { method: 'POST' })
+      toast.success(`대행사 #${id} 검증 승인`)
+      load()
+    } catch (err) { toast.error(err instanceof Error ? err.message : '승인 실패') } finally { setBusy(null) }
+  }
+
+  async function reject(id: number) {
+    const reason = prompt('반려 사유 (대행사에게 노출됩니다):', '')
+    if (reason === null) return
+    setBusy(id)
+    try {
+      await apiFetch(`/api/admin/market/agencies/${id}/verify-reject`, {
+        method: 'POST',
+        body: JSON.stringify({ reason: reason || '검증 기준 미충족' }),
+      })
+      toast.info(`대행사 #${id} 검증 반려`)
+      load()
+    } catch (err) { toast.error(err instanceof Error ? err.message : '반려 실패') } finally { setBusy(null) }
+  }
+
+  return (
+    <div className="market-tab-content">
+      <div className="market-toolbar">
+        <select value={filter} onChange={(e) => setFilter(e.target.value as typeof filter)} className="market-select">
+          <option value="submitted">검토 대기</option>
+          <option value="approved">승인됨</option>
+          <option value="rejected">반려됨</option>
+          <option value="all">전체</option>
+        </select>
+        <span className="market-count"><strong>{items.length}</strong>건</span>
+      </div>
+
+      {loading ? (
+        <div className="market-skeleton">불러오는 중…</div>
+      ) : items.length === 0 ? (
+        <div className="market-empty">
+          {filter === 'submitted' ? '검증 대기중인 대행사가 없습니다.' : '해당 상태의 대행사가 없습니다.'}
+        </div>
+      ) : (
+        <ul className="market-draft-list">
+          {items.map((v) => (
+            <li key={v.id} className={`market-draft-card status-${v.status === 'submitted' ? 'pending' : v.status}`}>
+              <header className="market-draft-head">
+                <div>
+                  <span className="market-draft-id">#{v.id}</span>
+                  <strong>{v.name}</strong>
+                  {v.userEmail && <span className="market-draft-contact">{v.userEmail}</span>}
+                </div>
+                <StatusPill status={v.status === 'submitted' ? 'pending' : v.status} />
+              </header>
+
+              <div className="market-draft-meta">
+                <span className="market-draft-chip">사업자번호: {v.businessRegNo ?? '—'}</span>
+                <span className="market-draft-chip">대표자: {v.ceoName ?? '—'}</span>
+                {v.verified && <span className="market-draft-chip" style={{ background: '#DCFCE7', color: '#14532D', fontWeight: 700 }}>✓ 이미 인증</span>}
+              </div>
+
+              {v.businessRegImgUrl && (
+                <div style={{ margin: '10px 0' }}>
+                  <img
+                    src={v.businessRegImgUrl}
+                    alt="사업자등록증"
+                    onClick={() => setZoom(v.businessRegImgUrl)}
+                    style={{ maxWidth: 240, maxHeight: 160, borderRadius: 6, border: '1px solid #E5E7EB', cursor: 'zoom-in' }}
+                  />
+                </div>
+              )}
+
+              {v.rejectReason && (
+                <div className="market-draft-reject-note">반려 사유: {v.rejectReason}</div>
+              )}
+
+              <div className="market-draft-footer">
+                <time>{v.submittedAt ? fmtRel(v.submittedAt) : '-'}</time>
+                {v.status === 'submitted' && (
+                  <div className="market-draft-actions">
+                    <button
+                      type="button"
+                      className="market-btn-sm market-btn-approve"
+                      onClick={() => approve(v.id)}
+                      disabled={busy === v.id}
+                    >
+                      <CheckCircle2 size={11} /> 검증 승인
+                    </button>
+                    <button
+                      type="button"
+                      className="market-btn-sm market-btn-danger"
+                      onClick={() => reject(v.id)}
+                      disabled={busy === v.id}
+                    >
+                      <XCircle size={11} /> 반려
+                    </button>
+                  </div>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {zoom && (
+        <div
+          onClick={() => setZoom(null)}
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)',
+            display: 'grid', placeItems: 'center', zIndex: 2000, cursor: 'zoom-out',
+          }}
+        >
+          <img src={zoom} alt="사업자등록증 확대" style={{ maxWidth: '92vw', maxHeight: '92vh', borderRadius: 8 }} />
+        </div>
+      )}
     </div>
   )
 }
