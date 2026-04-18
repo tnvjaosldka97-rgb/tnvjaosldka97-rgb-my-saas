@@ -2603,13 +2603,19 @@
   width: 6px; height: 6px; border-radius: 50%;
   flex-shrink: 0;
 }
-.oc-hot-text { display: inline-flex; align-items: center; gap: 6px; min-width: 0; font-size: 12px; }
-.oc-hot-text strong { color: var(--oc-navy); font-weight: 700; }
+.oc-hot-text { display: inline-flex; align-items: center; gap: 6px; min-width: 0; font-size: 12px; flex: 1; }
+.oc-hot-text strong {
+  color: var(--oc-navy);
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
 .oc-hot-text span {
   color: var(--oc-gray-700);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-width: 0;
 }
 .oc-hot-count {
   font-size: 11px;
