@@ -54,7 +54,7 @@ const BUDGET_PREFIX_SHORT: Record<BudgetType, string> = {
   fixed: '',
 }
 
-const INITIAL_VISIBLE = 8
+const INITIAL_VISIBLE = 4
 
 export function LPProjectGrid() {
   const [status, setStatus] = useState<StatusFilter>('all')
