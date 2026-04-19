@@ -32,6 +32,7 @@ const INITIAL: FormState = {
 
 export function LPLeadStart() {
   const [form, setForm] = useState<FormState>(INITIAL)
+  const [privacyConsent, setPrivacyConsent] = useState(false)
   const [state, setState] = useState<'idle' | 'submitting' | 'done' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const toast = useToast()
@@ -63,6 +64,13 @@ export function LPLeadStart() {
       toast.error(msg)
       return
     }
+    if (!privacyConsent) {
+      const msg = '개인정보 제3자 제공 동의를 체크해주세요.'
+      setErrorMessage(msg)
+      setState('error')
+      toast.error(msg)
+      return
+    }
 
     setState('submitting')
     setErrorMessage(null)
@@ -76,6 +84,7 @@ export function LPLeadStart() {
           marketingType: form.marketing,
           budgetRange: form.budget,
           message: form.message.trim() || '',
+          privacyConsent: true,
         }),
       })
       setState('done')
@@ -231,6 +240,18 @@ export function LPLeadStart() {
                 />
               </label>
 
+              <label className="oc-consent-row">
+                <input
+                  type="checkbox"
+                  checked={privacyConsent}
+                  onChange={(e) => setPrivacyConsent(e.target.checked)}
+                  required
+                />
+                <span>
+                  <strong>(필수)</strong> 개인정보 제3자 제공 및 운영팀 유선 검증에 동의합니다. 제공 대상 · 항목은 <a href="/pages/terms" target="_blank" rel="noopener">이용약관</a> · <a href="/pages/privacy" target="_blank" rel="noopener">개인정보처리방침</a> 참고.
+                </span>
+              </label>
+
               {errorMessage && (
                 <div className="oc-auth-error" role="alert">{errorMessage}</div>
               )}
@@ -238,11 +259,11 @@ export function LPLeadStart() {
               <button
                 type="submit"
                 className="oc-btn oc-btn-primary oc-btn-lg oc-btn-block"
-                disabled={submitting}
+                disabled={submitting || !privacyConsent}
               >
                 {submitting ? '전송 중…' : '프로젝트 접수하기 →'}
               </button>
-              <p className="oc-lead-note">가입이나 결제 없이 운영팀이 직접 검토해드립니다.</p>
+              <p className="oc-lead-note">운영팀이 접수 후 <strong>직접 유선 검증</strong>을 진행합니다. 확인 전까지 대행사에게 노출되지 않습니다.</p>
             </>
           )}
         </form>

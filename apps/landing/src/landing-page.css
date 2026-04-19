@@ -413,10 +413,15 @@
 .oc-select:focus { outline: 2px solid var(--oc-royal-soft); outline-offset: 1px; }
 
 /* === Industry art v3 — 업종별 씬 (대문 이미지 느낌) === */
+.oc-grid-more {
+  margin-top: 28px;
+  display: flex;
+  justify-content: center;
+}
 .oc-art {
   position: relative;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 10;
   overflow: hidden;
   isolation: isolate;
   background: #FFFFFF;
@@ -469,7 +474,7 @@
 .oc-card-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 24px 20px;
+  gap: 18px 16px;
 }
 .oc-project-card {
   position: relative;
@@ -543,8 +548,8 @@
 }
 
 .oc-project-body {
-  padding: 12px 2px 4px;
-  display: flex; flex-direction: column; gap: 6px;
+  padding: 10px 2px 2px;
+  display: flex; flex-direction: column; gap: 4px;
   flex: 1;
 }
 .oc-project-industry {
@@ -932,6 +937,21 @@
 }
 .oc-field .oc-select { border-radius: 10px; padding: 11px 40px 11px 14px; font-size: 14.5px; }
 .oc-btn-block { width: 100%; margin-top: 4px; }
+.oc-consent-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 14px;
+  background: #F8FAFC;
+  border: 1px solid var(--oc-gray-100);
+  border-radius: 10px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--oc-gray-700);
+}
+.oc-consent-row input[type="checkbox"] { margin-top: 2px; flex-shrink: 0; }
+.oc-consent-row a { color: var(--oc-royal); text-decoration: underline; }
+.oc-consent-row strong { color: #B91C1C; font-weight: 700; margin-right: 2px; }
 .oc-lead-note {
   margin: 4px 0 0;
   text-align: center;

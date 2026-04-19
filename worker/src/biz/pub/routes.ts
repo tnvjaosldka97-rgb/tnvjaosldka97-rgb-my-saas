@@ -162,6 +162,9 @@ const projectDraftSchema = z.object({
   marketingType: z.string().min(1).max(40),
   budgetRange: z.string().min(1).max(40),
   message: z.string().max(1000).optional(),
+  privacyConsent: z.literal(true, {
+    message: '개인정보 제3자 제공 동의가 필요합니다.',
+  }),
 })
 
 publicRoutes.post('/project-drafts', zValidator('json', projectDraftSchema), async (c) => {
@@ -171,8 +174,9 @@ publicRoutes.post('/project-drafts', zValidator('json', projectDraftSchema), asy
     await c.env.DB
       .prepare(
         `INSERT INTO project_drafts
-           (requester_name, requester_contact, industry, marketing_type, budget_range, message, status, submitted_at)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, 'pending', ?7)`,
+           (requester_name, requester_contact, industry, marketing_type, budget_range, message, status, submitted_at,
+            privacy_consent, privacy_consent_at)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, 'pending', ?7, 1, ?7)`,
       )
       .bind(
         input.requesterName,

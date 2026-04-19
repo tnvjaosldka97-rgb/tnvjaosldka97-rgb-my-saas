@@ -54,11 +54,14 @@ const BUDGET_PREFIX_SHORT: Record<BudgetType, string> = {
   fixed: '',
 }
 
+const INITIAL_VISIBLE = 8
+
 export function LPProjectGrid() {
   const [status, setStatus] = useState<StatusFilter>('all')
   const [sort, setSort] = useState<NonNullable<ProjectListQuery['sort']>>('latest')
   const [industry, setIndustry] = useState<IndustryFilter>('전체')
   const [query, setQuery] = useState('')
+  const [showAll, setShowAll] = useState(false)
   const { projects, loading, error } = useProjects({ status, sort })
 
   const filtered = useMemo(() => {
@@ -78,7 +81,11 @@ export function LPProjectGrid() {
     setSort('latest')
     setIndustry('전체')
     setQuery('')
+    setShowAll(false)
   }
+
+  const visibleItems = showAll ? filtered : filtered.slice(0, INITIAL_VISIBLE)
+  const hasMore = filtered.length > INITIAL_VISIBLE && !showAll
 
   return (
     <section id="market" className="oc-section oc-section-market">
@@ -153,7 +160,7 @@ export function LPProjectGrid() {
 
         {!loading && !error && filtered.length > 0 && (
           <div className="oc-card-grid">
-            {filtered.map((p) => {
+            {visibleItems.map((p) => {
               const d = dday(p.daysLeft, p.status)
               const statusMeta = STATUS_META[p.status]
               const peek = computePeek(p)
@@ -184,6 +191,23 @@ export function LPProjectGrid() {
                 </a>
               )
             })}
+          </div>
+        )}
+
+        {!loading && !error && hasMore && (
+          <div className="oc-grid-more">
+            <button type="button" className="oc-btn oc-btn-outline" onClick={() => setShowAll(true)}>
+              프로젝트 {filtered.length - INITIAL_VISIBLE}건 더 보기 →
+            </button>
+          </div>
+        )}
+
+        {!loading && !error && showAll && filtered.length > INITIAL_VISIBLE && (
+          <div className="oc-grid-more">
+            <button type="button" className="oc-btn oc-btn-text" onClick={() => {
+              setShowAll(false)
+              document.getElementById('market')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            }}>접기</button>
           </div>
         )}
 

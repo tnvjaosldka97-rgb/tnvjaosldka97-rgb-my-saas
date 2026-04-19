@@ -21,6 +21,7 @@ import {
   adminSetMemberStatus,
   adminMarkDraftPaid,
   adminRefundDraftPayment,
+  adminMarkPhoneVerified,
 } from './repository'
 import { sendEmailSafe, renderDraftApprovedEmail, renderDraftRejectedEmail } from '../eml/mailer'
 
@@ -199,14 +200,31 @@ adminMarketRoutes.get('/drafts', async (c) => {
   return c.json({ items })
 })
 
+// 유선 검증 완료 처리
+const phoneVerifySchema = z.object({ note: z.string().max(500).optional() })
+adminMarketRoutes.post('/drafts/:id/phone-verify', zValidator('json', phoneVerifySchema), async (c) => {
+  const id = Number.parseInt(c.req.param('id'), 10)
+  if (!Number.isFinite(id) || id <= 0) return c.json({ error: 'Invalid id' }, 400)
+  const { note } = c.req.valid('json')
+  await adminMarkPhoneVerified(c.env.DB, id, 'admin', note ?? null)
+  return c.json({ ok: true })
+})
+
 adminMarketRoutes.post('/drafts/:id/approve', async (c) => {
   const id = Number.parseInt(c.req.param('id'), 10)
   if (!Number.isFinite(id) || id <= 0) return c.json({ error: 'Invalid id' }, 400)
   try {
     const draft = await adminGetDraft(c.env.DB, id)
     if (!draft) return c.json({ error: '초안을 찾을 수 없습니다.' }, 404)
-    // C-4: 결제 게이트 — 등록비 미수령 시 승인 차단 (강제 옵션 제공)
     const force = c.req.query('force') === '1'
+    // 1) 유선 검증 게이트
+    if (!force && !draft.phoneVerifiedAt) {
+      return c.json({
+        error: '유선 검증 전입니다. 광고주에게 전화해서 디테일 확인 후 "유선 검증 완료" 처리해주세요.',
+        stage: 'phone_verify_required',
+      }, 412)
+    }
+    // 2) 결제 게이트
     if (!force && draft.paymentStatus !== 'paid') {
       return c.json({
         error: '등록비(₩10,000) 수령 전입니다. 결제 완료 처리 후 승인해주세요.',

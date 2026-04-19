@@ -426,6 +426,9 @@ type Draft = {
   paymentStatus: string
   paymentAmount: number
   paymentReceivedAt: string | null
+  phoneVerifiedAt: string | null
+  phoneVerifyNote: string | null
+  privacyConsent: boolean
 }
 
 function DraftsTab() {
@@ -495,6 +498,20 @@ function DraftsTab() {
     } finally {
       setBusy(null)
     }
+  }
+
+  async function phoneVerify(id: number) {
+    const note = prompt('유선 검증 메모 (선택): 상호·위치·실제 의뢰 여부 확인 결과', '')
+    if (note === null) return
+    setBusy(id)
+    try {
+      await apiFetch(`/api/admin/market/drafts/${id}/phone-verify`, {
+        method: 'POST',
+        body: JSON.stringify({ note: note || undefined }),
+      })
+      toast.success(`초안 #${id} 유선 검증 완료`)
+      load()
+    } catch (err) { toast.error(err instanceof Error ? err.message : '유선 검증 처리 실패') } finally { setBusy(null) }
   }
 
   async function markPaid(id: number) {
@@ -604,6 +621,17 @@ function DraftsTab() {
                 <span
                   className="market-draft-chip"
                   style={{
+                    background: d.phoneVerifiedAt ? '#DCFCE7' : '#FFE4E6',
+                    color: d.phoneVerifiedAt ? '#14532D' : '#9F1239',
+                    fontWeight: 700,
+                  }}
+                  title={d.phoneVerifyNote ?? undefined}
+                >
+                  {d.phoneVerifiedAt ? '✓ 유선검증' : '• 유선검증 전'}
+                </span>
+                <span
+                  className="market-draft-chip"
+                  style={{
                     background: d.paymentStatus === 'paid' ? '#DCFCE7' : d.paymentStatus === 'refunded' ? '#E0E7FF' : '#FEF3C7',
                     color: d.paymentStatus === 'paid' ? '#14532D' : d.paymentStatus === 'refunded' ? '#3730A3' : '#854D0E',
                     fontWeight: 700,
@@ -611,6 +639,9 @@ function DraftsTab() {
                 >
                   {d.paymentStatus === 'paid' ? '✓ 결제완료' : d.paymentStatus === 'refunded' ? '↺ 환불됨' : '• 미결제'} ₩{(d.paymentAmount ?? 10000).toLocaleString()}
                 </span>
+                {d.privacyConsent && (
+                  <span className="market-draft-chip" style={{ background: '#EDE9FE', color: '#5B21B6', fontWeight: 700 }}>✓ 개인정보 동의</span>
+                )}
               </div>
 
               {d.message && <p className="market-draft-msg">{d.message}</p>}
@@ -628,6 +659,17 @@ function DraftsTab() {
                 <time>{fmtRel(d.submittedAt)}</time>
                 {d.status === 'pending' && (
                   <div className="market-draft-actions">
+                    {!d.phoneVerifiedAt && (
+                      <button
+                        type="button"
+                        className="market-btn-sm"
+                        onClick={() => phoneVerify(d.id)}
+                        disabled={busy === d.id}
+                        style={{ background: '#DC2626', color: 'white' }}
+                      >
+                        📞 유선 검증 완료
+                      </button>
+                    )}
                     {d.paymentStatus !== 'paid' && (
                       <button
                         type="button"
@@ -654,8 +696,14 @@ function DraftsTab() {
                       type="button"
                       className="market-btn-sm market-btn-approve"
                       onClick={() => approve(d.id)}
-                      disabled={busy === d.id || d.paymentStatus !== 'paid'}
-                      title={d.paymentStatus !== 'paid' ? '결제 완료 후 승인 가능' : undefined}
+                      disabled={busy === d.id || !d.phoneVerifiedAt || d.paymentStatus !== 'paid'}
+                      title={
+                        !d.phoneVerifiedAt
+                          ? '유선 검증 완료 후 승인 가능'
+                          : d.paymentStatus !== 'paid'
+                          ? '결제 완료 후 승인 가능'
+                          : undefined
+                      }
                     >
                       <CheckCircle2 size={11} /> 승인 · 공개
                     </button>

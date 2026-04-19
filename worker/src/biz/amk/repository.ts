@@ -143,6 +143,9 @@ export type AdminDraftRow = {
   paymentStatus: string
   paymentAmount: number
   paymentReceivedAt: string | null
+  phoneVerifiedAt: string | null
+  phoneVerifyNote: string | null
+  privacyConsent: boolean
 }
 
 export type AdminReviewRow = {
@@ -411,13 +414,16 @@ export async function adminListDrafts(
     approved_project_id: number | null; reject_reason: string | null
     payment_status: string | null; payment_amount: number | null
     payment_received_at: string | null
+    phone_verified_at: string | null; phone_verify_note: string | null
+    privacy_consent: number | null
   }
   const where = statusFilter && statusFilter !== 'all' ? 'WHERE status = ?1' : ''
   const stmt = db.prepare(
     `SELECT id, requester_name, requester_contact, industry, marketing_type,
             budget_range, message, status, submitted_at,
             reviewed_at, reviewed_by, approved_project_id, reject_reason,
-            payment_status, payment_amount, payment_received_at
+            payment_status, payment_amount, payment_received_at,
+            phone_verified_at, phone_verify_note, privacy_consent
        FROM project_drafts
        ${where}
        ORDER BY submitted_at DESC
@@ -442,7 +448,29 @@ export async function adminListDrafts(
     paymentStatus: r.payment_status ?? 'unpaid',
     paymentAmount: r.payment_amount ?? 10000,
     paymentReceivedAt: r.payment_received_at,
+    phoneVerifiedAt: r.phone_verified_at,
+    phoneVerifyNote: r.phone_verify_note,
+    privacyConsent: r.privacy_consent === 1,
   }))
+}
+
+export async function adminMarkPhoneVerified(
+  db: D1DatabaseLike,
+  id: number,
+  reviewer: string,
+  note: string | null,
+): Promise<void> {
+  const now = isoNow()
+  await db
+    .prepare(
+      `UPDATE project_drafts
+          SET phone_verified_at = ?1,
+              phone_verified_by = ?2,
+              phone_verify_note = ?3
+        WHERE id = ?4`,
+    )
+    .bind(now, reviewer, note, id)
+    .run()
 }
 
 export async function adminMarkDraftPaid(
